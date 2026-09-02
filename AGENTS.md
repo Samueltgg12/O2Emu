@@ -82,7 +82,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Ask the user before writing emulator code. This is a research phase; premature
 implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-02T08:34:59.661Z","hash":"sha256:42320123b6a78a9a3995e13023d6fbf93a8916e9a12513c212df0605608b1131"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-02T08:56:59.671Z","hash":"sha256:8898c2cdb51b1020a1275d98292271ab615d1049f1c658b1443d7570182a9379"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -99,11 +99,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `.cursorrules` _(spec)_ — Cursor rules
 - `.windsurfrules` _(spec)_ — Windsurf rules
 - `.github/copilot-instructions.md` _(spec)_ — GitHub Copilot instructions (.github)
-
-## Working files (current focus)
-- `docs/sources.md` _(auto:recent-edit)_
-- `docs/register-maps.md` _(auto:recent-edit)_
-- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
