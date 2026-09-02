@@ -48,12 +48,30 @@ MACE sub-blocks (from the decompiled PROM `definitions.h`):
 
 ## Ethernet
 
-- 10/100 Base-T
-- Provided by MACE
+- 10/100 Base-T, provided by MACE.
+- Ethernet block base: `0x1f280000` (`BASE_MEC`), from the decompiled PROM
+  `definitions.h`.
+- The PROM accesses the MAC control register as a 64-bit register and uses its
+  low 32-bit lane at offset `0x04` on the big-endian bus. It writes zero then
+  one during the controller reset/start sequence.
+- PROM diagnostics write and read the receive FIFO at `0x104` and inspect the
+  byte-sized receive FIFO pointers at `0x45` (write), `0x46` (read), and `0x47`
+  (depth). The diagnostic exercises 16 FIFO positions and returns failure bits
+  for control, FIFO, base-register, and final-state checks.
+- These are PROM-observed behaviors, not a complete packet TX/RX programming
+  model. The controller descriptor and interrupt semantics remain open.
 
 ## Audio
 
-- MACEISA audio (see register-maps.md for MACEISA_AUDIO_SW_IRQ)
+- MACEISA audio block base: `0x1f300000` (`BASE_AUDIO`), from the decompiled
+  PROM `definitions.h`.
+- The PROM initializes audio channel 2's ring control at offset `0x40` and its
+  write pointer at offset `0x50` using 64-bit accesses. It sets ring-control
+  values `0x1000` and `0x200` during setup, resets the write pointer to zero,
+  and advances it while copying data into the ring.
+- Codec status/input registers are at offsets `0x08` and `0x18`; the PROM polls
+  codec status while transferring codec input data. Bit meanings and complete
+  channel behavior still require the MACE audio source or hardware reference.
 
 ## UART (serial)
 
@@ -88,6 +106,8 @@ MACE sub-blocks (from the decompiled PROM `definitions.h`):
 
 ## TODO / Open questions
 
-- [ ] MACEISA audio register details (mavb)
+- [x] PROM-level MACE Ethernet register map and reset/FIFO behavior
+- [x] PROM-level MACE audio ring/codec register map
+- [ ] Complete MACEISA audio register details (mavb)
 - [ ] PCI configuration space details
-- [ ] Ethernet controller register details (beyond the decompiled map)
+- [ ] Complete Ethernet controller register details (beyond the PROM map)

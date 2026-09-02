@@ -70,6 +70,119 @@ Offsets are relative to the GBE register block:
 | `frm_size_tile` | `0x30000` |
 | `frm_size_pixel` | `0x30004` |
 
+### GBE (Display Engine) register map (Linux `include/video/gbe.h`)
+
+The GBE is the Display Engine ASIC. `GBE_BASE = 0x16000000` (SGI O2), register
+block is 1 MiB (`0x100000`). Offsets below are relative to `GBE_BASE`. The
+register block is exposed as `struct sgi_gbe` in `include/video/gbe.h`; the
+driver is `drivers/video/fbdev/gbefb.c`.
+
+**Control / clock / ID block** (offset `0x00000`):
+
+| Register | Offset | Fields |
+|----------|--------|--------|
+| `ctrlstat` | `0x00000` | `CHIPID` 3:0, `SENSE_N` 4, `PCLKSEL` 29:28 |
+| `dotclock` | `0x00004` | `M` 7:0, `N` 13:8, `P` 15:14, `RUN` 20 |
+| `i2c` | `0x00008` | I2C bus |
+| `sysclk` | `0x0000c` | system clock |
+| `i2cfp` | `0x00010` | I2C flat-panel |
+| `id` | `0x00014` | chip ID |
+| `config` | `0x00018` | configuration |
+| `bist` | `0x0001c` | built-in self test |
+
+**Video timing block** (offset `0x10000`):
+
+| Register | Offset | Fields |
+|----------|--------|--------|
+| `vt_xy` | `0x10000` | `X` 11:0, `Y` 23:12, `FREEZE` 31 |
+| `vt_xymax` | `0x10004` | `MAXX` 11:0, `MAXY` 23:12 |
+| `vt_vsync` | `0x10008` | vertical sync |
+| `vt_hsync` | `0x1000c` | horizontal sync |
+| `vt_vblank` | `0x10010` | vertical blank |
+| `vt_hblank` | `0x10014` | horizontal blank |
+| `vt_flags` | `0x10018` | `VDRV_INVERT` 0, `VDRV_LOW` 1, `HDRV_INVERT` 2, `HDRV_LOW` 3, `SYNC_HIGH` 4, `SYNC_LOW` 5, `F2RF_HIGH` 6 |
+| `vt_f2rf_lock` | `0x1001c` | frame-to-raster lock |
+| `vt_intr01` | `0x10020` | interrupt 0/1 |
+| `vt_intr23` | `0x10024` | interrupt 2/3 |
+| `fp_hdrv` | `0x10028` | flat-panel hdrv |
+| `fp_vdrv` | `0x1002c` | flat-panel vdrv |
+| `fp_de` | `0x10030` | flat-panel data enable |
+| `vt_hpixen` | `0x10034` | horizontal pixel enable |
+| `vt_vpixen` | `0x10038` | vertical pixel enable |
+| `vt_hcmap` | `0x1003c` | horizontal colormap |
+| `vt_vcmap` | `0x10040` | vertical colormap |
+| `did_start_xy` | `0x10044` | `DID_STARTX` 11:0, `DID_STARTY` 23:12 |
+| `crs_start_xy` | `0x10048` | `CRS_STARTX` 11:0, `CRS_STARTY` 23:12 |
+| `vc_start_xy` | `0x1004c` | `VC_STARTX` 11:0, `VC_STARTY` 23:12 |
+
+**Overlay plane** (offset `0x20000`):
+
+| Register | Offset | Fields |
+|----------|--------|--------|
+| `ovr_width_tile` | `0x20000` | `OVR_FIFO_RESET` 13 |
+| `ovr_inhwctrl` | `0x20004` | `OVR_DMA_ENABLE` 0 |
+| `ovr_control` | `0x20008` | `OVR_DMA_ENABLE` 0 |
+
+**Normal framebuffer plane** (offset `0x30000`):
+
+| Register | Offset | Fields |
+|----------|--------|--------|
+| `frm_size_tile` | `0x30000` | `FRM_RHS` 4:0, `FRM_WIDTH_TILE` 12:5, `FRM_DEPTH` 14:13, `FRM_FIFO_RESET` 15 |
+| `frm_size_pixel` | `0x30004` | `FB_HEIGHT_PIX` 31:16 |
+| `frm_inhwctrl` | `0x30008` | `FRM_DMA_ENABLE` 0 |
+| `frm_control` | `0x3000c` | `FRM_DMA_ENABLE` 0, `FRM_LINEAR` 1, `FRM_TILE_PTR` 31:9 |
+
+**DID control** (offset `0x40000`):
+
+| Register | Offset | Fields |
+|----------|--------|--------|
+| `did_inhwctrl` | `0x40000` | `DID_DMA_ENABLE` 0 |
+| `did_control` | `0x40004` | `DID_DMA_ENABLE` 0 |
+
+**WID table** (offset `0x50000`): `mode_regs[32]`, fields `BUF` 1:0, `TYP` 4:2,
+`CM` 9:5, `GAMMA` 10, `AUX` 12:11.
+
+**Color / gamma map** (offset `0x60000`):
+
+| Register | Offset |
+|----------|--------|
+| `cmap[6144]` | `0x60000` |
+| `cm_fifo` | `0x78000` |
+| `gmap[256]` | `0x80000` |
+| `gmap10[1024]` | `0x90000` |
+
+**Cursor** (offset `0xa0000`):
+
+| Register | Offset |
+|----------|--------|
+| `crs_pos` | `0xa0000` |
+| `crs_ctl` | `0xa0004` |
+| `crs_cmap[3]` | `0xa0008` |
+| `crs_glyph[64]` | `0xa0014` |
+
+**Video capture** (offset `0xb0000`): `vc_0` … `vc_8`.
+
+**Color-mode constants** (`GBE_CMODE_*`): `I8` 0, `I12` 1, `RG3B2` 2, `RGB4` 3,
+`ARGB5` 4, `RGB8` 5, `RGBA5` 6, `RGB10` 7.
+
+**Driver init sequence** (`gbefb.c`): read `gbe_revision = ctrlstat & 15`; build
+tile list; init WID table; `vt_intr01`/`vt_intr23 = 0xffffffff`;
+`did_control`/`ovr_width_tile`/`crs_ctl = 0`; init gamma map; init color map +
+`gbe_loadcmap()`; program `vt_xymax`/`vsync`/`hsync`/`vblank`/`hblank`;
+`vc_start_xy` with `VC_STARTX = hblank_end - 4`; `vt_hpixen`/`vt_vpixen`;
+`did_start_xy` with `DID_STARTX = hblank_end - 20`; `crs_start_xy` with
+`CRS_STARTY = temp + 1`, `CRS_STARTX = hblank_end - GBE_CRS_MAGIC`;
+`fp_de`/`hdrv`/`vdrv`; `frm_size_pixel` with `FB_HEIGHT_PIX`;
+`frm_size_tile` with `FRM_WIDTH_TILE`/`FRM_RHS`/`FRM_DEPTH`; then
+`ctrlstat`/`dotclock`/`sysclk`/`i2c`/`i2cfp`/`id`/`config`/`bist`.
+
+**Timing info** (`struct gbe_timing_info`): `flags`, `width`, `height`,
+`fields_sec`, `cfreq`, `htotal`, `hblank_start`/`hblank_end`,
+`hsync_start`/`hsync_end`, `vtotal`, `vblank_start`/`vblank_end`,
+`vsync_start`/`vsync_end`, `pll_m`/`pll_n`/`pll_p`. Flags: `GBE_VOF_UNKNOWNMON`
+1, `STEREO` 2, `DO_GENSYNC` 4, `SYNC_ON_GREEN` 8, `FLATPANEL` 0x1000,
+`MAGICKEY` 0x2000.
+
 ### CRIME Control register bits
 
 ```text
@@ -347,6 +460,13 @@ Offsets relative to the render base (`0x15000000`):
 | `MACE_ETH_RX_MCL_DEPTH` | `0x47` |
 | `MACE_ETH_MCL_RECEIVE_FIFO(x)` | `x + 0x100` |
 
+PROM observations (`samples/decompiled-prom/rev4.18/firmware.S`): the MAC
+control register is accessed through the low 32-bit lane at `0x04` on the
+big-endian bus; the receive FIFO is accessed at `0x104`; and the write pointer,
+read pointer, and depth are byte registers at `0x45`, `0x46`, and `0x47`.
+The PROM diagnostic exercises 16 receive-FIFO positions but does not expose a
+complete packet descriptor or transmit-register map.
+
 ### Audio
 
 | Register | Offset |
@@ -359,6 +479,13 @@ Offsets relative to the render base (`0x15000000`):
 | `MACE_AUDIO_RD_PTR_CHAN(x)` | `0x20*x + 0x8` |
 | `MACE_AUDIO_WR_PTR_CHAN(x)` | `0x20*x + 0x10` |
 | `MACE_AUDIO_RING_DEPTH_CHAN(x)` | `0x20*x + 0x18` |
+
+PROM observations (`firmware.S`): channel 2 uses ring control `0x40`, read
+pointer `0x48`, write pointer `0x50`, and depth `0x58`; ring control and write
+pointer are accessed as 64-bit registers. The PROM setup writes control values
+`0x1000` and `0x200`, then resets the write pointer. Codec status is polled at
+`0x08` and codec input is read/written at `0x18`; codec bit definitions are not
+present in the recovered PROM header.
 
 ### I2C
 
@@ -432,8 +559,12 @@ RTC is at `0x1f3a0000`. Registers are byte-addressed with `RTC_REG(x) = x << 8`:
 
 ## TODO / Open questions
 
-- [ ] ICE ASIC register map (no NetBSD driver; needs Linux/IRIX source)
-- [ ] MRE (Memory & Rendering Engine) register map
-- [ ] Display Engine register map
-- [ ] crmfb framebuffer register map
-- [ ] mavb (Moosehead audio) register map
+- [ ] ICE ASIC register map (no authoritative register header located yet)
+- [x] PROM-visible MRE/RE/DE/MTE register map (`definitions.h`, base
+    `0x15000000`)
+- [x] Display Engine / GBE register map (`include/video/gbe.h`)
+- [ ] Cross-check the GBE map against the leaked IRIX `crmGfxState.c`
+- [x] PROM-level MACE Ethernet register map
+- [x] PROM-level MACE audio ring/codec register map
+- [ ] Complete Ethernet packet/descriptor register map
+- [ ] Complete mavb codec and audio register semantics

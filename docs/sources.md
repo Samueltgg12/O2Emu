@@ -18,7 +18,8 @@ for the O2.
   - `crime.h` — CRIME register definitions
   - `mace.h` — MACE register definitions
   - `ip32_ints.h` — interrupt map
-- `drivers/video/crmfb.c` + `crmfbreg.h` — framebuffer driver
+- `drivers/video/fbdev/gbefb.c` — GBE framebuffer driver
+- `include/video/gbe.h` — GBE register definitions (`struct sgi_gbe`)
 - `drivers/scsi/` — SCSI (aic7xxx)
 
 ## NetBSD
@@ -63,12 +64,17 @@ Collected under [`docs/datasheets/`](datasheets/):
   (+ `.md`). NEC doc U10710EJ5V0AN00 (Nov 2001). Covers VR4100/VR4300/VR5000/
   VR5432/VR5500/VR10000/VR12000: pipeline, caches, TLB, CP0 registers, cache
   init/writeback/fill programming.
-- **MIPS R5000** — IDT 79R5000 datasheet / user manual (CPU core, cache, bus)
-- **MIPS R10000** — MIPS Technologies R10000 user manual (CPU core, SysAD bus)
-- **MIPS R12000** — MIPS Technologies R12000 user manual
-- **Adaptec AIC-7880** — UltraWide SCSI controller datasheet
-- **SGI O2** — SGI hardware documentation (owner's manual, field service)
-- **SDRAM DIMM** — JEDEC 239-pin SDRAM DIMM spec (proprietary O2 variant)
+- **MIPS R5000/R10000/R12000** — NEC VRSeries manuals, collected under
+  `docs/datasheets/CPU/`
+- **Adaptec AIC-7880** — UltraWide SCSI controller datasheet (to collect)
+- **SGI O2** — SGI hardware documentation (owner's manual, field service; to
+  collect or verify)
+- **SDRAM DIMM** — JEDEC 239-pin SDRAM DIMM spec (O2-specific reference still
+  to collect or verify)
+
+> SPD status: no local O2-specific SPD address, EEPROM layout, or PROM DIMM
+> probe sequence has been verified. The PROM I2C code found so far is used for
+> display/flat-panel probing, so this remains an open research item.
 
 > The leaked IRIX source remains the primary register-level reference; the
 > NEC VRSeries datasheets are the authoritative CPU architecture reference.
@@ -103,8 +109,11 @@ Collected under [`docs/datasheets/`](datasheets/):
 
 ## TODO / Open questions
 
-- [ ] Full CRIME/MACE/ICE/MRE/Display register maps
-- [ ] crmfb framebuffer register details
-- [ ] mavb audio register details
+- [ ] Full ICE register map (no authoritative header located yet)
+- [x] CRIME/MRE/Display/GBE register maps (`definitions.h`, Linux `gbe.h`)
+- [ ] Cross-check the GBE map against leaked IRIX `crmGfxState.c`
+- [x] PROM-level MACE Ethernet/audio register observations (`firmware.S`)
+- [ ] Complete mavb audio register details and codec semantics
+- [ ] DIMM SPD address, EEPROM layout, and probe behavior
 - [ ] Search IRIX source for ASIC drivers lacking open-source coverage
-      (ICE, MRE, Display Engine, crmfb, mavb) in `irix/kern/io/`
+      (ICE, Ethernet packet engine, mavb, and codec) in `irix/kern/io/`

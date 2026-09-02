@@ -227,6 +227,15 @@ Offsets are relative to `CRM_BASEADDR`:
 - Each bank is either **32 MB** or **128 MB** (64 Mbit SDRAM)
 - POST sizes banks by probing (IRIX `stand/arcs/IP32prom/post/post1mem.c`)
 
+### DIMM SPD status
+
+The O2 uses proprietary 239-pin SDRAM DIMMs, but the sources currently
+collected do not provide an SPD EEPROM address or a DIMM SPD byte map. The
+decompiled PROM's MACE I2C routines access the display/flat-panel path; no
+DIMM-SPD transaction was identified in the PROM assembly. Treat SPD behavior
+as unresolved until an O2 board reference, IRIX memory code, or a captured
+I2C trace provides the missing evidence.
+
 ## Physical memory map
 
 | Range | Purpose |
@@ -261,6 +270,6 @@ Source: decompiled PROM `definitions.h` (`PHYS_BASE_CRIME`, `PHYS_BASE_RENDER`,
 ## TODO / Open questions
 
 - [x] CPU architecture (R5000/R10000/R12000) — from NEC VRSeries datasheets
-- [ ] MRE register map
-- [ ] DIMM SPD / configuration details
+- [x] PROM-visible MRE/RE/DE/MTE register map — see [register-maps.md](register-maps.md)
+- [ ] DIMM SPD / configuration details (EEPROM address, bytes, and probe path)
 - [ ] Full CRIME timing/refresh programming sequence

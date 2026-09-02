@@ -46,6 +46,7 @@ emulation, Phase 3 = JIT/optimizations/GUI/cross-platform).
 | Register maps (from drivers) | [register-maps.md](register-maps.md) |
 | PROM firmware | [prom.md](prom.md) |
 | Research sources | [sources.md](sources.md) |
+| Phase 1 checklist | [phase1-checklist.md](phase1-checklist.md) |
 
 ## Decompiled PROM
 

@@ -55,6 +55,7 @@ This project is developed in three phases. See
 | Register maps (from drivers) | [docs/register-maps.md](docs/register-maps.md) |
 | PROM firmware | [docs/prom.md](docs/prom.md) |
 | Research sources | [docs/sources.md](docs/sources.md) |
+| Phase 1 checklist | [docs/phase1-checklist.md](docs/phase1-checklist.md) |
 
 ## Firmware
 

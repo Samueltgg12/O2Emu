@@ -32,6 +32,19 @@ from the earlier SGI Indy (which had a separate graphics board).
 - Texture mapping
 - Contains the memory controller
 
+### PROM-visible render-engine registers
+
+The decompiled PROM exposes the MRE/CRIME render block at physical base
+`0x15000000` (`BASE_RENDER` in `samples/decompiled-prom/rev4.18/definitions.h`).
+The recovered offsets are documented in [register-maps.md](register-maps.md)
+under “CRIME rendering engine registers”. They cover the render interface,
+render TLB, display engine (DE), memory-transfer engine (MTE), status, and
+start/flush controls.
+
+No separate ICE register block is named by the PROM definitions or the Linux
+and NetBSD sources currently collected. ICE remains an open research item;
+pixel-format behavior should not be inferred from the GBE color-mode table.
+
 ## Display Engine
 
 - Analog video generation
@@ -39,8 +52,17 @@ from the earlier SGI Indy (which had a separate graphics board).
 
 ## Linux driver
 
-- `drivers/video/crmfb.c` — framebuffer driver
-- `drivers/video/crmfbreg.h` — register definitions
+The O2 framebuffer is the **GBE** (Graphics Back End). In the modern Linux
+kernel the driver and register definitions live under `drivers/video/fbdev/`
+and `include/video/`:
+
+- `drivers/video/fbdev/gbefb.c` — framebuffer driver
+- `include/video/gbe.h` — GBE register definitions (`struct sgi_gbe` + all
+  `GBE_*` bit-field macros)
+
+> Note: older references (and this repo's earlier notes) cite
+> `drivers/video/crmfb.c` + `crmfbreg.h`. In the current kernel the GBE
+> framebuffer is `gbefb.c`/`gbe.h`; the `crmfb` path is stale.
 
 ## NetBSD driver
 
@@ -82,10 +104,206 @@ The O2 framebuffer is **tile-based** (not a linear scanline buffer):
 8. `initTiming()`
 9. `initCursor()`
 
+## GBE register map (`include/video/gbe.h`)
+
+The Linux kernel exposes the GBE as `struct sgi_gbe` — a flat array of 32-bit
+registers. Offsets are relative to `GBE_BASE = 0x16000000` (SGI O2). The
+register block is 1 MiB (`0x100000`), so each register is at
+`GBE_BASE + offset`.
+
+### Control / clock / ID block
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x00000` | `ctrlstat` | — | General control / status |
+| | `CHIPID` | 3:0 | Chip revision (driver: `gbe_revision = ctrlstat & 15`) |
+| | `SENSE_N` | 4 | Monitor sense (active low) |
+| | `PCLKSEL` | 29:28 | Pixel clock select |
+| `0x00004` | `dotclock` | — | Dot clock PLL control |
+| | `M` | 7:0 | PLL multiplier |
+| | `N` | 13:8 | PLL divider |
+| | `P` | 15:14 | PLL post-divider |
+| | `RUN` | 20 | PLL run |
+| `0x00008` | `i2c` | — | CRT I2C control |
+| `0x0000c` | `sysclk` | — | System clock PLL control |
+| `0x00010` | `i2cfp` | — | Flat panel I2C control |
+| `0x00014` | `id` | — | Device id / chip revision |
+| `0x00018` | `config` | — | Power-on configuration |
+| `0x0001c` | `bist` | — | Internal BIST status |
+
+### Video timing block
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x10000` | `vt_xy` | — | Current dot coords |
+| | `X` | 11:0 | Current X |
+| | `Y` | 23:12 | Current Y |
+| | `FREEZE` | 31 | Freeze scan |
+| `0x10004` | `vt_xymax` | — | Maximum dot coords |
+| | `MAXX` | 11:0 | Max X |
+| | `MAXY` | 23:12 | Max Y |
+| `0x10008` | `vt_vsync` | — | VSYNC on/off |
+| | `VSYNC_OFF` | 11:0 | VSYNC off Y |
+| | `VSYNC_ON` | 23:12 | VSYNC on Y |
+| `0x1000c` | `vt_hsync` | — | HSYNC on/off |
+| `0x10010` | `vt_vblank` | — | VBLANK on/off |
+| `0x10014` | `vt_hblank` | — | HBLANK on/off |
+| `0x10018` | `vt_flags` | — | Polarity of VT signals |
+| | `VDRV_INVERT` | 0 | Invert VDRV |
+| | `VDRV_LOW` | 1 | VDRV active low |
+| | `HDRV_INVERT` | 2 | Invert HDRV |
+| | `HDRV_LOW` | 3 | HDRV active low |
+| | `SYNC_HIGH` | 4 | Sync active high |
+| | `SYNC_LOW` | 5 | Sync active low |
+| | `F2RF_HIGH` | 6 | F2RF high |
+| `0x1001c` | `vt_f2rf_lock` | — | F2RF & framelock Y coord |
+| `0x10020` | `vt_intr01` | — | Interrupt 0,1 Y coords |
+| `0x10024` | `vt_intr23` | — | Interrupt 2,3 Y coords |
+| `0x10028` | `fp_hdrv` | — | Flat panel HDRV on/off |
+| `0x1002c` | `fp_vdrv` | — | Flat panel VDRV on/off |
+| `0x10030` | `fp_de` | — | Flat panel DE on/off |
+| `0x10034` | `vt_hpixen` | — | Internal horiz pixel on/off |
+| `0x10038` | `vt_vpixen` | — | Internal vert pixel on/off |
+| `0x1003c` | `vt_hcmap` | — | Cmap write horiz |
+| `0x10040` | `vt_vcmap` | — | Cmap write vert |
+| `0x10044` | `did_start_xy` | — | EOL/F DID/XY reset val |
+| | `DID_STARTX` | 11:0 | DID start X |
+| | `DID_STARTY` | 23:12 | DID start Y |
+| `0x10048` | `crs_start_xy` | — | EOL/F CRS/XY reset val |
+| | `CRS_STARTX` | 11:0 | Cursor start X |
+| | `CRS_STARTY` | 23:12 | Cursor start Y |
+| `0x1004c` | `vc_start_xy` | — | EOL/F VC/XY reset val |
+| | `VC_STARTX` | 11:0 | Video capture start X |
+| | `VC_STARTY` | 23:12 | Video capture start Y |
+
+### Overlay plane
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x20000` | `ovr_width_tile` | — | Overlay plane ctrl 0 |
+| | `OVR_FIFO_RESET` | 13 | Overlay FIFO reset |
+| `0x20004` | `ovr_inhwctrl` | — | Overlay plane ctrl 1 |
+| | `OVR_DMA_ENABLE` | 0 | Overlay DMA enable |
+| `0x20008` | `ovr_control` | — | Overlay plane ctrl 1 |
+| | `OVR_DMA_ENABLE` | 0 | Overlay DMA enable |
+
+### Normal (framebuffer) plane
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x30000` | `frm_size_tile` | — | Normal plane ctrl 0 |
+| | `FRM_RHS` | 4:0 | Right-hand side tile |
+| | `FRM_WIDTH_TILE` | 12:5 | Width in tiles |
+| | `FRM_DEPTH` | 14:13 | Depth (`GBE_FRM_DEPTH_8/16/32`) |
+| | `FRM_FIFO_RESET` | 15 | Framebuffer FIFO reset |
+| `0x30004` | `frm_size_pixel` | — | Normal plane ctrl 1 |
+| | `FB_HEIGHT_PIX` | 31:16 | Height in pixels |
+| `0x30008` | `frm_inhwctrl` | — | Normal plane ctrl 2 |
+| | `FRM_DMA_ENABLE` | 0 | Framebuffer DMA enable |
+| `0x3000c` | `frm_control` | — | Normal plane ctrl 3 |
+| | `FRM_DMA_ENABLE` | 0 | Framebuffer DMA enable |
+| | `FRM_LINEAR` | 1 | Linear (non-tiled) mode |
+| | `FRM_TILE_PTR` | 31:9 | Tile pointer |
+
+### DID (display list) control
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x40000` | `did_inhwctrl` | — | DID control |
+| | `DID_DMA_ENABLE` | 0 | DID DMA enable |
+| `0x40004` | `did_control` | — | DID shadow |
+| | `DID_DMA_ENABLE` | 0 | DID DMA enable |
+
+### WID (window ID) table
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x50000` | `mode_regs[32]` | — | WID table (32 entries) |
+| | `BUF` | 1:0 | Buffer select |
+| | `TYP` | 4:2 | Type |
+| | `CM` | 9:5 | Color mode |
+| | `GAMMA` | 10 | Gamma map select |
+| | `AUX` | 12:11 | Auxiliary |
+
+### Color map / gamma map
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0x60000` | `cmap[6144]` | — | Color map (6144 entries) |
+| `0x78000` | `cm_fifo` | — | Color map FIFO status |
+| `0x80000` | `gmap[256]` | — | Gamma map (256 entries) |
+| `0x90000` | `gmap10[1024]` | — | Gamma map, 10-bit (1024 entries) |
+
+### Cursor
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0xa0000` | `crs_pos` | — | Cursor control 0 |
+| `0xa0004` | `crs_ctl` | — | Cursor control 1 |
+| `0xa0008` | `crs_cmap[3]` | — | Cursor color map |
+| `0xa0014` | `crs_glyph[64]` | — | Cursor glyph (64 entries) |
+
+### Video capture
+
+| Offset | Field | Bits | Meaning |
+|--------|-------|------|---------|
+| `0xb0000` | `vc_0` … `vc_8` | — | Video capture control 0–8 |
+
+### Color-mode constants
+
+| Constant | Value | Meaning |
+|----------|-------|---------|
+| `GBE_CMODE_I8` | 0 | 8-bit indexed |
+| `GBE_CMODE_I12` | 1 | 12-bit indexed |
+| `GBE_CMODE_RG3B2` | 2 | 3-3-2 RGB |
+| `GBE_CMODE_RGB4` | 3 | 4-4-4 RGB |
+| `GBE_CMODE_ARGB5` | 4 | 1-5-5-5 ARGB |
+| `GBE_CMODE_RGB8` | 5 | 8-8-8 RGB |
+| `GBE_CMODE_RGBA5` | 6 | 5-5-5-1 RGBA |
+| `GBE_CMODE_RGB10` | 7 | 10-10-10 RGB |
+
+### Driver init sequence (`drivers/video/fbdev/gbefb.c`)
+
+`gbe_turn_on()` / `gbe_reset()` / `compute_gbe_timing()` perform, in order:
+
+1. `gbe_revision = gbe->ctrlstat & 15` — read chip revision
+2. Build tile list: `gbe_tiles.cpu[i] = (gbe_mem_phys >> TILE_SHIFT) + i`
+3. Init WID table: `gbe->mode_regs[i] = val` for `i` in 0..31
+4. Disable interrupts: `gbe->vt_intr01 = 0xffffffff; gbe->vt_intr23 = 0xffffffff`
+5. `gbe->did_control = 0; gbe->ovr_width_tile = 0; gbe->crs_ctl = 0`
+6. Init gamma map: `gbe->gmap[i] = (i << 24) | (i << 16) | (i << 8)`
+7. Init color map: `gbe_cmap[i] = (i << 8) | (i << 16) | (i << 24)`; `gbe_loadcmap()`
+8. Set `vt_xymax`, `vt_vsync`/`vt_hsync`/`vt_vblank`/`vt_hblank`
+9. `vc_start_xy` with `VC_STARTY` and `VC_STARTX = hblank_end - 4`
+10. `vt_hpixen`/`vt_vpixen` setup
+11. `did_start_xy` with `DID_STARTY` and `DID_STARTX = hblank_end - 20`
+12. `crs_start_xy` with `CRS_STARTY = temp + 1` and `CRS_STARTX = hblank_end - GBE_CRS_MAGIC`
+13. `fp_de`/`fp_hdrv`/`fp_vdrv` setup
+14. `frm_size_pixel` with `FB_HEIGHT_PIX`
+15. `frm_size_tile` with `FRM_WIDTH_TILE`, `FRM_RHS`, `FRM_DEPTH`
+16. `ctrlstat`, `dotclock`, `sysclk`, `i2c`, `i2cfp`, `id`, `config`, `bist`
+
+### Timing info (`struct gbe_timing_info`)
+
+| Field | Meaning |
+|-------|---------|
+| `flags` | Mode flags (see below) |
+| `width` / `height` | Visible resolution |
+| `fields_sec` | Field rate |
+| `cfreq` | Pixel clock |
+| `htotal` / `vtotal` | Total lines |
+| `hblank_start/end`, `hsync_start/end` | Horizontal blank/sync |
+| `vblank_start/end`, `vsync_start/end` | Vertical blank/sync |
+| `pll_m`, `pll_n`, `pll_p` | PLL values |
+
+Timing flags: `GBE_VOF_UNKNOWNMON 1`, `GBE_VOF_STEREO 2`,
+`GBE_VOF_DO_GENSYNC 4`, `GBE_VOF_SYNC_ON_GREEN 8`, `GBE_VOF_FLATPANEL 0x1000`,
+`GBE_VOF_MAGICKEY 0x2000`.
+
 ## TODO / Open questions
 
-- [ ] Full ICE register map
-- [ ] Full MRE register map
-- [ ] Full Display Engine register map
-- [ ] crmfb framebuffer register details
-- [ ] Video modes / timing details
+- [x] Full GBE (Display Engine) register map — `include/video/gbe.h`
+- [ ] Full ICE register map (pixel packaging/unpacking); no authoritative
+  register header located yet
+- [x] PROM-visible MRE/RE/DE/MTE register map — `definitions.h`
+- [ ] Video modes / timing details (per-mode `gbe_timing_info` tables)
