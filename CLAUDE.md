@@ -80,7 +80,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Do **not** write emulator code without explicit user approval. This is a
 research phase; premature implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-02T16:27:56.904Z","hash":"sha256:e60f191092e993c4f7ccc8fca528eb294a5cb801feff3d98e2ef01ffb3cc6296"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-02T17:24:20.080Z","hash":"sha256:5d7fe99ceb386d64f83cfc03f7f600fb33116f3db089a6e77e59603e64586eed"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -100,7 +100,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `docs/register-maps.md` _(auto:recent-edit)_
-- `.vscode/settings.json` _(auto:recent-edit)_
 - `docs/graphics.md` _(auto:recent-edit)_
 - `docs/sources.md` _(auto:recent-edit)_
 - `docs/io.md` _(auto:recent-edit)_
