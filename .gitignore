@@ -1,3 +1,4 @@
 .copilot-specs-cache/
 samples/linux
 samples/netbsd
+samples/openbsd

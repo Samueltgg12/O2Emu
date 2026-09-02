@@ -82,7 +82,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Ask the user before writing emulator code. This is a research phase; premature
 implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-02T22:09:12.585Z","hash":"sha256:9c41960b7b7893e0c5d68bc8a951537a01e293a7ecae91604827a9df472bcbdf"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-02T23:05:12.658Z","hash":"sha256:5719dad2a84c8412988cd79cdc32ff0b55bae185ad1e435c6adbd5869f50b7e9"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -116,8 +116,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `.vscode/settings.json` _(auto:recent-edit)_
 - `.gitignore` _(auto:recent-edit)_
+- `samples/linux/README` _(auto:dwell)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
