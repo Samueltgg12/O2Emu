@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-02T08:56:59.678Z","hash":"sha256:8898c2cdb51b1020a1275d98292271ab615d1049f1c658b1443d7570182a9379"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-02T11:20:04.024Z","hash":"sha256:74ef3db8ef24a325e2288d972a4c58f171c43658085c856d10ebff1efeb7474a"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -11,10 +11,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `CLAUDE.md` _(spec)_ — Claude Code instructions
 - `.agent/AGENTS.md` _(spec)_ — Multi-agent instructions (.agent)
 - `GEMINI.md` _(spec)_ — Gemini instructions
-- `AGENT.md` _(spec)_ — Multi-agent instructions
 - `.cursorrules` _(spec)_ — Cursor rules
 - `.windsurfrules` _(spec)_ — Windsurf rules
 - `.github/copilot-instructions.md` _(spec)_ — GitHub Copilot instructions (.github)
+- `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
