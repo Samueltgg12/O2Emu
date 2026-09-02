@@ -9,6 +9,18 @@ An emulator for the **SGI O2 (IP32)** workstation, currently in **Phase 1:
 Research**. There is **no emulator code yet** — the current deliverable is
 accurate, well-sourced hardware documentation under `docs/`.
 
+## Phases
+
+- **Phase 1 — Research (current):** exhaustive, well-sourced hardware
+  documentation under `docs/`. No emulator code.
+- **Phase 2 — Emulation:** a full-fledged **C++** emulator, as accurate to the
+  hardware as the documentation and specs allow. CPU, memory, graphics, I/O,
+  and the PROM firmware, with a GUI.
+- **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
+  improvements, cross-platform support, and full-featured emulator features.
+
+See `ROADMAP.md` for the full plan.
+
 ## How to work here
 
 1. **Start with `docs/README.md`** for the documentation index, then read the
@@ -27,8 +39,7 @@ accurate, well-sourced hardware documentation under `docs/`.
 ```
 README.md            # GitHub-facing overview
 AGENTS.md            # AI agent guidance (generic)
-CLAUDE.md            # This file (Claude-specific)
-docs/                # All research documentation
+CLAUDE.md            # This file (Claude-specific)ROADMAP.md           # Full project plan (phases 1-3)docs/                # All research documentation
   README.md          #   docs index
   architecture.md    #   system architecture
   cpu-memory.md      #   CPU & memory
@@ -50,6 +61,10 @@ samples/             # firmware images
 - I/O = MACE ASIC (PCI, ISA, PS/2, Ethernet).
 - PROM reset vector: `0xBFC00000`; firmware VMA `0x81000000`.
 - PROM images in `samples/`; rev4.18 MD5 `c9725e036052cf1f3e6258eb9bc687fa`.
+
+## License
+
+BSD 3-Clause License. See [LICENSE](LICENSE).
 
 ## Research sources
 

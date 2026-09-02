@@ -4,6 +4,9 @@
 register-level details from Linux/BSD drivers and leaked IRIX source. **No
 implementation in this phase.**
 
+See [ROADMAP.md](../ROADMAP.md) for the full project plan (Phase 2 = C++
+emulation, Phase 3 = JIT/optimizations/GUI/cross-platform).
+
 ## Machine Overview
 
 - **Codename:** "Moosehead", SGI IP32
@@ -43,3 +46,10 @@ implementation in this phase.**
 | Register maps (from drivers) | [register-maps.md](register-maps.md) |
 | PROM firmware | [prom.md](prom.md) |
 | Research sources | [sources.md](sources.md) |
+
+## Decompiled PROM
+
+The PROM has been decompiled into MIPS assembly under
+[`samples/decompiled-prom/`](../samples/decompiled-prom/). The auto-generated
+`definitions.h` is the authoritative source for the IP32 address map and the
+CRIME/MACE/UART/RTC register maps (see [register-maps.md](register-maps.md)).

@@ -4,68 +4,92 @@
   "pinnedFiles": [
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/README.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Project README (docs)",
-      "pinnedAt": 1788327444536,
-      "auto": "spec",
+      "pinnedAt": 1788332405267,
+      "auto": "recent-edit",
+      "expiresAt": 1788336005267,
       "role": "spec"
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/architecture.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788326268708,
-      "auto": "recent-edit",
-      "expiresAt": 1788329868708
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/graphics.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788326875996,
-      "auto": "recent-edit",
-      "expiresAt": 1788330475996
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/sources.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788327744454,
+      "pinnedAt": 1788332405287,
       "auto": "recent-edit",
-      "expiresAt": 1788331344454
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/prom.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788326718081,
-      "auto": "recent-edit",
-      "expiresAt": 1788330318081
+      "expiresAt": 1788336005287
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/README.md",
       "pinnedBy": "auto:editor",
       "note": "Project README",
-      "pinnedAt": 1788327760938,
+      "pinnedAt": 1788332801528,
       "auto": "recent-edit",
-      "expiresAt": 1788331360938,
+      "expiresAt": 1788336401528,
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
       "pinnedBy": "auto:editor",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788327765932,
-      "auto": "spec",
-      "expiresAt": 1788331365932,
+      "pinnedAt": 1788333357504,
+      "auto": "recent-edit",
+      "expiresAt": 1788336957504,
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
       "pinnedBy": "auto:editor",
       "note": "Claude Code instructions",
-      "pinnedAt": 1788327450353,
-      "auto": "spec",
-      "expiresAt": 1788331050353,
+      "pinnedAt": 1788330909288,
+      "auto": "recent-edit",
+      "expiresAt": 1788334509288,
       "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/docs/cpu-memory.md",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788332309773,
+      "auto": "recent-edit",
+      "expiresAt": 1788335909773
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/docs/register-maps.md",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788332027755,
+      "auto": "recent-edit",
+      "expiresAt": 1788335627755
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/docs/architecture.md",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788332309798,
+      "auto": "recent-edit",
+      "expiresAt": 1788335909798
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
+      "pinnedBy": "auto:editor",
+      "note": "Spec: ROADMAP.md",
+      "pinnedAt": 1788333467842,
+      "auto": "recent-edit",
+      "expiresAt": 1788337067842,
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/docs/io.md",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788332309788,
+      "auto": "recent-edit",
+      "expiresAt": 1788335909788
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/docs/prom.md",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788332309807,
+      "auto": "recent-edit",
+      "expiresAt": 1788335909807
     }
   ],
   "skills": [],
-  "updatedAt": 1788328119577
+  "updatedAt": 1788333467842
 }

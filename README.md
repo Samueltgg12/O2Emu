@@ -31,6 +31,19 @@ single pool of main memory over a 133 MHz 144-bit bus (128-bit data + ECC).
    I/O (MACE), and the IP32 PROM firmware.
 3. **Boot** IRIX and/or a hobbyist OS on the emulator.
 
+## Roadmap
+
+This project is developed in three phases. See
+[ROADMAP.md](ROADMAP.md) for the full plan.
+
+- **Phase 1 — Research (current):** exhaustive, well-sourced hardware
+  documentation under [`docs/`](docs/). No emulator code.
+- **Phase 2 — Emulation:** a full-fledged C++ emulator, as accurate to the
+  hardware as the documentation and specs allow. CPU, memory, graphics, I/O,
+  and the PROM firmware, with a GUI.
+- **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
+  improvements, cross-platform support, and full-featured emulator features.
+
 ## Documentation
 
 | Topic | File |
@@ -50,6 +63,11 @@ The actual IP32 PROM images are included in [`samples/`](samples/):
 - `ip32prom.rev4.18.bin` — MD5 `c9725e036052cf1f3e6258eb9bc687fa`
 - `ip32prom.rev4.3.bin` — MD5 `6b86b20727a598ed15d93f27c9a3f2e8`
 
+The PROM has also been **decompiled into MIPS assembly** under
+[`samples/decompiled-prom/`](samples/decompiled-prom/). The auto-generated
+`definitions.h` is the authoritative source for the IP32 address map and the
+CRIME/MACE/UART/RTC register maps.
+
 ## Research sources
 
 - **Linux kernel** — `arch/mips/sgi-ip32/` and `arch/mips/include/asm/ip32/`
@@ -62,4 +80,4 @@ See [docs/sources.md](docs/sources.md) for the full list.
 
 ## License
 
-TBD.
+BSD 3-Clause License. See [LICENSE](LICENSE).

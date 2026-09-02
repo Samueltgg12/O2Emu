@@ -41,12 +41,29 @@ for the O2.
 
 - **`samples/ip32prom.rev4.18.bin`** — PROM image (MD5 `c9725e036052cf1f3e6258eb9bc687fa`)
 - **`samples/ip32prom.rev4.3.bin`** — older PROM image (MD5 `6b86b20727a598ed15d93f27c9a3f2e8`)
+- **`samples/decompiled-prom/`** — decompiled PROM output (MIPS assembly)
+  - `rev4.18/` and `rev4.3/` — per-revision output
+  - `definitions.h` — full IP32 address map + CRIME/MACE/UART/RTC registers
+  - `post1.S`, `sloader.S`, `env.S`, `firmware.S`, `version.S`, `trailing.S`
 - `github.com/mattst88/ip32prom-decompiler` — Rust tool that decompiles the IP32
   PROM (parses 5-section SHDR layout, firmware VMA `0x81000000`, embedded ELF
   header, two's complement checksum). Motivation: 900 MHz RM7900 CPU upgrade.
 - Author's blog post — reverse-engineering write-up of the PROM structure.
 - `forums.sgi.sh` thread 1508 — O2 PROM / firmware discussion.
 - Hackaday / Adafruit / LavX articles — O2 CPU upgrade and PROM work.
+
+## Datasheets & hardware references
+
+- **MIPS R5000** — IDT 79R5000 datasheet / user manual (CPU core, cache, bus)
+- **MIPS R10000** — MIPS Technologies R10000 user manual (CPU core, SysAD bus)
+- **MIPS R12000** — MIPS Technologies R12000 user manual
+- **Adaptec AIC-7880** — UltraWide SCSI controller datasheet
+- **SGI O2** — SGI hardware documentation (owner's manual, field service)
+- **SDRAM DIMM** — JEDEC 239-pin SDRAM DIMM spec (proprietary O2 variant)
+
+> These are referenced by part number; exact PDFs/URLs to be collected and
+> linked as they are located. The leaked IRIX source remains the primary
+> register-level reference.
 
 ## Leaked IRIX source
 

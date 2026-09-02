@@ -65,6 +65,20 @@ textures live in main memory.
 - Up to 1 GB (128 MiB/stick max, reverse-engineered)
 - ECC supported
 
+## Physical memory map
+
+| Range | Purpose |
+|-------|---------|
+| `0x00000000`–`0x0fffffff` | Main memory (up to 256 MB, 0-based alias) |
+| `0x10000000`–`0x13ffffff` | Memory above 256 MB (aliased above 1 GB) |
+| `0x14000000` | CRIME CPU interface |
+| `0x15000000` | Render engine interface |
+| `0x1f000000` | MACE (I/O engine) |
+| `0x1fc00000` | PROM (KSEG1 view of reset vector `0xBFC00000`) |
+
+Sources: decompiled PROM `definitions.h` (`PHYS_BASE_CRIME`,
+`PHYS_BASE_RENDER`, `PHYS_BASE_MACE`, `PHYS_SYSTEM_ROM`).
+
 ## Interrupt architecture
 
 - CRIME provides the top-level interrupt controller

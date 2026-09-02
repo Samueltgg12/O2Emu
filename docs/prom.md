@@ -100,6 +100,57 @@ The author documented the reverse-engineering process in a blog post covering:
 - The embedded ELF header in the version section.
 - The two's complement checksum scheme.
 
+## Decompiled PROM (in `samples/decompiled-prom/`)
+
+The PROM has been decompiled into MIPS assembly. The output is in
+`samples/decompiled-prom/` with separate directories for each revision:
+
+| File | Contents |
+|------|----------|
+| `definitions.h` | Auto-generated constants: full IP32 address map, CRIME/MACE/UART/RTC registers, ARCS SPB/RTSB/firmware-vector structures, CP0/CP1 definitions |
+| `macros.inc` | Assembly macros for SHDR headers, subsections, checksums, HI/LO address construction |
+| `post1.S` | POST (Power-On Self Test) — memory sizing, subsection copy, checksum verify, TLB init |
+| `sloader.S` | Secondary loader |
+| `env.S` | Default environment variables |
+| `firmware.S` | Main firmware (console, diagnostics, boot loader) |
+| `version.S` | Version section (embedded ELF header + version string) |
+| `trailing.S` | Trailing data |
+
+### POST entry (`post1.S`)
+
+- `post1_entry` at `0xbfc04400`; `post1` at `0xbfc04448`
+- Copies loadable subsections to their destinations, verifying checksums
+- Sizes memory banks by probing
+- Initializes the TLB (`tlb_init_preserve`)
+- Sets KSEG0 to cacheable, noncoherent via `CP0_CONFIG`
+- Uses `BASE_CRIME + CRIME_MC_STATUS_CTRL` and `BASE_ISA + ISA_MISC_CONTROL`
+  (LED control)
+
+### Default environment (`env.S`)
+
+The env section loads at `0xbfc04040` and contains the default environment:
+
+```text
+AutoLoad=Yes
+console=g
+ diskless=0
+dbaud=9600
+volume=80
+sgilogo=y
+monitor=h
+TimeZone=PST8PDT
+netaddr=192.168.1.25
+crt_option=1
+```
+
+### Version string (`version.S`)
+
+```text
+VERSION 4.18
+O2 R5K/R7K/R10K/R12K
+IRIX 6.5.x IP32prom IP32PROM-v4
+```
+
 ## PROM source code (in leaked IRIX source)
 
 The leaked IRIX 6.5.7m source (`calmsacibis995/irix-657m-src`) contains the
