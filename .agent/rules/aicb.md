@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-02T17:24:20.168Z","hash":"sha256:5d7fe99ceb386d64f83cfc03f7f600fb33116f3db089a6e77e59603e64586eed"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-02T17:58:17.965Z","hash":"sha256:ec150d0ca32725c950c4b26972f587deb83012d105f4caec4a3f7ffdd71d69ce"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -15,14 +15,11 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `.windsurfrules` _(spec)_ — Windsurf rules
 - `.github/copilot-instructions.md` _(spec)_ — GitHub Copilot instructions (.github)
 - `AGENT.md` _(spec)_ — Multi-agent instructions
+- `samples/irixsrc/IRIX-6.5.17-Src/README.md` _(spec)_ — Project README (samples/irixsrc/IRIX-6.5.17-Src)
+- `samples/irixsrc/irix-657m-src/README.md` _(spec)_ — Project README (samples/irixsrc/irix-657m-src)
 
 ## Working files (current focus)
-- `docs/register-maps.md` _(auto:recent-edit)_
-- `docs/graphics.md` _(auto:recent-edit)_
-- `docs/sources.md` _(auto:recent-edit)_
-- `docs/io.md` _(auto:recent-edit)_
-- `docs/cpu-memory.md` _(auto:recent-edit)_
-- `docs/phase1-checklist.md` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
