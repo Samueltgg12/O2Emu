@@ -70,10 +70,11 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.cursorrules",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Cursor rules",
-      "pinnedAt": 1788339422095,
+      "pinnedAt": 1788340094197,
       "auto": "spec",
+      "expiresAt": 1788343694197,
       "role": "spec"
     },
     {
@@ -94,5 +95,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788339553779
+  "updatedAt": 1788340094197
 }
