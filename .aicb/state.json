@@ -4,92 +4,142 @@
   "pinnedFiles": [
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/README.md",
-      "pinnedBy": "auto:editor",
+      "pinnedBy": "auto:spec",
       "note": "Project README (docs)",
-      "pinnedAt": 1788332405267,
-      "auto": "recent-edit",
-      "expiresAt": 1788336005267,
+      "pinnedAt": 1788335261184,
+      "auto": "spec",
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/sources.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332405287,
+      "pinnedAt": 1788334591454,
       "auto": "recent-edit",
-      "expiresAt": 1788336005287
+      "expiresAt": 1788338191454
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/README.md",
-      "pinnedBy": "auto:editor",
+      "pinnedBy": "auto:spec",
       "note": "Project README",
-      "pinnedAt": 1788332801528,
-      "auto": "recent-edit",
-      "expiresAt": 1788336401528,
+      "pinnedAt": 1788335261184,
+      "auto": "spec",
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
-      "pinnedBy": "auto:editor",
+      "pinnedBy": "auto:spec",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788333357504,
-      "auto": "recent-edit",
-      "expiresAt": 1788336957504,
-      "role": "spec"
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
-      "pinnedBy": "auto:editor",
-      "note": "Claude Code instructions",
-      "pinnedAt": 1788330909288,
-      "auto": "recent-edit",
-      "expiresAt": 1788334509288,
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/cpu-memory.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332309773,
+      "pinnedAt": 1788334437945,
       "auto": "recent-edit",
-      "expiresAt": 1788335909773
+      "expiresAt": 1788338037945
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/register-maps.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332027755,
+      "pinnedAt": 1788334587980,
       "auto": "recent-edit",
-      "expiresAt": 1788335627755
+      "expiresAt": 1788338187980
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/architecture.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332309798,
+      "pinnedAt": 1788334425820,
       "auto": "recent-edit",
-      "expiresAt": 1788335909798
+      "expiresAt": 1788338025820
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:editor",
+      "pinnedBy": "auto:spec",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788333467842,
-      "auto": "recent-edit",
-      "expiresAt": 1788337067842,
+      "pinnedAt": 1788335261184,
+      "auto": "spec",
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/io.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332309788,
+      "pinnedAt": 1788334456311,
       "auto": "recent-edit",
-      "expiresAt": 1788335909788
+      "expiresAt": 1788338056311
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/prom.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788332309807,
+      "pinnedAt": 1788334478055,
       "auto": "recent-edit",
-      "expiresAt": 1788335909807
+      "expiresAt": 1788338078055
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.vscode/settings.json",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788335247658,
+      "auto": "recent-edit",
+      "expiresAt": 1788338847658
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
+      "pinnedBy": "auto:spec",
+      "note": "Claude Code instructions",
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
+      "pinnedBy": "auto:spec",
+      "note": "Multi-agent instructions (.agent)",
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/GEMINI.md",
+      "pinnedBy": "auto:spec",
+      "note": "Gemini instructions",
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/AGENT.md",
+      "pinnedBy": "auto:spec",
+      "note": "Multi-agent instructions",
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.cursorrules",
+      "pinnedBy": "auto:spec",
+      "note": "Cursor rules",
+      "pinnedAt": 1788335261183,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.windsurfrules",
+      "pinnedBy": "auto:spec",
+      "note": "Windsurf rules",
+      "pinnedAt": 1788335261184,
+      "auto": "spec",
+      "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.github/copilot-instructions.md",
+      "pinnedBy": "auto:spec",
+      "note": "GitHub Copilot instructions (.github)",
+      "pinnedAt": 1788335261184,
+      "auto": "spec",
+      "role": "spec"
     }
   ],
   "skills": [],
-  "updatedAt": 1788333467842
+  "updatedAt": 1788335261184
 }

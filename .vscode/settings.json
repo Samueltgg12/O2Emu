@@ -1,0 +1,13 @@
+{
+  "workbench.colorCustomizations": {
+    "editor.wordHighlightBackground": "#1a456b90",
+    "editor.wordHighlightBorder": "#00000000",
+    "editor.wordHighlightStrongBackground": "#1a456b90",
+    "editor.wordHighlightStrongBorder": "#00000000",
+    "statusBar.background": "#339969",
+    "statusBar.foreground": "#15202b",
+    "sash.hoverBorder": "#339969"
+  },
+  "aiContextBridge.exportToAgentFiles": true,
+  "aiContextBridge.mirrorSkillsToOtherAgents": true
+}
