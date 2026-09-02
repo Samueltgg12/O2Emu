@@ -80,7 +80,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Do **not** write emulator code without explicit user approval. This is a
 research phase; premature implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-02T17:58:06.474Z","hash":"sha256:ec150d0ca32725c950c4b26972f587deb83012d105f4caec4a3f7ffdd71d69ce"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-02T21:53:16.807Z","hash":"sha256:86a055cbf4e281240e32d666ea999437fc4db4b5e38d73d70b2ca596987241e9"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -99,8 +99,21 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 - `samples/irixsrc/IRIX-6.5.17-Src/README.md` _(spec)_ — Project README (samples/irixsrc/IRIX-6.5.17-Src)
 - `samples/irixsrc/irix-657m-src/README.md` _(spec)_ — Project README (samples/irixsrc/irix-657m-src)
+- `samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1)
+- `samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc)
+- `samples/netbsd/usr (2)/usr/src/usr.bin/indent/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/usr.bin/indent)
+- `samples/netbsd/usr (2)/usr/src/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src)
+- `samples/linux-7.2.3/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux-7.2.3/drivers/gpu/drm/amd/display/dc/dml2_0)
+- `samples/linux-7.2.3/rust/zerocopy/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/zerocopy)
+- `samples/linux-7.2.3/rust/zerocopy-derive/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/zerocopy-derive)
+- `samples/linux-7.2.3/rust/syn/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/syn)
+- `samples/linux-7.2.3/rust/quote/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/quote)
+- `samples/linux-7.2.3/rust/proc-macro2/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/proc-macro2)
+- `samples/linux-7.2.3/rust/pin-init/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/pin-init)
+- `samples/linux-7.2.3/tools/sched_ext/README.md` _(spec)_ — Project README (samples/linux-7.2.3/tools/sched_ext)
 
 ## Working files (current focus)
+- `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff

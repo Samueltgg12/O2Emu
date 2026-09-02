@@ -98,6 +98,31 @@ Collected under [`docs/datasheets/`](datasheets/):
     `#ident "$Revision: ... $"` SCCS identifiers.
   - 6.5.4 introduced the 270 MHz O2/Octane processor; 6.5.3 introduced R12000.
 
+- **`github.com/jacklin9/IRIX-6.5.17-Src`** — IRIX 6.5.17 source code (later
+  release). Contains the authoritative register headers for O2:
+  - `irix/kern/sys/mace.h` — **authoritative MACE register map** (PCI, Ethernet,
+    Audio, I2C, PS/2, ISA, UST/MSC, interrupt assignments)
+  - `irix/kern/sys/crime.h` — **authoritative CRIME CPU interface register map**
+    (control, interrupts, timers, memory controller, error registers)
+  - `irix/kern/sys/IP32.h` — IP32 platform definitions, `VICE_CPU_INTR = 31`
+  - `stand/arcs/IP32prom/include/sys/crimereg.h` — **authoritative CRIME RE
+    register map** (Interface Buffer, TLB, Pixel Pipe, MTE, Status)
+  - `stand/arcs/IP32prom/include/sys/crimedef.h` — **authoritative CRIME RE
+    bitfield definitions** (buffer modes, draw modes, primitive types, etc.)
+  - `stand/arcs/IP32prom/include/sys/crimechip.h` — CRIME chip register layout
+  - `stand/arcs/IP32prom/include/sys/crime_gbe.h` — **authoritative GBE
+    register map** (control, video timing, overlay, framebuffer, DID, WID,
+    colormap, gamma, cursor, video capture)
+  - `stand/arcs/IP32prom/include/sys/crime_gfx.h` — GBE/CRM graphics ioctls
+  - `stand/arcs/IP32prom/include/sys/gbedefs.h` — GBE mode register bitfields
+  - `stand/arcs/IP32prom/include/crm_timing.h` — video timing tables
+  - `stand/arcs/IP32prom/include/crm_stand.h` — standalone CRIME definitions
+  - `stand/arcs/ide/IP32/graphics/` — diagnostics: `crmGBECommands.c`,
+    `crmGfxState.c`, `crmRECommands.c`, `crmRegTest.c`, `crmVisualTest.c`
+  - **Key finding**: The ICE ASIC is called **VICE** (Video Image Compression
+    Engine) in IRIX. Interrupt 31. Error address at `CRM_VICE_ERROR_ADDR`.
+    No authoritative VICE register header located in this source tree.
+
 - **`github.com/jacklin9/IRIX-6.5.17-Src`** — IRIX 6.5.17 source tree, the newer
   leak and a better reference for later IP32-era code and system definitions.
   This is a useful follow-up to the 6.5.7m leak when comparing platform drivers,
