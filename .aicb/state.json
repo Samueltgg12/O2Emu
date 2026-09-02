@@ -30,10 +30,10 @@
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
       "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788386696598,
+      "pinnedAt": 1788386985934,
       "auto": "spec",
       "role": "spec",
-      "expiresAt": 1788390296598
+      "expiresAt": 1788390585934
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
@@ -216,8 +216,15 @@
       "pinnedAt": 1788386665126,
       "auto": "spec",
       "role": "spec"
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.gitignore",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788386961436,
+      "auto": "recent-edit",
+      "expiresAt": 1788390561436
     }
   ],
   "skills": [],
-  "updatedAt": 1788386696598
+  "updatedAt": 1788386985934
 }
