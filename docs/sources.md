@@ -67,6 +67,15 @@ for the O2.
     `#ident "$Revision: ... $"` SCCS identifiers.
   - 6.5.4 introduced the 270 MHz O2/Octane processor; 6.5.3 introduced R12000.
 
+- **`github.com/jacklin9/IRIX-6.5.17-Src`** — IRIX 6.5.17 source tree, the newer
+  leak and a better reference for later IP32-era code and system definitions.
+  This is a useful follow-up to the 6.5.7m leak when comparing platform drivers,
+  firmware, and system architecture changes across the 6.5.x line.
+  - Contains the later IRIX sources for the same SGI IP32 and related systems.
+  - Useful for confirming whether IP32 PROM, crm, MACE, and graphics code changed
+    between 6.5.7m and 6.5.17.
+  - Should be treated as the same category of research artifact as the 6.5.7m leak.
+
 ## TODO / Open questions
 
 - [ ] Full CRIME/MACE/ICE/MRE/Display register maps

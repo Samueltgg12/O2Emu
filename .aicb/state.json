@@ -11,25 +11,11 @@
       "role": "spec"
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/register-maps.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788324467079,
-      "auto": "recent-edit",
-      "expiresAt": 1788328067079
-    },
-    {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/architecture.md",
       "pinnedBy": "auto:editor",
       "pinnedAt": 1788326268708,
       "auto": "recent-edit",
       "expiresAt": 1788329868708
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/cpu-memory.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788324444605,
-      "auto": "recent-edit",
-      "expiresAt": 1788328044605
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/graphics.md",
@@ -39,18 +25,11 @@
       "expiresAt": 1788330475996
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/docs/io.md",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788324461215,
-      "auto": "recent-edit",
-      "expiresAt": 1788328061215
-    },
-    {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/sources.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788326762634,
+      "pinnedAt": 1788327744454,
       "auto": "recent-edit",
-      "expiresAt": 1788330362634
+      "expiresAt": 1788331344454
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/prom.md",
@@ -63,17 +42,18 @@
       "path": "/home/samuel/SGI Projects/O2Emu/README.md",
       "pinnedBy": "auto:editor",
       "note": "Project README",
-      "pinnedAt": 1788327610099,
+      "pinnedAt": 1788327760938,
       "auto": "recent-edit",
-      "expiresAt": 1788331210099,
+      "expiresAt": 1788331360938,
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788327444536,
+      "pinnedAt": 1788327765932,
       "auto": "spec",
+      "expiresAt": 1788331365932,
       "role": "spec"
     },
     {
@@ -87,5 +67,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788327610099
+  "updatedAt": 1788328119577
 }
