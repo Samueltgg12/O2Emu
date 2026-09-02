@@ -27,11 +27,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788335261183,
+      "pinnedAt": 1788335301894,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788338901894
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/cpu-memory.md",
@@ -56,11 +57,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788335261184,
+      "pinnedAt": 1788335324884,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788338924884
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/io.md",
@@ -141,5 +143,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788335261184
+  "updatedAt": 1788335324884
 }
