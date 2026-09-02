@@ -54,6 +54,15 @@ for the O2.
 
 ## Datasheets & hardware references
 
+Collected under [`docs/datasheets/`](datasheets/):
+
+- **NEC VR5000/VR10000 Instruction User's Manual** — `datasheets/CPU/r5000 and
+  r10000/DSA-446416.pdf` (+ `.md`). NEC doc U12754EJ1V0UMJ1 (Aug 2000). Full
+  MIPS III/IV instruction set for the VR5000 (μPD30500) and VR10000 (μPD30700).
+- **NEC VRSeries Programming Guide** — `datasheets/CPU/r120000/DSA-446414.pdf`
+  (+ `.md`). NEC doc U10710EJ5V0AN00 (Nov 2001). Covers VR4100/VR4300/VR5000/
+  VR5432/VR5500/VR10000/VR12000: pipeline, caches, TLB, CP0 registers, cache
+  init/writeback/fill programming.
 - **MIPS R5000** — IDT 79R5000 datasheet / user manual (CPU core, cache, bus)
 - **MIPS R10000** — MIPS Technologies R10000 user manual (CPU core, SysAD bus)
 - **MIPS R12000** — MIPS Technologies R12000 user manual
@@ -61,9 +70,8 @@ for the O2.
 - **SGI O2** — SGI hardware documentation (owner's manual, field service)
 - **SDRAM DIMM** — JEDEC 239-pin SDRAM DIMM spec (proprietary O2 variant)
 
-> These are referenced by part number; exact PDFs/URLs to be collected and
-> linked as they are located. The leaked IRIX source remains the primary
-> register-level reference.
+> The leaked IRIX source remains the primary register-level reference; the
+> NEC VRSeries datasheets are the authoritative CPU architecture reference.
 
 ## Leaked IRIX source
 

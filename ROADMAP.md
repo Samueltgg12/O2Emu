@@ -26,7 +26,9 @@ A from-scratch emulator for the **SGI O2 (IP32 / "Moosehead")** workstation.
 - [x] **Decompiled the PROM** into MIPS assembly
       (`samples/decompiled-prom/`) — recovered the full IP32 address map and
       CRIME/MACE/UART/RTC register maps from `definitions.h`
-- [ ] Collect and link datasheets (MIPS R5000/R10000/R12000, AIC-7880, SDRAM)
+- [x] Collect and link datasheets (MIPS R5000/R10000/R12000, AIC-7880, SDRAM)
+      — CPU datasheets collected under `docs/datasheets/CPU/`; CPU architecture
+      documented in `docs/cpu-memory.md`
 - [ ] Fill remaining open questions in each doc (MRE/ICE/Display register maps,
       MACE Ethernet/audio registers, DIMM SPD)
 

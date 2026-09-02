@@ -12,6 +12,170 @@
 - 200 MHz R5000 + 1 MB L2 is faster than 180 MHz + 512 KB
 - Hobbyist retrofit: 600 MHz RM7xxx (sgidepot.co.uk/o2cpumod.html)
 
+## CPU identification (decompiled PROM `definitions.h`)
+
+The PROM identifies the CPU from the CP0 `PRID` register (register 15). The
+implementation field (`PRID_IMP_MASK = 0xff00`, shifted right 8) selects the
+CPU family:
+
+| PRID impl | CPU |
+|-----------|-----|
+| `0x04` | R4000 |
+| `0x20` | R4600 |
+| `0x21` | R4700 |
+| `0x23` | R5000 |
+| `0x27` | RM7000 |
+| `0x28` | Nevada (R10000-family) |
+
+> **Nevada quirk:** `get_prid` (firmware `0x81004e04`) reports a Nevada CPU
+> (`PRID_IMP_NEVADA`) as an R5000 by OR-ing the R5000 impl field into the
+> revision. The O2 treats Nevada as R5000-compatible for TLB/cache purposes.
+
+### TLB entry count (per CPU)
+
+| CPU | TLB entries |
+|-----|-------------|
+| R5000 | 48 |
+| RM7000 | 48 |
+| R10000 | 64 |
+
+Source: `definitions.h` (`R5000_NUM_TLB_ENTRIES`, `RM7000_NUM_TLB_ENTRIES`,
+`R10000_NUM_TLB_ENTRIES`).
+
+## CPU architecture (NEC VRSeries datasheets)
+
+The O2 CPUs are NEC VRSeries parts. The datasheets in
+[`docs/datasheets/CPU/`](datasheets/CPU/) cover the VR5000/VR10000 instruction
+set (DSA-446416, NEC U12754E) and the VRSeries programming guide (DSA-446414,
+NEC U10710E).
+
+### Pipeline
+
+| CPU | Pipeline | Stages |
+|-----|----------|--------|
+| VR5000 | 2-way superscalar | 5 |
+| VR10000 | 4-way superscalar, out-of-order | 7 |
+
+- VR5000: 2-way superscalar, in-order, with stall/slip interlocks.
+- VR10000: 4-way superscalar, out-of-order; pipeline flow is not interrupted
+  by interlocks.
+- One-cycle branch delay and one-cycle load delay (VR5000); the load delay is
+  hidden by hardware stalling.
+
+### Physical address space
+
+| CPU | Space | Address width |
+|-----|-------|---------------|
+| VR5000 | 64 GB | 36 bits |
+| VR10000 | 1 TB | 40 bits |
+
+### Primary cache (Table 3-1, DSA-446414)
+
+| CPU | Cache | Size | Line size | Index |
+|-----|-------|------|-----------|-------|
+| VR5000 | I-cache | 32 KB | 8 words | vAddr13..5 |
+| VR5000 | D-cache | 32 KB | 8 words | vAddr13..5 |
+| VR10000 | I-cache | 32 KB | 16 words | vAddr13..6 |
+| VR10000 | D-cache | 32 KB | 8 words | vAddr13..5 |
+
+- VR5000 primary cache line: `P` (parity), `F` (fill), `PState` (2-bit state),
+  `ICDEC` (I-cache predecode), `PTag` (24-bit physical tag, bits 31..12).
+- VR10000 primary cache is 2-way set-associative; bit 0 of the index selects
+  the way.
+
+### Secondary cache
+
+- **VR5000:** on-chip secondary cache controller; external SRAM. Line format:
+  `VIdx` (3-bit primary cache index, vAddr14..12), `SState` (3-bit state),
+  `STag` (32-bit tag), 8×64-bit data with parity.
+- **VR10000:** on-chip secondary cache controller; line format: `ECC` (7-bit
+  tag ECC + 9-bit data ECC), `Tag` (26-bit), 4×128-bit data with parity.
+
+### Cache instructions (CACHE op)
+
+The 5-bit suboperation code `op` = `op4..2` (operation) + `op1..0` (target):
+
+| op1..0 | Target |
+|--------|--------|
+| 0 | Primary I-cache |
+| 1 | Primary D-cache |
+| 3 | Secondary cache |
+
+VR5000 operations (`op4..2`): `0` Index_Invalidate/Index_Writeback_Invalidate/
+Flash, `1` Index_Load_Tag, `2` Index_Store_Tag, `3` Create_Dirty_Exclusive,
+`4` Hit_Invalidate, `5` Fill/Hit_Writeback_Invalidate/Page_Invalidate,
+`6` Hit_Writeback.
+
+VR10000 operations (`op4..2`): `0` Index_Invalidate/Index_Writeback_Invalidate,
+`1` Index_Load_Tag, `2` Index_Store_Tag, `4` Hit_Invalidate,
+`5` Cache_Barrier/Hit_Writeback_Invalidate, `6` Index_Load_Data,
+`7` Index_Store_Data.
+
+### TLB
+
+- Fully associative; each entry maps an even/odd page pair (VPN2 in EntryHi,
+  PFN in EntryLo0/EntryLo1).
+- Page sizes (VR5000/VR10000, Table 4-2): 4 KB, 16 KB, 64 KB, 256 KB, 1 MB,
+  4 MB, 16 MB (set via PageMask MASK field).
+- TLB instructions: `TLBP` (probe), `TLBR` (read), `TLBWI` (write index),
+  `TLBWR` (write random).
+- `Random` register decrements each instruction; range is `Wired`..max
+  (47 for VR5000, 63 for VR10000). `Wired` entries are not replaced by TLBWR.
+
+## CP0 registers (decompiled PROM `definitions.h`)
+
+| # | Register | # | Register |
+|---|----------|---|----------|
+| 0 | Index | 16 | Config |
+| 1 | Random | 17 | LLAddr |
+| 2 | EntryLo0 | 18 | WatchLo |
+| 3 | EntryLo1 | 19 | WatchHi |
+| 4 | Context | 20 | XContext |
+| 5 | PageMask | 21 | FrameMask |
+| 6 | Wired | 22 | Diagnostic |
+| 7 | Info | 23 | Debug |
+| 8 | BadVAddr | 24 | DEPC |
+| 9 | Count | 25 | Performance |
+| 10 | EntryHi | 26 | ECC |
+| 11 | Compare | 27 | CacheErr |
+| 12 | Status | 28 | TagLo |
+| 13 | Cause | 29 | TagHi |
+| 14 | EPC | 30 | ErrorEPC |
+| 15 | PRId | 31 | DESAVE |
+
+### CP0 Status bits
+
+`IE`(0), `EXL`(1), `KX`(7), `IM`(8..15), `DE`(16), `CH`(18), `NMI`(19),
+`SR`(20), `BEV`(22), `FR`(26), `CU0`(28), `CU1`(29).
+
+### CP0 Config bits
+
+`CM`(0..2, cachable noncoherent=3), `CU`(3), `DB`(4), `IB`(5), `DC`(6..8),
+`IC`(9..11), `SC`(17), `SB`(22..23).
+
+CPU-specific Config bits:
+
+| CPU | Bits |
+|-----|------|
+| R5000 | `SE`(12), `SS`(20..21) |
+| RM7000 | `TE`(12) |
+| R10000 | `SS`(16) |
+
+### R10000 cache block sizes
+
+`L1I` = 0x40 (64 B), `L1D` = 0x20 (32 B), `L2` = 0x10 (16 B).
+
+## CPU init in the PROM
+
+- `get_prid` (`0x81004e04`) — reads PRID, maps Nevada→R5000.
+- `r4600_cpu_init` (`0x810041d4`) / `r4600_cpu_setup` (`0x81006170`) — R4600
+  family setup.
+- `F_0x8100e080`..`F_0x8100e1c0` — per-CPU WatchLo/WatchHi setup, gated on
+  PRID (R4600/R4700/R5000/RM7000/Nevada).
+- `F_0x81004de0`/`F_0x81004df0` — read/write CP0 Config.
+- `soft_reset`/`hard_reset` (`0x81004e34`/`0x81004e50`) — write
+  `CRIME_CONTROL_SOFT_RESET`/`HARD_RESET` to the CRIME control register.
+
 ## Memory
 
 - **8 DIMM slots**, proprietary 239-pin SDRAM DIMMs
@@ -96,6 +260,7 @@ Source: decompiled PROM `definitions.h` (`PHYS_BASE_CRIME`, `PHYS_BASE_RENDER`,
 
 ## TODO / Open questions
 
+- [x] CPU architecture (R5000/R10000/R12000) — from NEC VRSeries datasheets
 - [ ] MRE register map
 - [ ] DIMM SPD / configuration details
 - [ ] Full CRIME timing/refresh programming sequence
