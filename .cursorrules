@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-02T07:47:38.914Z","hash":"sha256:4d26f8563713b9e86cadd126691565c1774b49e96edf06fa2d6299446b487523"} -->
+<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-02T08:34:59.671Z","hash":"sha256:42320123b6a78a9a3995e13023d6fbf93a8916e9a12513c212df0605608b1131"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -18,11 +18,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `docs/sources.md` _(auto:recent-edit)_
-- `docs/cpu-memory.md` _(auto:recent-edit)_
 - `docs/register-maps.md` _(auto:recent-edit)_
-- `docs/architecture.md` _(auto:recent-edit)_
-- `docs/io.md` _(auto:recent-edit)_
-- `docs/prom.md` _(auto:recent-edit)_
 - `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
