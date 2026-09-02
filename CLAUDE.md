@@ -1,0 +1,66 @@
+# CLAUDE.md
+
+Project-specific guidance for Claude Code (and other AI assistants) working in
+this repository.
+
+## What this project is
+
+An emulator for the **SGI O2 (IP32)** workstation, currently in **Phase 1:
+Research**. There is **no emulator code yet** — the current deliverable is
+accurate, well-sourced hardware documentation under `docs/`.
+
+## How to work here
+
+1. **Start with `docs/README.md`** for the documentation index, then read the
+   relevant module doc before answering or editing.
+2. **Documentation is the product.** In this phase, "implementing" means
+   writing/updating docs, not writing emulator code.
+3. **Every hardware claim must be sourced.** Cite the Linux/NetBSD driver,
+   header, or leaked IRIX source that backs each register, address, or
+   behavior. Never invent register names or addresses.
+4. **Keep docs concise.** Use tables for register maps and address layouts.
+5. **Update the index and sources.** Add new docs to `docs/README.md` and new
+   sources to `docs/sources.md`.
+
+## Repository layout
+
+```
+README.md            # GitHub-facing overview
+AGENTS.md            # AI agent guidance (generic)
+CLAUDE.md            # This file (Claude-specific)
+docs/                # All research documentation
+  README.md          #   docs index
+  architecture.md    #   system architecture
+  cpu-memory.md      #   CPU & memory
+  graphics.md        #   CRM/ICE/MRE/Display
+  io.md              #   MACE, PCI, SCSI, Ethernet
+  register-maps.md   #   register maps from drivers
+  prom.md            #   IP32 PROM firmware
+  sources.md         #   research sources
+samples/             # firmware images
+  ip32prom.rev4.18.bin
+  ip32prom.rev4.3.bin
+```
+
+## Key facts
+
+- O2 = SGI IP32, codename "Moosehead".
+- UMA: CPU, graphics, and I/O share main memory over a 133 MHz 144-bit bus.
+- Graphics = CRM chipset (Microprocessor + ICE, MRE, Display ASICs).
+- I/O = MACE ASIC (PCI, ISA, PS/2, Ethernet).
+- PROM reset vector: `0xBFC00000`; firmware VMA `0x81000000`.
+- PROM images in `samples/`; rev4.18 MD5 `c9725e036052cf1f3e6258eb9bc687fa`.
+
+## Research sources
+
+- Linux: `arch/mips/sgi-ip32/`, `arch/mips/include/asm/ip32/`, `drivers/video/crmfb.c`
+- NetBSD: `sys/arch/sgimips/`
+- Leaked IRIX source: `calmsacibis995/irix-657m-src` (6.5.7m) and
+  `jacklin9/IRIX-6.5.17-Src` (6.5.17) — includes the actual IP32 PROM source
+  under `stand/arcs/`
+- `mattst88/ip32prom-decompiler` — Rust PROM decompiler
+
+## Scope guard
+
+Do **not** write emulator code without explicit user approval. This is a
+research phase; premature implementation is out of scope.

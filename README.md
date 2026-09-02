@@ -1,0 +1,65 @@
+# O2Emu: An SGI O2 (IP32/Moosehead) Emulator
+![O2Emu Logo](assets/o2emu-logo.jpg)
+
+
+A from-scratch emulator for the **SGI O2** workstation (codename **"Moosehead"**,
+SGI IP32). This project is currently in **Phase 1: Research** — gathering
+hardware specs, register-level details, and firmware documentation before any
+implementation begins.
+
+> **Status: Research phase.** No emulator code yet. All findings are documented
+> in [`docs/`](docs/).
+
+## What is the SGI O2?
+
+The O2 is a 1996 SGI workstation built around a proprietary high-bandwidth
+**Unified Memory Architecture (UMA)** — the CPU, graphics, and I/O all share a
+single pool of main memory over a 133 MHz 144-bit bus (128-bit data + ECC).
+
+- **CPU:** MIPS R5000/RM7000 (low-end) or R10000/R12000 (high-end)
+- **Memory:** up to 1 GB of proprietary 239-pin SDRAM DIMMs (8 slots)
+- **Graphics:** CRM chipset (Microprocessor + ICE, MRE, Display ASICs) — no
+  separate VRAM; textures/framebuffer live in main memory
+- **I/O:** MACE ASIC (64-bit PCI, ISA, PS/2, 10/100 Ethernet), UltraWide SCSI
+- **OS:** IRIX 6.3/6.5.x (native), Linux, OpenBSD, NetBSD
+
+## Project goals
+
+1. **Document** the O2 hardware in exhaustive detail (registers, memory map,
+   firmware) — see [`docs/`](docs/).
+2. **Emulate** the machine: CPU, memory controller (MRE), graphics (CRM),
+   I/O (MACE), and the IP32 PROM firmware.
+3. **Boot** IRIX and/or a hobbyist OS on the emulator.
+
+## Documentation
+
+| Topic | File |
+|-------|------|
+| System architecture | [docs/architecture.md](docs/architecture.md) |
+| CPU & memory | [docs/cpu-memory.md](docs/cpu-memory.md) |
+| Graphics (CRM/ICE/MRE/Display) | [docs/graphics.md](docs/graphics.md) |
+| I/O (MACE, PCI, SCSI, Ethernet) | [docs/io.md](docs/io.md) |
+| Register maps (from drivers) | [docs/register-maps.md](docs/register-maps.md) |
+| PROM firmware | [docs/prom.md](docs/prom.md) |
+| Research sources | [docs/sources.md](docs/sources.md) |
+
+## Firmware
+
+The actual IP32 PROM images are included in [`samples/`](samples/):
+
+- `ip32prom.rev4.18.bin` — MD5 `c9725e036052cf1f3e6258eb9bc687fa`
+- `ip32prom.rev4.3.bin` — MD5 `6b86b20727a598ed15d93f27c9a3f2e8`
+
+## Research sources
+
+- **Linux kernel** — `arch/mips/sgi-ip32/` and `arch/mips/include/asm/ip32/`
+- **NetBSD** — `sys/arch/sgimips/`
+- **Leaked IRIX source** — IRIX 6.5.7m and 6.5.17 (includes the actual IP32
+  PROM source under `stand/arcs/`)
+- **`mattst88/ip32prom-decompiler`** — Rust tool for decompiling the IP32 PROM
+
+See [docs/sources.md](docs/sources.md) for the full list.
+
+## License
+
+TBD.
