@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T19:46:58.849Z","hash":"sha256:1028a3816bb54f4c34474b7ed2888712f2137183e4d2fd5222bcdc2ce9e8016b"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T20:09:17.202Z","hash":"sha256:169b015289fdf5bbc00f2a2a34f517ffa010d5f56d0786609d33c98275a7ed6c"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -34,6 +34,18 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
 - `CMakeLists.txt` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
+- `emu/include/o2emu/o2emu.h` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/cpu.h` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/cp0.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/memory.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/address_space.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/crime.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/mre.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_audio.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
