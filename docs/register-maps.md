@@ -521,14 +521,145 @@ MACE_PCI_SHARED2      15
 
 ## VICE / ICE (Image Compression Engine)
 
-The VICE (Video Image Compression Engine) is the ICE ASIC. It is referenced in
-IRIX as:
+The VICE (Video Image Compression Engine) is the ICE ASIC. Source: **VICE
+Design Specification 099-0123-003 v1.0** (`docs/manuals-specs/o2-VICE-spec.md`).
+It is referenced in IRIX as:
 - Interrupt: `VICE_CPU_INTR = 31` (IRIX `IP32.h`)
 - Error address: `CRM_VICE_ERROR_ADDR = 0x14000058` (IRIX `crime.h`)
 - Error status bits in `CRM_CPU_ERROR_STAT` and `CRM_MEM_ERROR_STAT`
 
-**No authoritative VICE/ICE register header has been located in the IRIX source
-tree.** The register map remains undocumented.
+VICE contains a Media Signal Processor (MSP), a Bitstream Processor (BSP), a
+DMA unit with its own TLB, and a host interface. All registers sit on
+double-word (8-byte) boundaries regardless of width.
+
+### VICE system address map (VICE_ID pins = 00)
+
+The VICE chip decodes SysAD address bits (21:20) against its VICE_ID pins.
+With VICE_ID = 00 the chip occupies `0x17000000`–`0x170FFFFC`:
+
+| System address | VICE offset | Size | Function |
+|----------------|-------------|------|----------|
+| `0x17000000` | `0x0000` | 8 B | "Safe" register address 0 (watchpoint) |
+| `0x17000008` | `0x0008` | 4 K | Chip registers (mode, status, control, interrupts) |
+| `0x17001000` | `0x1000` | 4 K | Chip DMA descriptor set registers (COP3) |
+| `0x17002000` | `0x2000` | 4 K | MSP instruction RAM |
+| `0x17003000` | `0x3000` | 4 K | MSP instruction RAM (reserved, not implemented) |
+| `0x17004000` | `0x4000` | 4 K | BSP instruction RAM (1K x 16) |
+| `0x17005000` | `0x5000` | 8 K | BSP table memory (1280K x 22) |
+| `0x17007000` | `0x7000` | 4 K | BSP input/output buffers (IN `0x7800`, OUT `0x7000`) |
+| `0x17008000` | `0x8000` | 2 K | Data RAM bank A |
+| `0x17008800` | `0x8800` | 2 K | Data RAM bank B |
+| `0x17009000` | `0x9000` | 2 K | Data RAM bank C |
+| `0x17009800` | `0x9800` | 10 K | Data RAM (unused) |
+| `0x1700C000` | `0xC000` | 8 K | Unused |
+| `0x1700E000` | `0xE000` | 4 K | Kernel restricted registers (protected) |
+| `0x1700F000` | `0xF000` | 4 K | VICE TLB (64-entry map) |
+
+VICE-accessible system memory (via the VICE TLB, 64K pages):
+- `0x00800000`–`0x00BFFFFC` — 64K linear pages (4 MB)
+- `0x10800000`–`0x10BFFFFC` — 64K frame-buffer tiles (4 MB)
+
+### VICE chip registers (offset from `0x17000000`)
+
+| Offset | MSP access | Register | Function | r/w | Reset | Bits |
+|--------|-----------|----------|----------|-----|-------|------|
+| `0x0008` | — | `VICE_ID` | Chip rev/ID | r | `0xE1` | 8 |
+| `0x0020`/`0xE000` | — | `VICE_CFG` | General config | r/w | `0x00` | 16 |
+| `0xE008` | — | `VICE_INT_RESET` | Interrupt reset (w1c) | w | `0x00` | 9 |
+| `0xE010` | — | `VICE_INT_EN` | Interrupt enable | r/w | `0x00` | 9 |
+| `0x0028` | — | `HST_BSP_IN_BOX` | Host copy of BSP/MSP in mailbox | r | `0x00` | 16 |
+| `0x0030` | — | `HST_BSP_OUT_BOX` | Host copy of BSP/MSP out mailbox | r | `0x00` | 16 |
+| `0x0040` | — | `MSP_CTL_STAT` | MSP control/status | r/w | `0x00` | 32 |
+| `0x0048` | — | `MSP_ExcpFlag` | MSP exception flag | r/w | `0x00` | 32 |
+| `0x0050` | — | `MSP_PC` | MSP program counter | r/w | — | 32 |
+| `0x0058` | — | `MSP_BadAddr` | MSP bad address | r | — | 32 |
+| `0x0060` | — | `MSP_WatchPoint` | MSP watchpoint | r/w | `0x00` | 32 |
+| `0x0068` | — | `MSP_EPC` | MSP exception PC | r | — | 32 |
+| `0x0070` | — | `MSP_CAUSE` | MSP exception cause | r | — | 32 |
+| `0x0078` | — | `BSP_RPAGE` | BSP R page | r/w | — | 16 |
+| `0x0080` | — | `BSP_SW_INT` | BSP software interrupt | w | — | 0 |
+| `0x0100` | CTC1 `$0` | `MSP_D_RAM` | MSP data RAM arbitration | r/w | `0x00` | 32 |
+| `0x0108` | CFC1 `$1` | `VICEMSP_COUNT` | MSP free-running counter | r | — | 32 |
+| `0x0110` | CTC1 `$2` | `BSP_CTL_STAT` | BSP control/status | r/w | `0x00` | 16 |
+| `0x0118` | CTC1 `$3` | `BSP_WatchPoint` | BSP watchpoint | r/w | `0x00` | 16 |
+| `0x0120` | CFC1 `$4` | `BSP_IN_COUNT` | BSP decoded bits counter | r | — | 24 |
+| `0x0128` | CFC1 `$5` | `BSP_OUT_COUNT` | BSP encoded bits counter | r | — | 24 |
+| `0x0140` | CTC1 `$8` | `BSP_PC` | BSP program counter | r/w | `0x00` | 16 |
+| `0x0148` | CTC1 `$9` | `BSP_EPC` | BSP exception PC | r | `0x00` | 16 |
+| `0x0150` | CTC1 `$10` | `BSP_HALT_RESET` | BSP halt/reset control | r | `0x00` | 2 |
+| `0x0158` | CTC1 `$11` | `BSP_CAUSE` | BSP exception cause | r | `0x00` | 16 |
+| `0x0160` | CTC1 `$12` | `VICE_INT` | Interrupt status | r | `0x00` | 9 |
+| `0x0168` | CTC1 `$13` | `BSP_FIFO_CTL_STAT` | BSP FIFO control/status | r/w | `0x05` | 6 |
+| `0x0170` | CTC1 `$14` | `BSP_AVALID_BITS` | BSP A FIFO valid bits (decode) | r/w | `0x00` | — |
+| `0x0178` | CTC1 `$15` | `BSP_FVALID_BITS` | BSP F FIFO valid bits (encode) | r/w | `0x00` | — |
+| `0x0180` | CTC1 `$16` | `DMA_CTL_CH1` | DMA ch1 control | r/w | `0x10` | 16 |
+| `0x0188` | CFC1 `$17` | `DMA_STAT_CH1` | DMA ch1 status | r | `0x10` | 16 |
+| `0x0190` | CTC1 `$18` | `DMA_DATA_CH1` | DMA ch1 data fill | r/w | `0x00` | 16 |
+| `0x0198` | CFC1 `$19` | `DMA_MEM_PT_CH1` | DMA ch1 system pointer | r | `0x00` | 32 |
+| `0x01A0` | CFC1 `$20` | `DMA_VICE_PT_CH1` | DMA ch1 VICE pointer | r | `0x00` | 16 |
+| `0x01A8` | CFC1 `$21` | `DMA_COUNT_CH1` | DMA ch1 remaining count | r | `0x00` | 16 |
+| `0x01B8` | CFC1 `$23` | `MSP_SW_INT` | MSP software interrupt | w | — | 0 |
+| `0x01C0` | CTC1 `$24` | `DMA_CTL_CH2` | DMA ch2 control | r/w | `0x10` | 16 |
+| `0x01C8` | CFC1 `$25` | `DMA_STAT_CH2` | DMA ch2 status | r | `0x10` | 16 |
+| `0x01D0` | CTC1 `$26` | `DMA_DATA_CH2` | DMA ch2 data fill | r/w | `0x00` | 16 |
+| `0x01D8` | CFC1 `$27` | `DMA_MEM_PT_CH2` | DMA ch2 system pointer | r | `0x00` | 32 |
+| `0x01E0` | CFC1 `$28` | `DMA_VICE_PT_CH2` | DMA ch2 VICE pointer | r | `0x00` | 16 |
+| `0x01E8` | CFC1 `$29` | `DMA_COUNT_CH2` | DMA ch2 remaining count | r | `0x00` | 16 |
+| `0x01F0` | CFC1 `$30` | `BSP_IN_BOX` | BSP/MSP in mailbox | r | `0x00` | 16 |
+| `0x01F8` | CTC1 `$31` | `BSP_OUT_BOX` | BSP/MSP out mailbox | r/w | `0x00` | 16 |
+
+### VICE DMA descriptor registers
+
+Two DMA channels, each with 4 descriptor sets (D1–D4). Channel 1 descriptors
+at system offset `0x1000`+ (MSP `MTC3`), channel 2 at `0x1100`+ (MSP `CTC3`).
+Each descriptor set is 8 registers spaced 8 bytes apart:
+
+| Descriptor offset | Register | Function |
+|-------------------|----------|----------|
+| `+0x00` | `DMA_CTL_CHx_Dy` | Descriptor control |
+| `+0x08` | `DMA_SMEM_HI_CHx_Dy` | Upper address pointer |
+| `+0x10` | `DMA_SMEM_LO_CHx_Dy` | Lower address pointer |
+| `+0x18` | `DMA_WIDTH_CHx_Dy` | Width in bytes of line |
+| `+0x20` | `DMA_STRIDE_CHx_Dy` | Bytes to skip |
+| `+0x28` | `DMA_LINES_CHx_Dy` | Number of lines |
+| `+0x30` | `DMA_VMEM_Y_CHx_Dy` | VICE pointer Y component |
+| `+0x38` | `DMA_VMEM_C_CHx_Dy` | VICE pointer C component |
+
+Channel 1 descriptors D1–D4 base offsets: `0x1000`, `0x1040`, `0x1080`,
+`0x10C0`. Channel 2 descriptors D1–D4 base offsets: `0x1100`, `0x1140`,
+`0x1180`, `0x11C0`.
+
+### VICE_ID register
+
+| Bits | Function |
+|------|----------|
+| 3:0 | VICE revision: `0001` = VICE-A (099-0123-001), `0010` = VICE-B "DX" (099-0123-002), `0011` = VICE-C "TRE" (099-0123-003) |
+| 7:4 | VICE ID value |
+
+### VICE_CFG register
+
+| Bits | Function |
+|------|----------|
+| 0 | `check_data_sysad` — check data on SysAD when VICE is external agent |
+| 1 | MSP TLB bypass enable |
+| 31:2 | reserved |
+
+### VICE_INT / VICE_INT_RESET / VICE_INT_EN bits
+
+| Bit | Function |
+|-----|----------|
+| 0 | DMA complete interrupt channel 1 |
+| 1 | DMA error interrupt channel 1 |
+| 2 | MSP software interrupt to Unix processor |
+| 3 | MSP exception interrupt to Unix processor |
+| 4 | BSP software interrupt to Unix processor |
+| 5 | BSP exception interrupt to Unix processor |
+| 6 | SysAD erroneous data received |
+| 7 | DMA complete interrupt channel 2 |
+| 8 | DMA error interrupt channel 2 |
+
+`VICE_INT` is read-only status; `VICE_INT_RESET` is write-1-to-clear;
+`VICE_INT_EN` masks the corresponding interrupt sources.
 
 ## PCI device map (Linux `arch/mips/pci/fixup-ip32.c`)
 
@@ -594,7 +725,7 @@ RTC at `0x1f3a0000`. Byte-addressed with `RTC_REG(x) = x << 8`:
 
 ## TODO / Open questions
 
-- [ ] ICE/VICE ASIC register map (no authoritative register header located)
+- [x] ICE/VICE ASIC register map (VICE Design Spec 099-0123-003)
 - [ ] Complete Ethernet packet/descriptor register map
 - [ ] Complete mavb codec and audio register semantics
 - [ ] DIMM SPD address, EEPROM layout, and probe behavior
