@@ -66,11 +66,45 @@ Collected under [`docs/datasheets/`](datasheets/):
   init/writeback/fill programming.
 - **MIPS R5000/R10000/R12000** — NEC VRSeries manuals, collected under
   `docs/datasheets/CPU/`
-- **Adaptec AIC-7880** — UltraWide SCSI controller datasheet (to collect)
+- **Adaptec AIC-7880** — UltraWide SCSI controller. **No datasheet appears to
+  have ever been publicly released** (unlike Analog Devices parts, Adaptec
+  ASIC datasheets were NDA-only); the register-level references below are the
+  authoritative sources:
+  - IRIX PROM driver: `stand/arcs/include/sys/adp78.h` (adapter/SCB/SG
+    structures), `stand/arcs/lib/libsk/io/adp78.c` (standalone driver),
+    `stand/arcs/lib/libsk/io/adphim/` (HIM — Hardware Interface Module:
+    `him_equ.h`, `him_scb.h`, `himd.c`, sequencer interface)
+  - IRIX kernel driver: `irix/kern/io/adp78.c`
+  - Linux driver: `samples/linux/drivers/scsi/aic7xxx/` — `aic7xxx.h`,
+    `aic7xxx.reg` (full register definitions), `aic7xxx.seq` (sequencer
+    microcode source), `aic7xxx_pci.c` (PCI attachment incl. AIC-7880)
+- **MACE audio codec (AD1843)** — Analog Devices AD1843 codec, register map
+  collected from IRIX:
+  - `irix/kern/sys/ad1843.h` — **authoritative AD1843 register map** (codec
+    registers, DMA channel assignments: ADC=0, DAC1=1, DAC2=2)
+  - `stand/arcs/IP32prom/fw/hello_tune.c` — PROM audio test with AD1843
+    reset defaults and MACE DMA ring usage
+  - `irix/kern/sys/mace.h` — MACE audio ring/codec control registers
+    (`MACE_AUDIO_*` at `MACE_PERIF + 0x00000`)
+  - AD1843 datasheet itself still to collect.
+- **ICE / MRE** — graphics ASIC references:
+  - ICE is the **VICE** (Video Image Compression Engine) in IRIX; interrupt 31
+    (`VICE_CPU_INTR` in `irix/kern/sys/IP32.h`), error address register
+    `CRM_VICE_ERROR_ADDR` in `irix/kern/sys/crime.h`. No standalone VICE
+    register header located — remains an open item.
+  - MRE (Memory & Rendering Engine) register maps: `crimereg.h` /
+    `crimedef.h` / `crimechip.h` under `stand/arcs/IP32prom/include/sys/`.
+- **SDRAM DIMM** — memory/bank references:
+  - `irix/kern/sys/crime.h` — `CRM_MEM_BANK_CTRL(x)` bank registers,
+    `CRM_MEM_BANK_CTRL_SDRAM_SIZE` (32 MB vs 128 MB bank select)
+  - `stand/arcs/IP32prom/post/post1mem.c` and
+    `stand/arcs/IP32prom/debugcard/lcore/memory.c` — PROM bank sizing/probing
+  - `stand/arcs/IP32prom/debugcard/diags/mem_addr*.s` — memory address test
+    patterns for 16/64 Mbit SDRAM configurations
+  - `forums.irixnet.org thread-4794` — 128 MiB/stick DIMM reverse-engineering
+  - JEDEC 239-pin SDRAM DIMM spec (O2-specific reference still to collect)
 - **SGI O2** — SGI hardware documentation (owner's manual, field service; to
   collect or verify)
-- **SDRAM DIMM** — JEDEC 239-pin SDRAM DIMM spec (O2-specific reference still
-  to collect or verify)
 
 > SPD status: no local O2-specific SPD address, EEPROM layout, or PROM DIMM
 > probe sequence has been verified. The PROM I2C code found so far is used for

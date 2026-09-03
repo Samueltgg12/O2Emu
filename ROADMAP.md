@@ -29,7 +29,11 @@ A from-scratch emulator for the **SGI O2 (IP32 / "Moosehead")** workstation.
 - [x] Collect and link CPU datasheets (MIPS R5000/R10000/R12000)
       — collected under `docs/datasheets/CPU/`; CPU architecture documented in
       `docs/cpu-memory.md`
-- [ ] Collect and link AIC-7880, MACE/codec, ICE/MRE, and SDRAM/DIMM references
+- [x] Collect and link AIC-7880, MACE/codec, ICE/MRE, and SDRAM/DIMM references
+      — AIC-7880: IRIX `adp78.h`/`adp78.c` + Linux `drivers/scsi/aic7xxx/`;
+      MACE/codec: IRIX `mace.h` + `ad1843.h` (AD1843 codec); ICE/MRE: IRIX
+      `crime.h`/`crimereg.h` (ICE = VICE, interrupt 31); SDRAM/DIMM: CRIME
+      `CRM_MEM_BANK_CTRL` + IP32 PROM `post1mem.c`/`memory.c` bank probing
 - [ ] Fill remaining open questions in each doc (ICE register map, complete
       MACE Ethernet/audio semantics, DIMM SPD, and per-mode display timing)
 
