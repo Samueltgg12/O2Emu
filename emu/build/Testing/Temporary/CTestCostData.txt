@@ -1,2 +1,2 @@
-cpu_interface_tests 5 0.000555102
+cpu_interface_tests 6 0.000531671
 ---

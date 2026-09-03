@@ -99,15 +99,26 @@ public:
     const uint32_t pc = state_.pc;
     const uint32_t instr = read_physical(pc);
     state_.instructions += 1;
+    state_.in_delay_slot =
+        (state_.delay_slot_pc != 0 && state_.pc == state_.delay_slot_pc);
     state_.next_pc = pc + 4u;
-    state_.in_delay_slot = false;
     state_.branch_taken = false;
     state_.branch_target = 0;
 
     execute_instruction(instr, pc);
 
     if (!state_.exception_pending) {
+      const uint32_t current_pc = state_.pc;
       state_.pc = state_.next_pc;
+      if (state_.branch_taken) {
+        state_.delay_slot_pc = state_.next_pc;
+        state_.in_delay_slot = true;
+      } else {
+        state_.delay_slot_pc = 0;
+      }
+      if (state_.pc != current_pc && state_.branch_taken) {
+        state_.next_pc = state_.branch_target;
+      }
     }
   }
 
@@ -323,10 +334,14 @@ private:
         break;
       case 0x08:
         state_.next_pc = state_.gpr[rs];
+        state_.branch_taken = true;
+        state_.branch_target = state_.next_pc;
         break;
       case 0x09:
-        state_.gpr[rd] = state_.next_pc;
+        state_.gpr[rd] = pc + 8u;
         state_.next_pc = state_.gpr[rs];
+        state_.branch_taken = true;
+        state_.branch_target = state_.next_pc;
         break;
       case 0x0c:
         state_.exception_pending = true;
@@ -408,6 +423,9 @@ private:
       break;
     case 0x2b:
       write_physical(state_.gpr[rs] + sign_extend16(imm), state_.gpr[rt]);
+      break;
+    case 0x3c:
+      state_.gpr[rt] = imm << 16u;
       break;
     default:
       O2E_WARN(LogCategory::CPU, "Unsupported opcode 0x{:08x} at 0x{:08x}",

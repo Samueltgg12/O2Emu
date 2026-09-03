@@ -80,7 +80,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Do **not** write emulator code without explicit user approval. This is a
 research phase; premature implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T00:32:29.140Z","hash":"sha256:e2980e067c3fc879c38ee4f113ba199645d54362c84c9a97bb1c5b3690d74686"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T00:48:47.804Z","hash":"sha256:8029d7333f854a194af1af64d93c0cd7ce3324d5bed1d37550e0d7c1d5641a51"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -102,14 +102,15 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc)
 - `samples/netbsd/usr (2)/usr/src/usr.bin/indent/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/usr.bin/indent)
 - `samples/netbsd/usr (2)/usr/src/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src)
-- `samples/linux-7.2.3/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux-7.2.3/drivers/gpu/drm/amd/display/dc/dml2_0)
-- `samples/linux-7.2.3/rust/zerocopy/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/zerocopy)
-- `samples/linux-7.2.3/rust/zerocopy-derive/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/zerocopy-derive)
-- `samples/linux-7.2.3/rust/syn/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/syn)
-- `samples/linux-7.2.3/rust/quote/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/quote)
-- `samples/linux-7.2.3/rust/proc-macro2/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/proc-macro2)
-- `samples/linux-7.2.3/rust/pin-init/README.md` _(spec)_ — Project README (samples/linux-7.2.3/rust/pin-init)
-- `samples/linux-7.2.3/tools/sched_ext/README.md` _(spec)_ — Project README (samples/linux-7.2.3/tools/sched_ext)
+- `samples/linux/tools/sched_ext/README.md` _(spec)_ — Project README (samples/linux/tools/sched_ext)
+- `samples/linux/rust/zerocopy/README.md` _(spec)_ — Project README (samples/linux/rust/zerocopy)
+- `samples/linux/rust/zerocopy-derive/README.md` _(spec)_ — Project README (samples/linux/rust/zerocopy-derive)
+- `samples/linux/rust/syn/README.md` _(spec)_ — Project README (samples/linux/rust/syn)
+- `samples/linux/rust/quote/README.md` _(spec)_ — Project README (samples/linux/rust/quote)
+- `samples/linux/rust/proc-macro2/README.md` _(spec)_ — Project README (samples/linux/rust/proc-macro2)
+- `samples/linux/rust/pin-init/README.md` _(spec)_ — Project README (samples/linux/rust/pin-init)
+- `samples/irixsrc/IRIX-6.5.17-Src/README.md` _(spec)_ — Project README (samples/irixsrc/IRIX-6.5.17-Src)
+- `samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0)
 
 ## Working files (current focus)
 - `emu/src/cpu_interface.cpp` _(auto:recent-edit)_
@@ -124,6 +125,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/mace.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu_interface.h` _(auto:recent-edit)_
 - `emu/include/o2emu/memory_map.h` _(auto:recent-edit)_
+- `.aicb/state.json` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

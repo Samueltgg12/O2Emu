@@ -1,18 +1,18 @@
-Start testing: Sep 02 21:37 -03
+Start testing: Sep 02 21:45 -03
 ----------------------------------------------------------
 1/1 Testing: cpu_interface_tests
 1/1 Test: cpu_interface_tests
 Command: "/home/samuel/SGI Projects/O2Emu/emu/build/tests/o2emu_tests"
 Directory: /home/samuel/SGI Projects/O2Emu/emu/build/tests
-"cpu_interface_tests" start time: Sep 02 21:37 -03
+"cpu_interface_tests" start time: Sep 02 21:45 -03
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"cpu_interface_tests" end time: Sep 02 21:37 -03
+"cpu_interface_tests" end time: Sep 02 21:45 -03
 "cpu_interface_tests" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 02 21:37 -03
+End testing: Sep 02 21:45 -03

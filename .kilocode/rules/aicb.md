@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T00:32:37.588Z","hash":"sha256:e2980e067c3fc879c38ee4f113ba199645d54362c84c9a97bb1c5b3690d74686"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T00:48:21.194Z","hash":"sha256:7d30fbfc25cdcd8638f63833652798b46329cc2173dd4a9ed5256aa445e6aa91"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -42,6 +42,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/mace.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu_interface.h` _(auto:recent-edit)_
 - `emu/include/o2emu/memory_map.h` _(auto:recent-edit)_
+- `.aicb/state.json` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
