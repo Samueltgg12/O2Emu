@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T20:09:17.191Z","hash":"sha256:169b015289fdf5bbc00f2a2a34f517ffa010d5f56d0786609d33c98275a7ed6c"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T20:41:31.288Z","hash":"sha256:062039ef2b664bc247b160fb8826ea15b1dc74b00e4061389ab1064454e48959"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,7 +31,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `docs/phase1-checklist.md` _(auto:recent-edit)_
 - `CMakeLists.txt` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `emu/include/o2emu/o2emu.h` _(auto:recent-edit)_
@@ -46,6 +45,25 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_audio.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
+- `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
+- `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
+- `emu/include/o2emu/system/bus.h` _(auto:recent-edit)_
+- `emu/include/o2emu/system/interrupts.h` _(auto:recent-edit)_
+- `emu/include/o2emu/system/timer.h` _(auto:recent-edit)_
+- `emu/include/o2emu/logging/logger.h` _(auto:recent-edit)_
+- `cli/CMakeLists.txt` _(auto:recent-edit)_
+- `cli/main.cpp` _(auto:recent-edit)_
+- `gui/CMakeLists.txt` _(auto:recent-edit)_
+- `gui/main.cpp` _(auto:recent-edit)_
+- `gui/mainwindow.h` _(auto:recent-edit)_
+- `gui/mainwindow.cpp` _(auto:recent-edit)_
+- `gui/framebufferwidget.h` _(auto:recent-edit)_
+- `gui/framebufferwidget.cpp` _(auto:recent-edit)_
+- `gui/debuggerwidget.h` _(auto:recent-edit)_
+- `gui/debuggerwidget.cpp` _(auto:recent-edit)_
+- `gui/resources.qrc` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
