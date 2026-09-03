@@ -82,7 +82,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Ask the user before writing emulator code. This is a research phase; premature
 implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T17:40:33.226Z","hash":"sha256:112c449b8304de92109babbf923dacbef0a14f399eaaab12ed2bc32e06cce6d8"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T18:23:51.096Z","hash":"sha256:7739e08bd7aa1562ac0b996af835e77e30060f48613cac4b077f1a152634eadf"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -116,6 +116,11 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `docs/register-maps.md` _(auto:recent-edit)_
+- `docs/io.md` _(auto:recent-edit)_
+- `docs/cpu-memory.md` _(auto:recent-edit)_
+- `docs/phase1-checklist.md` _(auto:recent-edit)_
+- `docs/sources.md` _(auto:recent-edit)_
+- `docs/graphics.md` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

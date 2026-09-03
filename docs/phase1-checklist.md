@@ -24,7 +24,8 @@ in this phase.
       (`docs/manuals-specs/`)
 - [ ] Complete MACE Ethernet packet and descriptor semantics
 - [ ] Complete MACE audio codec and `mavb` semantics
-- [ ] DIMM SPD address, EEPROM layout, and probing behavior
+- [x] DIMM SPD address, EEPROM layout, and probing behavior — resolved: no
+      SPD; PROM sizes banks by write/read probing (`post1mem.c` `SizeMEM()`)
 - [ ] Per-mode GBE timing tables and monitor behavior
 - [ ] PCI configuration-space details
 - [x] UART, RTC, PS/2, I2C, and physical address maps

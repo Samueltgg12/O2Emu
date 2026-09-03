@@ -216,6 +216,7 @@ Collected under [`docs/datasheets/`](datasheets/):
 - [x] PROM-level MACE Ethernet/audio register observations (`firmware.S`)
 - [ ] Complete mavb audio register details and codec semantics (cross-check
       MACE spec + AD1843 datasheet)
-- [ ] DIMM SPD address, EEPROM layout, and probe behavior
+- [x] DIMM SPD address, EEPROM layout, and probe behavior — resolved: no SPD
+      EEPROM; PROM probes banks with test patterns (`post1mem.c` `SizeMEM()`)
 - [ ] Search IRIX source for ASIC drivers lacking open-source coverage
       (ICE, Ethernet packet engine, mavb, and codec) in `irix/kern/io/`

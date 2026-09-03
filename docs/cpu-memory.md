@@ -227,14 +227,33 @@ Offsets are relative to `CRM_BASEADDR`:
 - Each bank is either **32 MB** or **128 MB** (64 Mbit SDRAM)
 - POST sizes banks by probing (IRIX `stand/arcs/IP32prom/post/post1mem.c`)
 
-### DIMM SPD status
+### DIMM SPD status — resolved: no SPD
 
-The O2 uses proprietary 239-pin SDRAM DIMMs, but the sources currently
-collected do not provide an SPD EEPROM address or a DIMM SPD byte map. The
-decompiled PROM's MACE I2C routines access the display/flat-panel path; no
-DIMM-SPD transaction was identified in the PROM assembly. Treat SPD behavior
-as unresolved until an O2 board reference, IRIX memory code, or a captured
-I2C trace provides the missing evidence.
+**The O2 does not use SPD EEPROM for memory sizing.** The PROM sizes memory
+entirely by probing (IRIX `stand/arcs/IP32prom/post/post1mem.c`, `SizeMEM()`):
+
+1. ECC checking is disabled (`CRM_MEM_CONTROL &= ~CRM_MEM_CONTROL_ECC_ENA`).
+2. For each of the 8 banks, all bank control registers from the current bank
+   onward are pointed at the current probe address with the 128 MB size bit
+   set (`CRM_MEM_BANK_CTRL_SDRAM_SIZE`), and a 128 MB TLB page is mapped.
+3. Four 64-bit test values are written at offsets 0, 32 MB−8, 32 MB, and
+   128 MB−8 from the bank base, followed by three dummy writes to clear the
+   memory bus.
+4. Read-back distinguishes the cases:
+   - If the 32 MB aliases overwrote the 0/128 MB locations → **32 MB bank**
+     (16 Mbit SDRAM; address wraps within 32 MB).
+   - If all four locations read back distinctly → **128 MB bank**
+     (64 Mbit SDRAM).
+   - Otherwise → no DIMM in the bank.
+5. Bank 0 must be populated; if not, the PROM blinks the dual-color LED amber
+   and halts.
+6. Second/third passes then remap all 128 MB banks to the lowest physical
+   addresses, followed by the 32 MB banks (128 MB banks first so the memory
+   map is contiguous with large pages low).
+
+The decompiled PROM's MACE I2C routines access only the display/flat-panel
+path; no DIMM SPD transaction exists in the PROM. The proprietary 239-pin
+DIMMs carry no SPD EEPROM that the firmware reads.
 
 ## Physical memory map
 

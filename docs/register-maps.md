@@ -423,6 +423,63 @@ PERR_DATA_PARITY_ADDR_VALID 0x00020000
 PERR_RETRY_ADDR_VALID       0x00010000
 ```
 
+Additional error bits from Linux `asm/ip32/mace.h`: `MEMORY_ADDR` bit 21,
+`CONFIG_ADDR` bit 20 (address-type flags for the error address), `SIG_TABORT`
+bit 4, `DEVSEL` timing bits 7:6 (fast/medium/slow), `FBB` bit 1, `66MHZ`
+bit 0.
+
+### PCI control register bits (Linux `asm/ip32/mace.h`)
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 7:0 | `INT(x)` | Interrupt enables (per-slot) |
+| 8 | `SERR_ENA` | System error enable |
+| 9 | `ARB_N6` | Arbiter |
+| 10 | `PARITY_ERR` | Parity error |
+| 11 | `MRMRA_ENA` | Memory-read-multiple/read-ahead enable |
+| 12–14 | `ARB_N3/N4/N5` | Arbiter |
+| 15 | `PARK_LIU` | Park last-in-use |
+| 23:16 | `INV_INT(x)` | Inverted interrupt bits |
+| 24 | `OVERRUN_INT` | Overrun interrupt |
+| 25 | `PARITY_INT` | Parity interrupt |
+| 26 | `SERR_INT` | System error interrupt |
+| 27 | `IT_INT` | Interrupt test |
+| 28 | `RE_INT` | Retry error interrupt |
+| 29 | `DPED_INT` | Data parity error interrupt |
+| 30 | `TAR_INT` | Target abort interrupt |
+| 31 | `MAR_INT` | Master abort interrupt |
+
+Linux init writes `control = 0xff008500` after clearing errors.
+
+### PCI configuration space access (Linux `arch/mips/pci/ops-mace.c`)
+
+Config cycles go through `PCI_CONFIG_ADDR` (`0xcf8`) / `PCI_CONFIG_DATA`
+(`0xcfc`):
+
+- `config_addr = (bus << 16) | (devfn << 8) | (reg & 0xfc)`
+- Byte/word accesses use big-endian lane steering:
+  byte `b[(reg & 3) ^ 3]`, word `w[((reg >> 1) & 1) ^ 1]`
+- Master-abort interrupts are masked during config reads; the master-abort
+  error bit is cleared afterwards
+- **Quirk:** reads of config register `0x40` (dword) from the two onboard
+  SCSI devices (devfn 1<<3 and 2<<3) have bit 12 (`0x1000`, Ultra SCSI)
+  forced on — the firmware never set the Ultra bit, so Linux fakes it
+
+### PCI address windows (Linux `asm/ip32/mace.h`)
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `MACEPCI_LOW_MEMORY` | `0x1a000000` | Low PCI memory window (32 MB, to `0x1bffffff`) |
+| `MACEPCI_LOW_IO` | `0x18000000` | Low PCI I/O window |
+| `MACEPCI_SWAPPED_VIEW` | `0x00000000` | Byte-swapped view offset |
+| `MACEPCI_NATIVE_VIEW` | `0x40000000` | Native (unswapped) view offset |
+| `MACEPCI_IO` | `0x80000000` | I/O space flag |
+| `MACEPCI_HI_MEMORY` | `0x280000000` | High PCI memory window (64-bit kernels) |
+| `MACEPCI_HI_IO` | `0x100000000` | High PCI I/O window |
+
+On 32-bit kernels the PCI memory offset is `MACEPCI_LOW_MEMORY - 0x80000000`;
+on 64-bit kernels it is `0x200000000`.
+
 ### Ethernet (offset `MACE_ENET = 0x280000`)
 
 The MACE Ethernet block is a **MAC110** core. Register map from NetBSD
@@ -567,16 +624,49 @@ pointer (`0x46`), and depth (`0x47`).
 
 ### Audio (offset `MACE_AUDIO = 0x300000`)
 
-| Register | Offset | Description |
-|----------|--------|-------------|
-| `MACE_AUDIO_STATUS` | `0x00` | Status |
-| `MACE_AUDIO_CODEC_STATUS` | `0x08` | Codec status |
-| `MACE_AUDIO_CODEC_INPUT_MASK` | `0x10` | Codec input mask |
-| `MACE_AUDIO_CODEC_INPUT` | `0x18` | Codec input |
-| `MACE_AUDIO_RING_CTRL_CHAN(x)` | `0x20*x` | Ring control |
-| `MACE_AUDIO_RD_PTR_CHAN(x)` | `0x20*x + 0x8` | Read pointer |
-| `MACE_AUDIO_WR_PTR_CHAN(x)` | `0x20*x + 0x10` | Write pointer |
-| `MACE_AUDIO_RING_DEPTH_CHAN(x)` | `0x20*x + 0x18` | Ring depth |
+Register layout from Linux `arch/mips/include/asm/ip32/mace.h`
+(`struct mace_audio`) and `sound/mips/sgio2audio.c`. All registers are 64-bit.
+
+| Offset | Register | Description |
+|--------|----------|-------------|
+| `0x00` | `control` | Audio control |
+| `0x08` | `codec_control` | Codec control/status |
+| `0x10` | `codec_mask` | Codec status input mask |
+| `0x18` | `codec_read` | Codec read data |
+| `0x20` | `chan[0].control` | Channel 0 (ADC) control |
+| `0x28` | `chan[0].read_ptr` | Channel 0 read pointer |
+| `0x30` | `chan[0].write_ptr` | Channel 0 write pointer |
+| `0x38` | `chan[0].depth` | Channel 0 ring depth |
+| `0x40` | `chan[1].control` | Channel 1 (DAC1) control |
+| `0x48` | `chan[1].read_ptr` | Channel 1 read pointer |
+| `0x50` | `chan[1].write_ptr` | Channel 1 write pointer |
+| `0x58` | `chan[1].depth` | Channel 1 ring depth |
+| `0x60` | `chan[2].control` | Channel 2 (DAC2) control |
+| `0x68` | `chan[2].read_ptr` | Channel 2 read pointer |
+| `0x70` | `chan[2].write_ptr` | Channel 2 write pointer |
+| `0x78` | `chan[2].depth` | Channel 2 ring depth |
+
+Audio `control` bits: bit 0 = `RESET` (reset audio interface), bit 1 =
+`CODEC_PRESENT` (codec detected).
+
+`codec_control`: bits 15:0 = codec control word, bit 16 = `READ` (initiate
+codec register read), bits 24:17 = codec register address. After writing a
+read command, poll/wait ~200 µs then read the result from `codec_read`.
+
+Channel `control` bits: bit 10 = `RESET` (reset channel), bit 9 = `DMA_ENABLE`,
+bits 7:5 = interrupt threshold (0 = disabled, 1 = >25% full, 2 = >50%,
+3 = >75%, 4 = empty, 5 = not empty, 6 = full, 7 = not full).
+
+Each channel has a 4 KB ring buffer (`CHANNEL_RING_SIZE = 1 << 12`). Sample
+packing: left channel at bit 40, right channel at bit 8 of each 64-bit ring
+entry. DMA channel assignments: ADC = channel 0, DAC1 = channel 1,
+DAC2 = channel 2 (IRIX `ad1843.h`).
+
+Audio interrupts appear in the MACE ISA interrupt status/mask registers
+(`MACEISA_AUDIO_SW_INT` bit 0, `MACEISA_AUDIO_SC_INT` bit 1,
+`MACEISA_AUDIO1_DMAT_INT` bit 2, `MACEISA_AUDIO1_OF_INT` bit 3,
+`MACEISA_AUDIO2_DMAT_INT` bit 4, `MACEISA_AUDIO2_MERR_INT` bit 5,
+`MACEISA_AUDIO3_DMAT_INT` bit 6, `MACEISA_AUDIO3_MERR_INT` bit 7).
 
 PROM uses channel 2: ring control `0x40`, read ptr `0x48`, write ptr `0x50`,
 depth `0x58`. Ring control and write pointer are 64-bit.
@@ -910,8 +1000,11 @@ RTC at `0x1f3a0000`. Byte-addressed with `RTC_REG(x) = x << 8`:
       Linux `meth.h`)
 - [x] Complete mavb codec and audio register semantics (IRIX `ad1843.h` +
       AD1843 datasheet)
-- [ ] DIMM SPD address, EEPROM layout, and probe behavior
-- [ ] PCI configuration space details for O2-specific devices
+- [x] DIMM SPD address, EEPROM layout, and probe behavior — no SPD; PROM
+      bank probing (see cpu-memory.md)
+- [x] PCI configuration space details (Linux `ops-mace.c`, `pci-ip32.c`,
+      `fixup-ip32.c`; config mechanism, windows, control/error bits, Ultra
+      SCSI quirk)
 | `vt_vblank` | `0x10010` | vertical blank |
 | `vt_hblank` | `0x10014` | horizontal blank |
 | `vt_flags` | `0x10018` | `VDRV_INVERT` 0, `VDRV_LOW` 1, `HDRV_INVERT` 2, `HDRV_LOW` 3, `SYNC_HIGH` 4, `SYNC_LOW` 5, `F2RF_HIGH` 6 |

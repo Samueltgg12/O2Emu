@@ -108,6 +108,10 @@ MACE sub-blocks (from the decompiled PROM `definitions.h`):
 
 - [x] PROM-level MACE Ethernet register map and reset/FIFO behavior
 - [x] PROM-level MACE audio ring/codec register map
-- [ ] Complete MACEISA audio register details (mavb)
-- [ ] PCI configuration space details
-- [ ] Complete Ethernet controller register details (beyond the PROM map)
+- [x] Complete MACEISA audio register details (Linux `struct mace_audio` +
+      `sgio2audio.c`; AD1843 codec register map from IRIX `ad1843.h` and the
+      AD1843 datasheet)
+- [x] PCI configuration space details (Linux `ops-mace.c`/`pci-ip32.c`/
+      `fixup-ip32.c`)
+- [x] Complete Ethernet controller register details (NetBSD `if_mecreg.h`,
+      Linux `meth.h` — full MAC110 register map, TX/RX descriptor formats)

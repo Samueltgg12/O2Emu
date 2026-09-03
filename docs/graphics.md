@@ -300,10 +300,42 @@ Timing flags: `GBE_VOF_UNKNOWNMON 1`, `GBE_VOF_STEREO 2`,
 `GBE_VOF_DO_GENSYNC 4`, `GBE_VOF_SYNC_ON_GREEN 8`, `GBE_VOF_FLATPANEL 0x1000`,
 `GBE_VOF_MAGICKEY 0x2000`.
 
+## PROM video timing tables (IRIX `stand/arcs/include/crm_timing.h`)
+
+The PROM's `crimeVTimings[]` table (`struct crime_timing_info`) defines every
+video mode the firmware can set. Fields per entry: flags, width, height,
+fields/sec (mHz), pixel clock (kHz), htotal, hblank_start/end, hsync_start/end,
+vtotal, vblank_start/end, vsync_start/end, pll_m, pll_n, pll_p.
+
+| Mode | Width×Height | Refresh (mHz) | Clock (kHz) | htotal | hblank | hsync | vtotal | vblank | vsync | PLL m/n/p |
+|------|--------------|---------------|-------------|--------|--------|-------|--------|--------|-------|-----------|
+| `VT_640_480_60` | 640×480 | 59940 | 25175 | 800 | 640–800 | 656–752 | 525 | 480–525 | 490–492 | 5/1/2 |
+| `VT_800_600_60` | 800×600 | 60317 | 40000 | 1056 | 800–1056 | 840–968 | 628 | 600–628 | 601–605 | 8/1/2 |
+| `VT_800_600_72` | 800×600 | 72188 | 50000 | 1040 | 800–1040 | 856–976 | 666 | 600–666 | 637–643 | 5/1/1 |
+| `VT_1024_768_60` | 1024×768 | 60004 | 63546 | 1344 | 1024–1344 | 1048–1184 | 806 | 768–806 | 771–777 | 13/2/1 |
+| `VT_1024_768_70` | 1024×768 | 70069 | 75000 | 1328 | 1024–1328 | 1048–1184 | 806 | 768–806 | 771–777 | 15/2/1 |
+| `VT_1024_768_75` | 1024×768 | 75029 | 78750 | 1312 | 1024–1312 | 1040–1136 | 800 | 768–800 | 769–772 | 39/5/1 |
+| `VT_1280_1024_48` | 1280×1024 | 48000 | 85882 | 1680 | 1280–1680 | 1360–1480 | 1065 | 1024–1065 | 1028–1031 | 30/7/0 |
+| `VT_1280_1024_50` | 1280×1024 | 50000 | 89544 | 1680 | 1280–1680 | 1360–1480 | 1065 | 1024–1065 | 1027–1030 | 9/1/1 |
+| `VT_1280_1024_60` | 1280×1024 | 59940 | 107245 | 1680 | 1280–1680 | 1310–1430 | 1065 | 1024–1065 | 1027–1030 | 16/3/0 |
+| `VT_1280_1024_72` | 1280×1024 | 72000 | 128701 | 1690 | 1280–1690 | 1310–1450 | 1064 | 1024–1064 | 1027–1030 | 13/2/0 |
+| `VT_1280_1024_75` | 1280×1024 | 75025 | 135000 | 1688 | 1280–1688 | 1296–1440 | 1066 | 1024–1066 | 1025–1028 | 27/4/0 |
+| `VT_1280_492_120` | 1280×492 | 119880 | 107072 | 1680 | 1280–1680 | 1310–1430 | 532 | 492–532 | 495–498 | 16/3/0 |
+| `VT_1600_1024_50` | 1600×1024 | 50000 | 101270 | 1900 | 1600–1900 | 1630–1730 | 1066 | 1024–1066 | 1027–1030 | 5/1/0 |
+
+Notes:
+- `VT_1280_492_120` is the field-sequential stereo mode
+  (`CRIME_VOF_FS_STEREO` flag) for shutter glasses.
+- `VT_1600_1024_50` is the 1600SW flat-panel mode.
+- The GBE video timing counters are two 12-bit counters (`vt_x`, `vt_y`);
+  `vt_x` counts 0→`vt_maxx` per line (GBE spec §video timing).
+- The dot clock PLL is programmed via the `dotclock` register with the
+  m/n/p values above.
+
 ## TODO / Open questions
 
 - [x] Full GBE (Display Engine) register map — `include/video/gbe.h`
-- [ ] Full ICE register map (pixel packaging/unpacking); no authoritative
-  register header located yet
+- [x] Full ICE register map — VICE Design Spec 099-0123-003 (see
+  [register-maps.md](register-maps.md) "VICE / ICE")
 - [x] PROM-visible MRE/RE/DE/MTE register map — `definitions.h`
-- [ ] Video modes / timing details (per-mode `gbe_timing_info` tables)
+- [x] Video modes / timing details — PROM `crm_timing.h` table above
