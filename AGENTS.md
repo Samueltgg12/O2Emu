@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T23:41:49.833Z","hash":"sha256:2a5eda62a63ffefcb6553e4effff3d7291044e6772a79d153730835b5181e9ba"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T23:43:10.459Z","hash":"sha256:4a0b0344580d7f577228334b5df3085a78a7df5f9754299ee3591ba315da9f99"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -119,7 +119,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
-- `gui/resources.qrc` _(auto:recent-edit)_
 - `gui/main.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
@@ -129,6 +128,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
+- `gui/framebufferwidget.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

@@ -15,7 +15,7 @@ namespace o2emu::memory {
 class Memory;
 }
 namespace o2emu::cpu {
-class CPU;
+class ICpu;
 }
 
 class FramebufferWidget : public QOpenGLWidget, protected QOpenGLFunctions {
@@ -26,7 +26,7 @@ public:
   ~FramebufferWidget() override;
 
   void setMemory(o2emu::memory::Memory *memory);
-  void setCPU(o2emu::cpu::CPU *cpu);
+  void setCPU(o2emu::cpu::ICpu *cpu);
   void clear();
   void updateFramebuffer();
   int fps() const { return fps_; }
@@ -38,7 +38,7 @@ protected:
 
 private:
   o2emu::memory::Memory *memory_ = nullptr;
-  o2emu::cpu::CPU *cpu_ = nullptr;
+  o2emu::cpu::ICpu *cpu_ = nullptr;
 
   // OpenGL resources
   GLuint texture_id_ = 0;
