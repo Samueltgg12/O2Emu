@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".windsurfrules","generatedAt":"2026-09-03T21:42:09.265Z","hash":"sha256:cb125ed203b4db76f3546400e5e68fd6e64872f3b695bc0f839ba5cdf24e1141"} -->
+<!-- AICB:BEGIN {"version":1,"target":".windsurfrules","generatedAt":"2026-09-03T21:56:08.449Z","hash":"sha256:a72c71c363f4954c3ef3aa7f7e1d986874e6647bf5071a4d55f3b2b84cae9b7a"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,10 +32,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/src/cpu/cpu.cpp` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 - `emu/src/memory/memory.cpp` _(auto:recent-edit)_
-- `emu/src/memory/address_space.cpp` _(auto:recent-edit)_
 - `emu/src/memory/crime.cpp` _(auto:recent-edit)_
 - `emu/src/memory/mre.cpp` _(auto:recent-edit)_
 - `emu/src/devices/device.cpp` _(auto:recent-edit)_
@@ -56,6 +53,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/uart.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/ps2.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/rtc.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
