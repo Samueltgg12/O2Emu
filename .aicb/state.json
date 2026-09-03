@@ -28,11 +28,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788464831894,
+      "pinnedAt": 1788465016112,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788468616112
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -212,9 +213,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788464928452,
+      "pinnedAt": 1788465008282,
       "auto": "recent-edit",
-      "expiresAt": 1788468528452
+      "expiresAt": 1788468608282
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/CMakeLists.txt",
@@ -225,5 +226,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788464928452
+  "updatedAt": 1788465016112
 }
