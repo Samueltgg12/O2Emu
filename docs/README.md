@@ -1,8 +1,8 @@
-# SGI O2 Emulator — Phase 1 Research
+# SGI O2 Emulator — Hardware Documentation
 
-**Goal:** Gather all SGI O2 (IP32) hardware specs, datasheets, documentation, and
-register-level details from Linux/BSD drivers and leaked IRIX source. **No
-implementation in this phase.**
+**Phase 1 (Research) is complete.** Every hardware subsystem has a sourced
+register map. These docs are the authoritative reference for the Phase 2 C++
+emulator.
 
 See [ROADMAP.md](../ROADMAP.md) for the full project plan (Phase 2 = C++
 emulation, Phase 3 = JIT/optimizations/GUI/cross-platform).

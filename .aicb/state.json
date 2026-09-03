@@ -4,11 +4,12 @@
   "pinnedFiles": [
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/README.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Project README (docs)",
-      "pinnedAt": 1788462547933,
-      "auto": "spec",
-      "role": "spec"
+      "pinnedAt": 1788462743710,
+      "auto": "recent-edit",
+      "role": "spec",
+      "expiresAt": 1788466343710
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/README.md",
@@ -182,10 +183,10 @@
       "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
       "pinnedBy": "auto:editor",
       "note": "Claude Code instructions",
-      "pinnedAt": 1788462595401,
-      "auto": "spec",
+      "pinnedAt": 1788462686324,
+      "auto": "recent-edit",
       "role": "spec",
-      "expiresAt": 1788466195401
+      "expiresAt": 1788466286324
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/GEMINI.md",
@@ -240,5 +241,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788462595401
+  "updatedAt": 1788462743710
 }

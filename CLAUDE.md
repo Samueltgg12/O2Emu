@@ -79,8 +79,10 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 
 ## Scope guard
 
-Do **not** write emulator code without explicit user approval. This is a
-research phase; premature implementation is out of scope.
+Phase 1 (research) is complete; Phase 2 (emulation) is in scope. When hardware
+behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
+then the driver sources. Ask the user before deviating from documented
+behavior.
 
 <!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T19:08:58.624Z","hash":"sha256:1d4ba1b685f869b7e0cf6b1a2f62a575c348559eb3755eb79da870800093dda7"} -->
 # AI Context Bridge — Handoff
