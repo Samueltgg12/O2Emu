@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T22:18:36.888Z","hash":"sha256:8362df4ddb24cf929cafa4d18ba14a4f922848c0f384b088e69e0c6a1ca4a9d9"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T22:32:31.672Z","hash":"sha256:e81cc71da79b49b6f95b5ffae1f07215e13471dbc9bec17e9a70e4bc7ec1b340"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -121,13 +121,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
 - `emu/src/devices/uart.cpp` _(auto:recent-edit)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
-- `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
-- `emu/src/system/bus.cpp` _(auto:recent-edit)_
-- `emu/src/system/interrupts.cpp` _(auto:recent-edit)_
-- `emu/src/system/timer.cpp` _(auto:recent-edit)_
-- `emu/src/logging/logger.cpp` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
-- `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/uart.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/ps2.h` _(auto:recent-edit)_
@@ -141,6 +135,12 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/graphics/display_engine.cpp` _(auto:recent-edit)_
 - `emu/src/graphics/framebuffer.cpp` _(auto:recent-edit)_
 - `tests/CMakeLists.txt` _(auto:recent-edit)_
+- `tests/test_cpu.cpp` _(auto:recent-edit)_
+- `tests/test_memory.cpp` _(auto:recent-edit)_
+- `tests/test_devices.cpp` _(auto:recent-edit)_
+- `tests/test_graphics.cpp` _(auto:recent-edit)_
+- `tests/test_firmware.cpp` _(auto:recent-edit)_
+- `tests/test_integration.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
