@@ -158,4 +158,112 @@ const std::vector<PROMImage::Section> &PROMImage::sections() const {
   return sections_;
 }
 
+// PROMLoader implementation
+PROMLoader::PROMLoader(cpu::ICpu &cpu, memory::Memory &memory)
+    : cpu_(cpu), memory_(memory), prom_() {}
+
+bool PROMLoader::load_prom(const std::string &prom_path) {
+  return prom_.load(prom_path);
+}
+
+void PROMLoader::execute_bootstrap() {
+  // The PROM starts executing at the reset vector (0xBFC00000)
+  // The CPU should already be reset to this address
+  O2EMU_LOG_INFO("Starting PROM bootstrap at 0xBFC00000");
+
+  // Run POST
+  run_post();
+
+  // The PROM will then initialize hardware and boot the OS
+  // This is handled by the emulation loop
+}
+
+void PROMLoader::run_post() {
+  O2EMU_LOG_INFO("Running POST sequence...");
+  // POST is part of the PROM code, it will execute automatically
+  // when the CPU runs from the reset vector
+}
+
+bool PROMLoader::boot_kernel(const std::string &kernel_path,
+                             const std::string &initrd_path,
+                             const std::string &cmdline) {
+  O2EMU_LOG_INFO("Booting kernel: " << kernel_path);
+  // This would load an OS kernel (IRIX/Linux/NetBSD)
+  // For now, just return false as not implemented
+  (void)kernel_path;
+  (void)initrd_path;
+  (void)cmdline;
+  return false;
+}
+
+void PROMLoader::map_prom_sections() {
+  if (!prom_.valid()) {
+    O2EMU_LOG_ERROR("Cannot map sections: PROM not loaded");
+    return;
+  }
+
+  O2EMU_LOG_INFO("Mapping PROM sections to memory...");
+
+  for (const auto &section : prom_.sections()) {
+    if (section.size == 0)
+      continue;
+
+    const u8 *src = prom_.data() + section.offset;
+    u32 dst = section.load_addr;
+
+    O2EMU_LOG_DEBUG("Mapping section " << section.name << " to 0x" << std::hex
+                                       << dst << " size 0x" << section.size
+                                       << std::dec);
+
+    // Copy section data to memory
+    for (u32 i = 0; i < section.size; ++i) {
+      memory_.write8(dst + i, src[i]);
+    }
+  }
+}
+
+void PROMLoader::init_cpu_for_prom() {
+  O2EMU_LOG_INFO("Initializing CPU for PROM execution...");
+
+  // Set CPU to PROM reset vector
+  cpu_.set_pc(0xBFC00000);
+
+  // Initialize CP0 registers for PROM
+  // Status register: BEV=1 (bootstrap exception vectors), KU=0 (kernel mode)
+  cpu_.set_cp0_reg(12, 0x00400004); // Status
+
+  // Cause register: clear
+  cpu_.set_cp0_reg(13, 0);
+
+  // EPC: reset vector
+  cpu_.set_cp0_reg(14, 0xBFC00000);
+
+  // Config register
+  cpu_.set_cp0_reg(16, 0x0006E463); // MIPS IV, 64-bit FPU, etc.
+
+  // Set initial stack pointer in kseg0
+  cpu_.set_gpr(29, 0x80000000); // SP
+  cpu_.set_gpr(28, 0x80000000); // GP
+
+  // Clear other registers
+  for (int i = 1; i < 28; ++i) {
+    cpu_.set_gpr(i, 0);
+  }
+  cpu_.set_gpr(0, 0); // $zero
+
+  O2EMU_LOG_INFO("CPU initialized for PROM: PC=0x" << std::hex << cpu_.pc()
+                                                   << std::dec);
+}
+
+void PROMLoader::setup_environment() {
+  // Set up PROM environment variables in memory
+  // This would normally be done by the PROM code itself
+  O2EMU_LOG_INFO("Setting up PROM environment...");
+}
+
+void PROMLoader::copy_sections() {
+  // Already done in map_prom_sections
+  map_prom_sections();
+}
+
 } // namespace o2emu::firmware

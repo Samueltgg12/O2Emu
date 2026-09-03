@@ -205,9 +205,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788477291209,
+      "pinnedAt": 1788478661315,
       "auto": "recent-edit",
-      "expiresAt": 1788480891209
+      "expiresAt": 1788482261315
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu/mips_r5000.cpp",
@@ -271,8 +271,15 @@
       "pinnedAt": 1788478451070,
       "auto": "recent-edit",
       "expiresAt": 1788482051070
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/firmware/prom_loader.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788478855801,
+      "auto": "recent-edit",
+      "expiresAt": 1788482455801
     }
   ],
   "skills": [],
-  "updatedAt": 1788478451070
+  "updatedAt": 1788478855801
 }
