@@ -18,6 +18,10 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QToolBar>
+#include <o2emu/cpu/cpu_factory.h>
+#include <o2emu/cpu/cpu_interface.h>
+#include <o2emu/memory/memory.h>
+#include <o2emu/system/bus.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowTitle("O2Emu - SGI O2 (IP32) Emulator");
@@ -170,41 +174,15 @@ void MainWindow::initializeEmulator() {
   memory_ = std::make_unique<o2emu::memory::Memory>();
   memory_->init(ram_mb_);
 
-  // Initialize CPU
-  cpu_ = std::make_unique<o2emu::cpu::CPU>();
+  // Initialize system bus
+  bus_ = std::make_unique<o2emu::system::Bus>();
+
+  // Initialize CPU (R10000 for O2/IP32)
+  cpu_ = o2emu::cpu::create_cpu(o2emu::cpu::CPUType::R10000, bus_.get());
   cpu_->reset(o2emu::ip32::PROM_RESET_VECTOR);
 
-  // Connect CPU to memory
-  cpu_->set_memory_read_callback([this](u32 addr, u32 size) -> u32 {
-    if (!memory_)
-      return 0;
-    switch (size) {
-    case 1:
-      return memory_->read8(addr);
-    case 2:
-      return memory_->read16(addr);
-    case 4:
-      return memory_->read32(addr);
-    default:
-      return 0;
-    }
-  });
-
-  cpu_->set_memory_write_callback([this](u32 addr, u32 size, u32 value) {
-    if (!memory_)
-      return;
-    switch (size) {
-    case 1:
-      memory_->write8(addr, value);
-      break;
-    case 2:
-      memory_->write16(addr, value);
-      break;
-    case 4:
-      memory_->write32(addr, value);
-      break;
-    }
-  });
+  // Connect CPU to memory via bus
+  bus_->attach_memory(memory_.get());
 
   // Load PROM
   prom_loader_ = std::make_unique<o2emu::firmware::PROMLoader>(*cpu_, *memory_);
@@ -226,7 +204,7 @@ void MainWindow::initializeEmulator() {
 
   running_ = true;
   emulation_timer_.start();
-  cpu_status_label_->setText("CPU: Running");
+  cpu_status_label_->setText("CPU: Running (R10000)");
 }
 
 void MainWindow::shutdownEmulator() {
