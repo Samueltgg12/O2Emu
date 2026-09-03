@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-03T21:23:07.701Z","hash":"sha256:4bd662b0bceb585d7e4d241a8bf50b5cde2739c124935eed44b32824f2aa421d"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-03T21:42:09.232Z","hash":"sha256:cb125ed203b4db76f3546400e5e68fd6e64872f3b695bc0f839ba5cdf24e1141"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,20 +32,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/include/o2emu/system/interrupts.h` _(auto:recent-edit)_
-- `emu/include/o2emu/system/timer.h` _(auto:recent-edit)_
-- `emu/include/o2emu/logging/logger.h` _(auto:recent-edit)_
-- `cli/CMakeLists.txt` _(auto:recent-edit)_
-- `cli/main.cpp` _(auto:recent-edit)_
-- `gui/CMakeLists.txt` _(auto:recent-edit)_
-- `gui/main.cpp` _(auto:recent-edit)_
-- `gui/mainwindow.h` _(auto:recent-edit)_
-- `gui/mainwindow.cpp` _(auto:recent-edit)_
-- `gui/framebufferwidget.h` _(auto:recent-edit)_
-- `gui/framebufferwidget.cpp` _(auto:recent-edit)_
-- `gui/debuggerwidget.h` _(auto:recent-edit)_
-- `gui/debuggerwidget.cpp` _(auto:recent-edit)_
-- `gui/resources.qrc` _(auto:recent-edit)_
 - `emu/src/cpu/cpu.cpp` _(auto:recent-edit)_
 - `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 - `emu/src/memory/memory.cpp` _(auto:recent-edit)_
@@ -67,6 +53,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/system/interrupts.cpp` _(auto:recent-edit)_
 - `emu/src/system/timer.cpp` _(auto:recent-edit)_
 - `emu/src/logging/logger.cpp` _(auto:recent-edit)_
+- `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
+- `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
