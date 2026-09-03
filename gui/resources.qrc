@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <!-- Icons and resources will go here -->
+    <file alias="appicon.png">../assets/appicon.png</file>
 </qresource>
 </RCC>

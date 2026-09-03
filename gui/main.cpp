@@ -5,6 +5,7 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QIcon>
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QSurfaceFormat>
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
   app.setApplicationName("O2Emu");
   app.setApplicationVersion("0.1.0");
   app.setOrganizationName("O2Emu Project");
+  app.setWindowIcon(QIcon(":/appicon.png"));
 
   // Command line parser
   QCommandLineParser parser;

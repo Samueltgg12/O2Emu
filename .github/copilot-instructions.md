@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-03T22:32:32.458Z","hash":"sha256:e81cc71da79b49b6f95b5ffae1f07215e13471dbc9bec17e9a70e4bc7ec1b340"} -->
+<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-03T22:47:09.383Z","hash":"sha256:e1c55b0a3403791accd3aa1b91c9dae50f246a9dfae3363fada6209804142fc4"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -33,10 +33,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
-- `emu/src/devices/uart.cpp` _(auto:recent-edit)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/uart.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/ps2.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/rtc.h` _(auto:recent-edit)_
@@ -55,6 +53,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `tests/test_graphics.cpp` _(auto:recent-edit)_
 - `tests/test_firmware.cpp` _(auto:recent-edit)_
 - `tests/test_integration.cpp` _(auto:recent-edit)_
+- `gui/resources.qrc` _(auto:recent-edit)_
+- `gui/main.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
