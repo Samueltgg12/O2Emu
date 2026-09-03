@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T23:07:50.588Z","hash":"sha256:cbe409ed690b07ee0c17d2cda83b6cf72fe4ebe8c23e361da5bde7c4ecb08372"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-03T23:10:09.782Z","hash":"sha256:a4a19546c576b6a518bd2ea4585e3f08aea67c10ec0d1f56e78e1344f4c53e3c"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -33,10 +33,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/graphics/ice.h` _(auto:recent-edit)_
 - `emu/include/o2emu/graphics/display_engine.h` _(auto:recent-edit)_
 - `emu/include/o2emu/graphics/framebuffer.h` _(auto:recent-edit)_
-- `emu/src/graphics/microprocessor.cpp` _(auto:recent-edit)_
 - `emu/src/graphics/ice.cpp` _(auto:recent-edit)_
 - `emu/src/graphics/display_engine.cpp` _(auto:recent-edit)_
 - `emu/src/graphics/framebuffer.cpp` _(auto:recent-edit)_

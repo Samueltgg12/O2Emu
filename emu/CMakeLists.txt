@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.20)
 add_library(o2emu_core STATIC
     src/cpu/cpu.cpp
     src/cpu/mips_r5000.cpp
+    src/cpu/mips_r10000.cpp
     src/cpu/cp0.cpp
     src/memory/memory.cpp
     src/memory/address_space.cpp
