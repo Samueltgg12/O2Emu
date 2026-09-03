@@ -57,7 +57,8 @@ for the O2.
 
 Collected under [`docs/manuals-specs/`](manuals-specs/) — these are the actual
 SGI "PROPRIETARY and CONFIDENTIAL" ASIC specs for the O2 (Moosehead), the most
-authoritative hardware references in the project:
+authoritative hardware references in the project. **Every document has a
+searchable markdown (`.md`) conversion alongside the PDF.**
 
 - **`o2-CRIME-spec.pdf`** (+ `.md`) — CRIME ASIC spec (6/2/97): CPU interface,
   memory controller, interrupt controller, timers, error handling.
@@ -68,15 +69,21 @@ authoritative hardware references in the project:
   Ahlgrim / Nielsen / Izadi): graphics back end — 140 MHz dot clock, 4608-entry
   colormap, 256-entry gamma map, hardware cursor, DID-based pixel mode control,
   overlay/normal stream mixing, video timing controller, I2C/DDC, flat panel.
-- **`o2-VICE-spec.pdf`** — VICE (Video Image Compression Engine = the "ICE"
-  ASIC) spec. **This closes the long-standing ICE register-map gap.**
+- **`o2-VICE-spec.pdf`** (+ `.md`) — **VICE Design Specification 099-0123-003
+  v1.0 (4/17/97)** — the full VICE (Video Image Compression Engine = the "ICE"
+  ASIC) design spec: programmer's interface, address map, register
+  descriptions, MSP (Media Signal Processor) and BSP (Bitstream Processor)
+  code management, DMA unit with TLB and 64K tile formats, interrupts and
+  exceptions. **This closes the long-standing ICE register-map gap.**
 - **`o2-hardware-reference-guide.pdf`** (+ `.md`) — O2 hardware reference.
-- **`o2-workstation-hardware-guide.pdf`** — O2 workstation hardware guide.
-- **`o2-tech-report.pdf`** — O2 technical report (system architecture).
+- **`o2-workstation-hardware-guide.pdf`** (+ `.md`) — O2 workstation hardware
+  guide.
+- **`o2-tech-report.pdf`** (+ `.md`) — O2 technical report (system
+  architecture).
 - **`o2-digital-video-option-installation-guide.pdf`** (+ `.md`) — O2 digital
   video option installation.
-- **`o2-pci-digital-audio-board-installation-guide.pdf`** — PCI digital audio
-  board installation.
+- **`o2-pci-digital-audio-board-installation-guide.pdf`** (+ `.md`) — PCI
+  digital audio board installation.
 
 ## Datasheets & hardware references
 
