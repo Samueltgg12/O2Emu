@@ -34,8 +34,10 @@ A from-scratch emulator for the **SGI O2 (IP32 / "Moosehead")** workstation.
       MACE/codec: IRIX `mace.h` + `ad1843.h` (AD1843 codec); ICE/MRE: IRIX
       `crime.h`/`crimereg.h` (ICE = VICE, interrupt 31); SDRAM/DIMM: CRIME
       `CRM_MEM_BANK_CTRL` + IP32 PROM `post1mem.c`/`memory.c` bank probing
-- [ ] Fill remaining open questions in each doc (ICE register map, complete
-      MACE Ethernet/audio semantics, DIMM SPD, and per-mode display timing)
+- [ ] Fill remaining open questions in each doc (transcribe the ICE/VICE
+      register map from `docs/manuals-specs/o2-VICE-spec.pdf`, complete MACE
+      Ethernet/audio semantics against the MACE spec, DIMM SPD, and per-mode
+      display timing against the GBE spec)
 
 **Exit criteria:** every hardware subsystem has a sourced register map and the
 memory map is fully documented.

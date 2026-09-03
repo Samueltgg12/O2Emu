@@ -30,10 +30,10 @@
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
       "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788452328275,
-      "auto": "spec",
+      "pinnedAt": 1788452952753,
+      "auto": "recent-edit",
       "role": "spec",
-      "expiresAt": 1788455928275
+      "expiresAt": 1788456552753
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -219,5 +219,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788452889308
+  "updatedAt": 1788452952753
 }
