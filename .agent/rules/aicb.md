@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-03T21:56:08.500Z","hash":"sha256:a72c71c363f4954c3ef3aa7f7e1d986874e6647bf5071a4d55f3b2b84cae9b7a"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-03T22:06:08.487Z","hash":"sha256:de90e95232b539e9a562241ea2146ca719da2a0f0d483d788b521341ba65449b"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,12 +32,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
-- `emu/src/memory/crime.cpp` _(auto:recent-edit)_
-- `emu/src/memory/mre.cpp` _(auto:recent-edit)_
-- `emu/src/devices/device.cpp` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_pci.cpp` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
@@ -56,6 +51,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/include/o2emu/devices/uart.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/ps2.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/rtc.h` _(auto:recent-edit)_
+- `emu/include/o2emu/graphics/microprocessor.h` _(auto:recent-edit)_
+- `emu/include/o2emu/graphics/ice.h` _(auto:recent-edit)_
+- `emu/include/o2emu/graphics/display_engine.h` _(auto:recent-edit)_
+- `emu/include/o2emu/graphics/framebuffer.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
