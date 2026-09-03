@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".windsurfrules","generatedAt":"2026-09-03T19:08:58.637Z","hash":"sha256:1d4ba1b685f869b7e0cf6b1a2f62a575c348559eb3755eb79da870800093dda7"} -->
+<!-- AICB:BEGIN {"version":1,"target":".windsurfrules","generatedAt":"2026-09-03T19:13:58.626Z","hash":"sha256:c02ae630b0cc812f470e0ad6d0498f3d8b24d1e2f2709177a1ba6913e5b03a5c"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -33,7 +33,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `docs/register-maps.md` _(auto:recent-edit)_
 - `docs/io.md` _(auto:recent-edit)_
-- `docs/cpu-memory.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
 - `docs/graphics.md` _(auto:recent-edit)_
 
