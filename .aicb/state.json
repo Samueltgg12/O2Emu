@@ -28,11 +28,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788451873896,
+      "pinnedAt": 1788452328275,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788455928275
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -205,18 +206,18 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/sources.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788450515873,
+      "pinnedAt": 1788452741528,
       "auto": "recent-edit",
-      "expiresAt": 1788454115873
+      "expiresAt": 1788456341528
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/docs/phase1-checklist.md",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788450464344,
+      "pinnedAt": 1788452889308,
       "auto": "recent-edit",
-      "expiresAt": 1788454064344
+      "expiresAt": 1788456489308
     }
   ],
   "skills": [],
-  "updatedAt": 1788451873896
+  "updatedAt": 1788452889308
 }

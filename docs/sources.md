@@ -53,9 +53,37 @@ for the O2.
 - `forums.sgi.sh` thread 1508 — O2 PROM / firmware discussion.
 - Hackaday / Adafruit / LavX articles — O2 CPU upgrade and PROM work.
 
+## SGI proprietary ASIC specifications
+
+Collected under [`docs/manuals-specs/`](manuals-specs/) — these are the actual
+SGI "PROPRIETARY and CONFIDENTIAL" ASIC specs for the O2 (Moosehead), the most
+authoritative hardware references in the project:
+
+- **`o2-CRIME-spec.pdf`** (+ `.md`) — CRIME ASIC spec (6/2/97): CPU interface,
+  memory controller, interrupt controller, timers, error handling.
+- **`o2-MACE-spec.pdf`** (+ `.md`) — MACE ASIC spec: video input/output
+  channels, filtering, colorspace conversion, DMA engines, PIO/DMA register
+  interfaces.
+- **`o2-GBE-spec.pdf`** (+ `.md`) — GBE ASIC spec rev 1.1 (7/18/96, Liston /
+  Ahlgrim / Nielsen / Izadi): graphics back end — 140 MHz dot clock, 4608-entry
+  colormap, 256-entry gamma map, hardware cursor, DID-based pixel mode control,
+  overlay/normal stream mixing, video timing controller, I2C/DDC, flat panel.
+- **`o2-VICE-spec.pdf`** — VICE (Video Image Compression Engine = the "ICE"
+  ASIC) spec. **This closes the long-standing ICE register-map gap.**
+- **`o2-hardware-reference-guide.pdf`** (+ `.md`) — O2 hardware reference.
+- **`o2-workstation-hardware-guide.pdf`** — O2 workstation hardware guide.
+- **`o2-tech-report.pdf`** — O2 technical report (system architecture).
+- **`o2-digital-video-option-installation-guide.pdf`** (+ `.md`) — O2 digital
+  video option installation.
+- **`o2-pci-digital-audio-board-installation-guide.pdf`** — PCI digital audio
+  board installation.
+
 ## Datasheets & hardware references
 
 Collected under [`docs/datasheets/`](datasheets/):
+
+- **O2 digital video option** — `datasheets/o2/o2-digital-video-option-datasheet.pdf`
+  (+ `.md`).
 
 - **NEC VR5000/VR10000 Instruction User's Manual** — `datasheets/CPU/r5000 and
   r10000/DSA-446416.pdf` (+ `.md`). NEC doc U12754EJ1V0UMJ1 (Aug 2000). Full
@@ -106,8 +134,9 @@ Collected under [`docs/datasheets/`](datasheets/):
     patterns for 16/64 Mbit SDRAM configurations
   - `forums.irixnet.org thread-4794` — 128 MiB/stick DIMM reverse-engineering
   - JEDEC 239-pin SDRAM DIMM spec (O2-specific reference still to collect)
-- **SGI O2** — SGI hardware documentation (owner's manual, field service; to
-  collect or verify)
+- **SGI O2** — SGI hardware documentation collected under
+  [`docs/manuals-specs/`](manuals-specs/) (hardware reference guide, workstation
+  hardware guide, tech report, option installation guides)
 
 > SPD status: no local O2-specific SPD address, EEPROM layout, or PROM DIMM
 > probe sequence has been verified. The PROM I2C code found so far is used for
@@ -171,11 +200,15 @@ Collected under [`docs/datasheets/`](datasheets/):
 
 ## TODO / Open questions
 
-- [ ] Full ICE register map (no authoritative header located yet)
-- [x] CRIME/MRE/Display/GBE register maps (`definitions.h`, Linux `gbe.h`)
-- [ ] Cross-check the GBE map against leaked IRIX `crmGfxState.c`
+- [ ] Extract the ICE/VICE register map from `manuals-specs/o2-VICE-spec.pdf`
+      (spec collected; register map not yet transcribed into `docs/`)
+- [x] CRIME/MRE/Display/GBE register maps (`definitions.h`, Linux `gbe.h`,
+      plus the SGI CRIME/GBE ASIC specs in `manuals-specs/`)
+- [ ] Cross-check the GBE map against leaked IRIX `crmGfxState.c` and the
+      GBE ASIC spec
 - [x] PROM-level MACE Ethernet/audio register observations (`firmware.S`)
-- [ ] Complete mavb audio register details and codec semantics
+- [ ] Complete mavb audio register details and codec semantics (cross-check
+      MACE spec + AD1843 datasheet)
 - [ ] DIMM SPD address, EEPROM layout, and probe behavior
 - [ ] Search IRIX source for ASIC drivers lacking open-source coverage
       (ICE, Ethernet packet engine, mavb, and codec) in `irix/kern/io/`

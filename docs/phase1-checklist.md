@@ -11,13 +11,17 @@ in this phase.
 - [x] CRIME memory controller and interrupt registers
 - [x] PROM-visible MRE/RE/DE/MTE registers
 - [x] GBE / Display Engine register map
-- [ ] ICE register map (ICE = VICE in IRIX; only interrupt/error registers
-      known — no authoritative VICE header located)
+- [ ] ICE register map (VICE ASIC spec collected at
+      `docs/manuals-specs/o2-VICE-spec.pdf`; register map not yet transcribed)
 - [x] PROM-level MACE Ethernet register observations
 - [x] PROM-level MACE audio ring and codec register observations
-- [x] AD1843 codec register map (IRIX `ad1843.h`)
-- [x] AIC-7880 SCSI references (IRIX `adp78.h`/`adp78.c`, Linux `aic7xxx/`)
+- [x] AD1843 codec register map (IRIX `ad1843.h` + datasheet in
+      `docs/datasheets/ad1843/`)
+- [x] AIC-7880 SCSI references (IRIX `adp78.h`/`adp78.c`, Linux `aic7xxx/`;
+      no public datasheet exists — Adaptec ASIC docs were NDA-only)
 - [x] SDRAM/DIMM bank registers and PROM probing code (CRIME bank control)
+- [x] SGI ASIC specs collected: CRIME, MACE, GBE, VICE
+      (`docs/manuals-specs/`)
 - [ ] Complete MACE Ethernet packet and descriptor semantics
 - [ ] Complete MACE audio codec and `mavb` semantics
 - [ ] DIMM SPD address, EEPROM layout, and probing behavior
