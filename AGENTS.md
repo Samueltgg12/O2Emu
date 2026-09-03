@@ -82,7 +82,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Ask the user before writing emulator code. This is a research phase; premature
 implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T16:57:14.292Z","hash":"sha256:120760695442f0452cec355f9f17df7fe06941ec633b1b5e8f486776a6a5c513"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T17:40:33.226Z","hash":"sha256:112c449b8304de92109babbf923dacbef0a14f399eaaab12ed2bc32e06cce6d8"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -115,8 +115,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `docs/sources.md` _(auto:recent-edit)_
-- `docs/phase1-checklist.md` _(auto:recent-edit)_
 - `docs/register-maps.md` _(auto:recent-edit)_
 
 ## How to use this handoff

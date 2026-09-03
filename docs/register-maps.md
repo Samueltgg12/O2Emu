@@ -425,10 +425,145 @@ PERR_RETRY_ADDR_VALID       0x00010000
 
 ### Ethernet (offset `MACE_ENET = 0x280000`)
 
+The MACE Ethernet block is a **MAC110** core. Register map from NetBSD
+`sys/arch/sgimips/mace/if_mecreg.h` and Linux `drivers/net/ethernet/sgi/meth.h`.
+All registers are 64-bit, accessed at 8-byte offsets from `0x1f280000`.
+
+| Offset | Register | Description |
+|--------|----------|-------------|
+| `0x00` | `MEC_MAC_CONTROL` | MAC control |
+| `0x08` | `MEC_INT_STATUS` | Interrupt status |
+| `0x10` | `MEC_DMA_CONTROL` | DMA control |
+| `0x18` | `MEC_TIMER` | Timer |
+| `0x20` | `MEC_TX_ALIAS` | TX alias (int enable) |
+| `0x28` | `MEC_RX_ALIAS` | RX alias (int enable/threshold) |
+| `0x30` | `MEC_TX_RING_PTR` | TX ring read/write pointers |
+| `0x38` | `MEC_TX_RING_PTR_ALIAS` | TX ring pointer alias |
+| `0x40` | `MEC_RX_FIFO` | RX FIFO status |
+| `0x48` | `MEC_RX_FIFO_ALIAS1` | RX FIFO alias 1 |
+| `0x50` | `MEC_RX_FIFO_ALIAS2` | RX FIFO alias 2 |
+| `0x58` | `MEC_TX_VECTOR` / `MEC_IRQ_VECTOR` | TX/IRQ vector |
+| `0x60` | `MEC_PHY_DATA` | PHY data (MDIO) |
+| `0x68` | `MEC_PHY_ADDRESS` | PHY address |
+| `0x70` | `MEC_PHY_READ_INITIATE` | PHY read initiate |
+| `0x78` | `MEC_PHY_BACKOFF` | PHY backoff |
+| `0xa0` | `MEC_STATION` | Station address (48-bit MAC) |
+| `0xa8` | `MEC_STATION_ALT` | Station address (alternate) |
+| `0xb0` | `MEC_MULTICAST` | Multicast hash filter |
+| `0xb8` | `MEC_TX_RING_BASE` | TX ring base address |
+| `0xc0` | `MEC_TX_PKT1_CMD_1` | TX packet 1 command |
+| `0xc8`–`0xd8` | `MEC_TX_PKT1_BUFFER_1..3` | TX packet 1 concat buffers |
+| `0xe0` | `MEC_TX_PKT2_CMD_1` | TX packet 2 command |
+| `0xe8`–`0xf8` | `MEC_TX_PKT2_BUFFER_1..3` | TX packet 2 concat buffers |
+| `0x100` | `MEC_MCL_RX_FIFO` | MCL RX FIFO |
+
+#### MAC_CONTROL bits
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 0 | `CORE_RESET` | Global reset to MAC110 core |
+| 1 | `FULL_DUPLEX` | 1 = full duplex |
+| 2 | `INT_LOOPBACK` | 1 = loop internal MII bus |
+| 3 | `SPEED_SELECT` | 0 = 10 Mbit, 1 = 100 Mbit |
+| 4 | `MII_SELECT` | 0 = MII, 1 = SIA (collision report in loopback) |
+| 6:5 | `FILTER` | 00 = station only, 01 = +matched multicast, 10 = +all multicast, 11 = promiscuous |
+| 7 | `LINK_FAILURE` | 1 = PHY link-failure detection enabled |
+| 14:8 | `IPGT` | Inter-packet gap (80 ns/unit @100M, 800 ns @10M) |
+| 21:15 | `IPGR1` | IPGR1 |
+| 28:22 | `IPGR2` | IPGR2 |
+| 31:29 | `REVISION` | 000 = initial, 001 = improved TX concatenation |
+
+Default IPG: `IPGT=21, IPGR1=17, IPGR2=11` (`MEC_MAC_IPG_DEFAULT`).
+
+#### INT_STATUS bits (write-1-to-clear)
+
+| Bit | Field | Description |
+|-----|-------|-------------|
+| 0 | `TX_EMPTY` | TX ring buffer empty |
+| 1 | `TX_PACKET_SENT` | TX packet with INT request sent |
+| 2 | `TX_LINK_FAIL` | PHY link failure |
+| 3 | `TX_MEM_ERROR` | DMA memory error (fatal) |
+| 4 | `TX_ABORT` | TX aborted (fatal) |
+| 5 | `RX_THRESHOLD` | RX threshold condition |
+| 6 | `RX_FIFO_UNDERFLOW` | RX FIFO empty, packet dropped |
+| 7 | `RX_DMA_UNDERFLOW` | RX DMA FIFO overflow (fatal) |
+| 12:8 | `RX_MCL_FIFO_ALIAS` | RX MCL FIFO read pointer alias |
+| 24:16 | `TX_RING_BUFFER_ALIAS` | TX ring read pointer alias |
+| 29:25 | `RX_SEQUENCE_NUMBER` | RX sequence number of queue head |
+| 30 | `MCAST_HASH_OUTPUT` | Multicast hash select latch |
+
+#### DMA_CONTROL bits
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 0 | `TX_INT_ENABLE` | TX buffer-empty interrupt enable |
+| 1 | `TX_DMA_ENABLE` | TX DMA enable |
+| 3:2 | `TX_RING_SIZE` | TX ring size |
+| 8:4 | `RX_INT_THRESHOLD` | RX FIFO depth threshold for interrupt |
+| 9 | `RX_INT_ENABLE` | RX packet interrupt enable |
+| 10 | `RX_RUNT` | Receive runt packets |
+| 11 | `RX_PACKET_GATHER` | RX packet gather |
+| 14:12 | `RX_DMA_OFFSET` | RX packet data start offset |
+| 15 | `RX_DMA_ENABLE` | RX DMA enable |
+
+#### TX packet format (128 bytes per ring entry)
+
+Each TX ring entry is a 128-byte `tx_packet`: an 8-byte header followed by
+either up to 3 concatenation buffer pointers or up to 120 bytes of inline data.
+
+Header (`tx_packet_hdr`):
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 63:28 | pad | zero |
+| 27 | `cat_ptr3_valid` | Concat pointer 3 valid |
+| 26 | `cat_ptr2_valid` | Concat pointer 2 valid |
+| 25 | `cat_ptr1_valid` | Concat pointer 1 valid |
+| 24 | `tx_int_flag` | Generate TX interrupt when sent |
+| 23 | `term_dma_flag` | Terminate DMA on abort |
+| 22:16 | `data_offset` | Start offset in ring data block |
+| 15:0 | `data_len` | Data length in bytes − 1 |
+
+Concat pointer (`tx_cat_ptr`): bits 63:48 pad, 47:32 length−1, 60:32 start
+address (physical), 2:0 pad.
+
+On DMA completion the header is overwritten with a TX status vector:
+bit 63 = sent, bits 44:36 flags, 35:32 collision retry count, 15:0 length.
+TX status flags: `SUCCESS` bit 23, `TOOLONG` 24, `UNDERRUN` 25, `EXCCOLL` 26,
+`DEFER` 27, `LATECOLL` 28.
+
+#### RX status vector (per received packet)
+
+| Bits | Field | Description |
+|------|-------|-------------|
+| 63 | valid | Entry valid |
+| 47:32 | `ip_chk_sum` | IP checksum |
+| 31:27 | `seq_num` | Sequence number |
+| 26 | `mac_addr_match` | Station address match |
+| 25 | `mcast_addr_match` | Multicast filter match |
+| 24 | `carrier_event_seen` | Carrier event |
+| 23 | `bad_packet` | Bad packet |
+| 22 | `long_event_seen` | Long event |
+| 21 | `invalid_preamble` | Invalid preamble |
+| 20 | `broadcast` | Broadcast packet |
+| 19 | `multicast` | Multicast packet |
+| 18 | `crc_error` | CRC error |
+| 16 | `rx_code_violation` | RX code violation |
+| 15:0 | `rx_len` | Received length |
+
+RX ring: 16 entries, each a 4 KB buffer (`METH_RX_BUFF_SIZE`), 34-byte header
+(status vector + 3 quad pad + 2-byte zero pad) before packet data.
+
+#### PHY (MDIO) interface
+
+- `MEC_PHY_DATA` (`0x60`): bit 16 = busy, bits 15:0 = data
+- `MEC_PHY_ADDRESS` (`0x68`): bits 4:0 = register, bits 9:5 = device
+- `MEC_PHY_READ_INITIATE` (`0x70`): write to start read
+- Known PHYs: Quality QS6612X (`0x0181441`), ICS1889/ICS1890, National DP83840
+
 The PROM exercises the MAC control register at offset `0x04` (low 32-bit lane),
 receive FIFO at `0x104`, and byte registers for write pointer (`0x45`), read
-pointer (`0x46`), and depth (`0x47`). Complete packet descriptor and transmit
-register map not present in PROM.
+pointer (`0x46`), and depth (`0x47`).
 
 ### Audio (offset `MACE_AUDIO = 0x300000`)
 
@@ -444,8 +579,53 @@ register map not present in PROM.
 | `MACE_AUDIO_RING_DEPTH_CHAN(x)` | `0x20*x + 0x18` | Ring depth |
 
 PROM uses channel 2: ring control `0x40`, read ptr `0x48`, write ptr `0x50`,
-depth `0x58`. Ring control and write pointer are 64-bit. Codec bit definitions
-not in PROM.
+depth `0x58`. Ring control and write pointer are 64-bit.
+
+#### AD1843 codec registers (IRIX `irix/kern/sys/ad1843.h`, AD1843 datasheet)
+
+The MACE audio block talks to an Analog Devices AD1843 SoundComm codec over a
+serial control interface. The AD1843 has 32 16-bit registers:
+
+| Reg | Name | Function |
+|-----|------|----------|
+| 0 | `AD1843_STAT_REV` | Status/revision (bit 15 `INIT`, bit 14 `PDNO`, bits 3:0 rev) |
+| 1 | `AD1843_CH_STAT` | Channel status (DAC1/2 underrun, ADC L/R overrange) |
+| 2 | `AD1843_ADC_SRC_GATTN` | ADC source select + gain/attenuation (L/R) |
+| 3 | `AD1843_DAC2_MIX` | DAC2 to main mix (mute + gain L/R) |
+| 4 | `AD1843_AUX1_MIX` | AUX1 to mix (mute + gain L/R) |
+| 5 | `AD1843_AUX2_MIX` | AUX2 to mix (mute + gain L/R) |
+| 6 | `AD1843_AUX3_MIX` | AUX3 to DAC1 mix |
+| 7 | `AD1843_MIC_MIX` | MIC to mix |
+| 8 | `AD1843_MONO_MIX_MISC` | Mono in select + misc mixing |
+| 9 | `AD1843_DAC1_GATTN` | DAC1 gain/attenuation |
+| 10 | `AD1843_DAC2_GATTN` | DAC2 gain/attenuation |
+| 11 | `AD1843_DAC1_DIGITAL_ATTEN` | DAC1 digital-only attenuation |
+| 12 | `AD1843_DAC2_DIGITAL_ATTEN` | DAC2 digital-only attenuation |
+| 13 | `AD1843_ADC_DAC1_MIX` | ADC→DAC1 digital mixing |
+| 14 | `AD1843_ADC_DAC2_MIX` | ADC→DAC2 digital mixing |
+| 15 | `AD1843_CLK_SRC_SELECT` | Rate clock source select |
+| 16 | `AD1843_CLK_GEN1_MODE` | Clock gen 1 mode (video lock, PLL gain) |
+| 17 | `AD1843_CLK_GEN1_RATE` | Clock gen 1 sample rate |
+| 18 | `AD1843_CLK_GEN1_PHASE` | Clock gen 1 phase shift |
+| 19 | `AD1843_CLK_GEN2_MODE` | Clock gen 2 mode |
+| 20 | `AD1843_CLK_GEN2_RATE` | Clock gen 2 sample rate |
+| 21 | `AD1843_CLK_GEN2_PHASE` | Clock gen 2 phase shift |
+| 22 | `AD1843_CLK_GEN3_MODE` | Clock gen 3 mode |
+| 23 | `AD1843_CLK_GEN3_RATE` | Clock gen 3 sample rate |
+| 24 | `AD1843_CLK_GEN3_PHASE` | Clock gen 3 phase shift |
+| 25 | `AD1843_FILTER_MODE` | Digital filter mode |
+| 26 | `AD1843_SERIAL` | Serial interface + sample format |
+| 27 | `AD1843_CH_POWERDOWN` | Channel power down |
+| 28 | `AD1843_CONFIG` | Converter power down, clock out enables |
+| 29–31 | reserved | — |
+
+ADC source select (reg 2): line, mic, aux1, aux2, aux3, mono, DAC1, DAC2 per
+channel; mic gain enable bits 12 (L) and 4 (R); 4-bit gain/attenuation fields.
+Mixer registers use bit 15/7 = mute, 5-bit gain fields (`01000` = 0.0 dB).
+
+DMA channel assignments (IRIX `ad1843.h`): ADC = channel 0, DAC1 = channel 1,
+DAC2 = channel 2. PROM audio test (`hello_tune.c`) uses these with the MACE
+audio ring registers above.
 
 ### I2C (offset `MACE_I2C = 0x330000`)
 
@@ -726,8 +906,10 @@ RTC at `0x1f3a0000`. Byte-addressed with `RTC_REG(x) = x << 8`:
 ## TODO / Open questions
 
 - [x] ICE/VICE ASIC register map (VICE Design Spec 099-0123-003)
-- [ ] Complete Ethernet packet/descriptor register map
-- [ ] Complete mavb codec and audio register semantics
+- [x] Complete Ethernet packet/descriptor register map (NetBSD `if_mecreg.h`,
+      Linux `meth.h`)
+- [x] Complete mavb codec and audio register semantics (IRIX `ad1843.h` +
+      AD1843 datasheet)
 - [ ] DIMM SPD address, EEPROM layout, and probe behavior
 - [ ] PCI configuration space details for O2-specific devices
 | `vt_vblank` | `0x10010` | vertical blank |
