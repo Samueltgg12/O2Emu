@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-03T19:13:58.622Z","hash":"sha256:c02ae630b0cc812f470e0ad6d0498f3d8b24d1e2f2709177a1ba6913e5b03a5c"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-03T19:46:58.817Z","hash":"sha256:1028a3816bb54f4c34474b7ed2888712f2137183e4d2fd5222bcdc2ce9e8016b"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,10 +31,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `docs/register-maps.md` _(auto:recent-edit)_
-- `docs/io.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
-- `docs/graphics.md` _(auto:recent-edit)_
+- `CMakeLists.txt` _(auto:recent-edit)_
+- `emu/CMakeLists.txt` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
