@@ -5,17 +5,18 @@ this repository.
 
 ## What this project is
 
-An emulator for the **SGI O2 (IP32)** workstation, currently in **Phase 1:
-Research**. There is **no emulator code yet** — the current deliverable is
-accurate, well-sourced hardware documentation under `docs/`.
+An emulator for the **SGI O2 (IP32)** workstation. **Phase 1 (Research) is
+complete** — every hardware subsystem has a sourced register map under
+`docs/`. We are now in **Phase 2 (Emulation)**: a full-fledged C++ emulator,
+as accurate to the hardware as the documentation and specs allow.
 
 ## Phases
 
-- **Phase 1 — Research (current):** exhaustive, well-sourced hardware
-  documentation under `docs/`. No emulator code.
-- **Phase 2 — Emulation:** a full-fledged **C++** emulator, as accurate to the
-  hardware as the documentation and specs allow. CPU, memory, graphics, I/O,
-  and the PROM firmware, with a GUI.
+- **Phase 1 — Research ✅ complete:** exhaustive, well-sourced hardware
+  documentation under `docs/`. All register maps sourced.
+- **Phase 2 — Emulation (current):** a full-fledged **C++** emulator, as
+  accurate to the hardware as the documentation and specs allow. CPU, memory,
+  graphics, I/O, and the PROM firmware, with a GUI.
 - **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
   improvements, cross-platform support, and full-featured emulator features.
 
@@ -25,8 +26,9 @@ See `ROADMAP.md` for the full plan.
 
 1. **Start with `docs/README.md`** for the documentation index, then read the
    relevant module doc before answering or editing.
-2. **Documentation is the product.** In this phase, "implementing" means
-   writing/updating docs, not writing emulator code.
+2. **Accuracy is the product.** Every emulated register, address, and
+   behavior must be backed by a source in `docs/` (ASIC spec, driver, header,
+   or leaked IRIX source).
 3. **Every hardware claim must be sourced.** Cite the Linux/NetBSD driver,
    header, or leaked IRIX source that backs each register, address, or
    behavior. Never invent register names or addresses.
@@ -80,7 +82,7 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 Do **not** write emulator code without explicit user approval. This is a
 research phase; premature implementation is out of scope.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T18:23:51.095Z","hash":"sha256:7739e08bd7aa1562ac0b996af835e77e30060f48613cac4b077f1a152634eadf"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T19:08:58.624Z","hash":"sha256:1d4ba1b685f869b7e0cf6b1a2f62a575c348559eb3755eb79da870800093dda7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,7 +119,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `docs/io.md` _(auto:recent-edit)_
 - `docs/cpu-memory.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
-- `docs/sources.md` _(auto:recent-edit)_
 - `docs/graphics.md` _(auto:recent-edit)_
 
 ## How to use this handoff

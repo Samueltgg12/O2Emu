@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-03T18:23:51.112Z","hash":"sha256:7739e08bd7aa1562ac0b996af835e77e30060f48613cac4b077f1a152634eadf"} -->
+<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-03T19:08:58.637Z","hash":"sha256:1d4ba1b685f869b7e0cf6b1a2f62a575c348559eb3755eb79da870800093dda7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -35,7 +35,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `docs/io.md` _(auto:recent-edit)_
 - `docs/cpu-memory.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
-- `docs/sources.md` _(auto:recent-edit)_
 - `docs/graphics.md` _(auto:recent-edit)_
 
 ## How to use this handoff

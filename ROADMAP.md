@@ -12,7 +12,7 @@ A from-scratch emulator for the **SGI O2 (IP32 / "Moosehead")** workstation.
 
 ---
 
-## Phase 1 — Research (current)
+## Phase 1 — Research ✅ COMPLETE
 
 **Goal:** exhaustive, well-sourced hardware documentation. **No emulator code.**
 
@@ -34,13 +34,21 @@ A from-scratch emulator for the **SGI O2 (IP32 / "Moosehead")** workstation.
       MACE/codec: IRIX `mace.h` + `ad1843.h` (AD1843 codec); ICE/MRE: IRIX
       `crime.h`/`crimereg.h` (ICE = VICE, interrupt 31); SDRAM/DIMM: CRIME
       `CRM_MEM_BANK_CTRL` + IP32 PROM `post1mem.c`/`memory.c` bank probing
-- [ ] Fill remaining open questions in each doc (transcribe the ICE/VICE
-      register map from `docs/manuals-specs/o2-VICE-spec.pdf`, complete MACE
-      Ethernet/audio semantics against the MACE spec, DIMM SPD, and per-mode
-      display timing against the GBE spec)
+- [x] Fill remaining open questions in each doc:
+      - ICE/VICE register map transcribed from the VICE Design Spec
+        (`docs/manuals-specs/o2-VICE-spec.md`) into `docs/register-maps.md`
+      - MACE Ethernet semantics from NetBSD `if_mecreg.h` + Linux `meth.h`
+      - MACE audio/AD1843 codec semantics from Linux `sgio2audio.c` +
+        IRIX `ad1843.h` + AD1843 datasheet
+      - DIMM SPD resolved: no SPD — PROM probes banks (`post1mem.c`)
+      - Per-mode GBE timing tables from IRIX `crm_timing.h` into
+        `docs/graphics.md`
+      - PCI config-space details from Linux `ops-mace.c`/`pci-ip32.c`/
+        `fixup-ip32.c`
 
-**Exit criteria:** every hardware subsystem has a sourced register map and the
-memory map is fully documented.
+**Exit criteria met:** every hardware subsystem has a sourced register map and
+the memory map is fully documented. See `docs/phase1-checklist.md` — all items
+checked.
 
 > **Key asset:** the decompiled PROM (`samples/decompiled-prom/`) is the
 > authoritative reference for the address map and register maps. It also gives
@@ -49,7 +57,7 @@ memory map is fully documented.
 
 ---
 
-## Phase 2 — Emulation (C++)
+## Phase 2 — Emulation (C++) (current)
 
 **Goal:** a full-fledged C++ emulator, as accurate to the hardware as the
 documentation and specs allow. **This is the core implementation phase.**

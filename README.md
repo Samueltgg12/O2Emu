@@ -3,12 +3,12 @@
 
 
 A from-scratch emulator for the **SGI O2** workstation (codename **"Moosehead"**,
-SGI IP32). This project is currently in **Phase 1: Research** — gathering
-hardware specs, register-level details, and firmware documentation before any
-implementation begins.
+SGI IP32). **Phase 1 (Research) is complete** — every hardware subsystem has a
+sourced register map. The project is now entering **Phase 2: Emulation** (C++).
 
-> **Status: Research phase.** No emulator code yet. All findings are documented
-> in [`docs/`](docs/).
+> **Status: Phase 1 complete, Phase 2 starting.** All hardware documentation is
+> in [`docs/`](docs/), including the SGI ASIC specs (CRIME/MACE/GBE/VICE) under
+> [`docs/manuals-specs/`](docs/manuals-specs/).
 
 ## What is the SGI O2?
 
@@ -36,11 +36,11 @@ single pool of main memory over a 133 MHz 144-bit bus (128-bit data + ECC).
 This project is developed in three phases. See
 [ROADMAP.md](ROADMAP.md) for the full plan.
 
-- **Phase 1 — Research (current):** exhaustive, well-sourced hardware
-  documentation under [`docs/`](docs/). No emulator code.
-- **Phase 2 — Emulation:** a full-fledged C++ emulator, as accurate to the
-  hardware as the documentation and specs allow. CPU, memory, graphics, I/O,
-  and the PROM firmware, with a GUI.
+- **Phase 1 — Research ✅ complete:** exhaustive, well-sourced hardware
+  documentation under [`docs/`](docs/). All register maps sourced.
+- **Phase 2 — Emulation (current):** a full-fledged C++ emulator, as accurate
+  to the hardware as the documentation and specs allow. CPU, memory, graphics,
+  I/O, and the PROM firmware, with a GUI.
 - **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
   improvements, cross-platform support, and full-featured emulator features.
 

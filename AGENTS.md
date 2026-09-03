@@ -4,18 +4,18 @@ Guidance for AI coding agents working in this repository.
 
 ## Project overview
 
-This is a **research-first** project: an emulator for the SGI O2 (IP32)
-workstation. We are currently in **Phase 1 (Research)** — there is **no
-emulator code yet**. The deliverable right now is accurate, well-sourced
-hardware documentation.
+This is an emulator for the SGI O2 (IP32) workstation. **Phase 1 (Research)
+is complete** — every hardware subsystem has a sourced register map under
+`docs/`. We are now in **Phase 2 (Emulation)**: a full-fledged C++ emulator,
+as accurate to the hardware as the documentation and specs allow.
 
 ## Phases
 
-- **Phase 1 — Research (current):** exhaustive, well-sourced hardware
-  documentation under `docs/`. No emulator code.
-- **Phase 2 — Emulation:** a full-fledged **C++** emulator, as accurate to the
-  hardware as the documentation and specs allow. CPU, memory, graphics, I/O,
-  and the PROM firmware, with a GUI.
+- **Phase 1 — Research ✅ complete:** exhaustive, well-sourced hardware
+  documentation under `docs/`. All register maps sourced.
+- **Phase 2 — Emulation (current):** a full-fledged **C++** emulator, as
+  accurate to the hardware as the documentation and specs allow. CPU, memory,
+  graphics, I/O, and the PROM firmware, with a GUI.
 - **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
   improvements, cross-platform support, and full-featured emulator features.
 
@@ -42,11 +42,11 @@ samples/             # firmware images
 
 ## Conventions
 
-- **Documentation is the product.** When asked to "implement" something, in
-  this phase that means writing/updating docs under `docs/`, not writing code.
+- **Accuracy is the product.** Every emulated register, address, and behavior
+  must be backed by a source in `docs/` (ASIC spec, driver, header, or leaked
+  IRIX source). Do not invent register names, addresses, or behaviors.
 - **Every hardware claim must be sourced.** Cite the driver file, header, or
-  leaked IRIX source that backs each register/address/behavior. Do not invent
-  register names or addresses.
+  leaked IRIX source that backs each register/address/behavior.
 - **Keep docs concise.** A few lines per section, not essays. Use tables for
   register maps and address layouts.
 - **Update the index.** When adding a doc, add a row to `docs/README.md`.
@@ -79,10 +79,12 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 
 ## When in doubt
 
-Ask the user before writing emulator code. This is a research phase; premature
-implementation is out of scope.
+Phase 1 (research) is complete; Phase 2 (emulation) is in scope. When hardware
+behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
+then the driver sources. Ask the user before deviating from documented
+behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T18:23:51.096Z","hash":"sha256:7739e08bd7aa1562ac0b996af835e77e30060f48613cac4b077f1a152634eadf"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-03T19:08:58.625Z","hash":"sha256:1d4ba1b685f869b7e0cf6b1a2f62a575c348559eb3755eb79da870800093dda7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -119,7 +121,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `docs/io.md` _(auto:recent-edit)_
 - `docs/cpu-memory.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
-- `docs/sources.md` _(auto:recent-edit)_
 - `docs/graphics.md` _(auto:recent-edit)_
 
 ## How to use this handoff
