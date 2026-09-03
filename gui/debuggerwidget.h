@@ -14,7 +14,7 @@
 #include <memory>
 
 namespace o2emu::cpu {
-class CPU;
+class ICpu;
 }
 namespace o2emu::memory {
 class Memory;
@@ -27,7 +27,7 @@ public:
   DebuggerWidget(QWidget *parent = nullptr);
   ~DebuggerWidget() override;
 
-  void setCPU(o2emu::cpu::CPU *cpu);
+  void setCPU(o2emu::cpu::ICpu *cpu);
   void setMemory(o2emu::memory::Memory *memory);
   void clear();
   void update();
@@ -47,7 +47,7 @@ private:
   void updateDisassembly();
   void updateBreakpoints();
 
-  o2emu::cpu::CPU *cpu_ = nullptr;
+  o2emu::cpu::ICpu *cpu_ = nullptr;
   o2emu::memory::Memory *memory_ = nullptr;
 
   // UI components

@@ -60,7 +60,7 @@ void FramebufferWidget::setMemory(o2emu::memory::Memory *memory) {
   memory_ = memory;
 }
 
-void FramebufferWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
+void FramebufferWidget::setCPU(o2emu::cpu::ICpu *cpu) { cpu_ = cpu; }
 
 void FramebufferWidget::clear() {
   makeCurrent();
