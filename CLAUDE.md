@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T20:41:31.285Z","hash":"sha256:062039ef2b664bc247b160fb8826ea15b1dc74b00e4061389ab1064454e48959"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T20:56:07.650Z","hash":"sha256:3d8773e567efa5fa1942ab502925fae620de113498b16280e630b116f1d5f7c7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,12 +117,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `CMakeLists.txt` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/include/o2emu/o2emu.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cpu.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cp0.h` _(auto:recent-edit)_
-- `emu/include/o2emu/memory/memory.h` _(auto:recent-edit)_
 - `emu/include/o2emu/memory/address_space.h` _(auto:recent-edit)_
 - `emu/include/o2emu/memory/crime.h` _(auto:recent-edit)_
 - `emu/include/o2emu/memory/mre.h` _(auto:recent-edit)_
@@ -150,6 +145,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/debuggerwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
 - `gui/resources.qrc` _(auto:recent-edit)_
+- `emu/src/cpu/cpu.cpp` _(auto:recent-edit)_
+- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
+- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
+- `emu/src/memory/address_space.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
