@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-02T23:05:13.859Z","hash":"sha256:5719dad2a84c8412988cd79cdc32ff0b55bae185ad1e435c6adbd5869f50b7e9"} -->
+<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-03T00:32:35.667Z","hash":"sha256:e2980e067c3fc879c38ee4f113ba199645d54362c84c9a97bb1c5b3690d74686"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -15,7 +15,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `.windsurfrules` _(spec)_ — Windsurf rules
 - `.github/copilot-instructions.md` _(spec)_ — GitHub Copilot instructions (.github)
 - `AGENT.md` _(spec)_ — Multi-agent instructions
-- `samples/irixsrc/IRIX-6.5.17-Src/README.md` _(spec)_ — Project README (samples/irixsrc/IRIX-6.5.17-Src)
 - `samples/irixsrc/irix-657m-src/README.md` _(spec)_ — Project README (samples/irixsrc/irix-657m-src)
 - `samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1)
 - `samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc)
@@ -31,9 +30,18 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `samples/linux-7.2.3/tools/sched_ext/README.md` _(spec)_ — Project README (samples/linux-7.2.3/tools/sched_ext)
 
 ## Working files (current focus)
-- `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `.gitignore` _(auto:recent-edit)_
-- `samples/linux/README` _(auto:dwell)_
+- `emu/src/cpu_interface.cpp` _(auto:recent-edit)_
+- `emu/tests/CMakeLists.txt` _(auto:recent-edit)_
+- `emu/tests/test_cpu_interface.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/bus.h` _(auto:recent-edit)_
+- `emu/include/o2emu/logging.h` _(auto:recent-edit)_
+- `emu/src/memory_map.cpp` _(auto:recent-edit)_
+- `emu/src/main.cpp` _(auto:recent-edit)_
+- `emu/src/vice.cpp` _(auto:recent-edit)_
+- `emu/src/crime.cpp` _(auto:recent-edit)_
+- `emu/src/mace.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu_interface.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory_map.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

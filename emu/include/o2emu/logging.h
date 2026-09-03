@@ -2,10 +2,12 @@
 
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <string>
 #include <string_view>
 
 namespace o2emu {
@@ -79,7 +81,6 @@ public:
            std::string_view file = "", int line = 0,
            std::string_view func = "");
 
-  // Convenience macros
   template <typename... Args>
   void trace(LogCategory cat, std::string_view fmt, Args &&...args) {
     log(LogLevel::Trace, cat, format(fmt, std::forward<Args>(args)...));
@@ -110,6 +111,14 @@ public:
     log(LogLevel::Fatal, cat, format(fmt, std::forward<Args>(args)...));
   }
 
+  template <typename... Args>
+  static std::string format(std::string_view fmt, Args &&...args) {
+    char buffer[1024];
+    int len = std::snprintf(buffer, sizeof(buffer), fmt.data(),
+                            std::forward<Args>(args)...);
+    return std::string(buffer, len > 0 ? len : 0);
+  }
+
 private:
   Logger() = default;
   ~Logger() {
@@ -123,21 +132,11 @@ private:
   std::ofstream file_;
   std::function<uint64_t()> cycle_counter_;
   std::mutex mutex_;
-
-  template <typename... Args>
-  static std::string format(std::string_view fmt, Args &&...args) {
-    // Simple format implementation - in production use fmtlib or std::format
-    // (C++20)
-    char buffer[1024];
-    int len = std::snprintf(buffer, sizeof(buffer), fmt.data(),
-                            std::forward<Args>(args)...);
-    return std::string(buffer, len > 0 ? len : 0);
-  }
 };
 
 // Macro for easy logging with file/line/function
 #define O2E_LOG(logger, level, cat, fmt, ...)                                  \
-  logger.log(o2emu::LogLevel::level, o2emu::LogCategory::cat,                  \
+  logger.log(o2emu::LogLevel::level, cat,                                      \
              o2emu::Logger::format(fmt, ##__VA_ARGS__), __FILE__, __LINE__,    \
              __func__)
 

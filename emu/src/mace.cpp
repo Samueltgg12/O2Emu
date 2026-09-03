@@ -105,13 +105,13 @@ void MaceDevice::write_reg(uint32_t offset, uint32_t val) {
     // PCI config space write - no-op for unimplemented
     break;
   }
-  case static_cast<uint32_t>(
-      MaceReg::ISA_BASE + static_cast<uint32_t>(MaceIsaReg::FLASH_NIC_REG)): {
+  case static_cast<uint32_t>(MaceReg::ISA_BASE) +
+      static_cast<uint32_t>(MaceIsaReg::FLASH_NIC_REG): {
     regs_[idx] = val & 0x7f;
     break;
   }
-  case static_cast<uint32_t>(MaceReg::ISA_BASE +
-                             static_cast<uint32_t>(MaceIsaReg::INT_MSK_REG)): {
+  case static_cast<uint32_t>(MaceReg::ISA_BASE) +
+      static_cast<uint32_t>(MaceIsaReg::INT_MSK_REG): {
     regs_[idx] = val & 0xffff;
     break;
   }

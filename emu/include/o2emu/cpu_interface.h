@@ -7,8 +7,32 @@
 
 namespace o2emu {
 
+enum class CpuModel : uint8_t { R5000 = 0, R10000 = 1, R12000 = 2 };
+
+struct TlbEntry {
+  bool valid = false;
+  uint32_t asid = 0;
+  uint32_t vpn = 0;
+  uint32_t page_mask = 0;
+  uint32_t pfn = 0;
+};
+
 // MIPS CPU state
 struct CpuState {
+  // CPU identity
+  CpuModel model = CpuModel::R5000;
+
+  struct CacheState {
+    bool icache_enabled = true;
+    bool dcache_enabled = true;
+    uint32_t icache_linesize = 32;
+    uint32_t dcache_linesize = 32;
+    uint32_t icache_size = 32 * 1024;
+    uint32_t dcache_size = 32 * 1024;
+  } cache;
+
+  std::array<TlbEntry, 64> tlb{};
+
   // General purpose registers
   std::array<uint32_t, 32> gpr{};
   uint32_t hi = 0;
@@ -110,6 +134,14 @@ public:
   virtual void add_watchpoint(uint32_t addr, uint32_t size, bool read,
                               bool write) = 0;
   virtual void remove_watchpoint(uint32_t addr) = 0;
+
+  // MMU / TLB
+  virtual void add_tlb_entry(const TlbEntry &entry) = 0;
+  virtual void remove_tlb_entry(uint32_t vpn) = 0;
+  virtual uint32_t translate_address(uint32_t vaddr) const = 0;
+
+  // Cache model
+  virtual void set_cache_mode(bool icache_enabled, bool dcache_enabled) = 0;
 
   // Disassembly
   virtual std::string disassemble(uint32_t pc, uint32_t instr) const = 0;

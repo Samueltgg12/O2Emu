@@ -115,12 +115,12 @@ void CrimeDevice::write_cpu_reg(uint32_t offset, uint32_t val) {
   case CrimeCpuReg::CONTROL: {
     // Handle reset bits
     if (val & CRM_CTRL_HARD_RESET) {
-      O2E_WARN(CRIME, "HARD_RESET requested");
+      O2E_WARN(LogCategory::CRIME, "HARD_RESET requested");
       reset();
       return;
     }
     if (val & CRM_CTRL_SOFT_RESET) {
-      O2E_WARN(CRIME, "SOFT_RESET requested");
+      O2E_WARN(LogCategory::CRIME, "SOFT_RESET requested");
       // Soft reset - clear some state but not all
     }
     cpu_regs_[idx] = val;

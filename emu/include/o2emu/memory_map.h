@@ -2,8 +2,10 @@
 
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 namespace o2emu {
 
@@ -484,6 +486,8 @@ class MemoryMap {
 public:
   virtual ~MemoryMap() = default;
 
+  virtual uint32_t size() const = 0;
+
   // Read/write 8/16/32/64-bit
   virtual uint8_t read8(uint32_t addr) = 0;
   virtual uint16_t read16(uint32_t addr) = 0;
@@ -494,6 +498,8 @@ public:
   virtual void write16(uint32_t addr, uint16_t val) = 0;
   virtual void write32(uint32_t addr, uint32_t val) = 0;
   virtual void write64(uint32_t addr, uint64_t val) = 0;
+
+  virtual void reset() = 0;
 
   // Device access helpers
   uint32_t crime_cpu_read(uint32_t offset) {
@@ -522,5 +528,32 @@ public:
     write32(PHYS_MACE_BASE + offset, val);
   }
 };
+
+class LinearMemoryMap final : public MemoryMap {
+public:
+  explicit LinearMemoryMap(uint32_t size);
+
+  uint32_t size() const override;
+  uint8_t read8(uint32_t addr) override;
+  uint16_t read16(uint32_t addr) override;
+  uint32_t read32(uint32_t addr) override;
+  uint64_t read64(uint32_t addr) override;
+
+  void write8(uint32_t addr, uint8_t val) override;
+  void write16(uint32_t addr, uint16_t val) override;
+  void write32(uint32_t addr, uint32_t val) override;
+  void write64(uint32_t addr, uint64_t val) override;
+
+  void reset() override;
+
+  void load_bytes(const std::vector<uint8_t> &bytes, uint32_t offset = 0);
+
+private:
+  uint32_t size_;
+  std::vector<uint8_t> data_;
+};
+
+std::unique_ptr<MemoryMap> create_ram_map(uint32_t size);
+std::unique_ptr<MemoryMap> create_prom_map(uint32_t size);
 
 } // namespace o2emu

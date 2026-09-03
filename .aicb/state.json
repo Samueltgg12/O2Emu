@@ -20,20 +20,21 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788386665126,
+      "pinnedAt": 1788395032608,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788398632608
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
       "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788389925501,
+      "pinnedAt": 1788396140570,
       "auto": "spec",
       "role": "spec",
-      "expiresAt": 1788393525501
+      "expiresAt": 1788399740570
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
@@ -85,20 +86,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/AGENT.md",
-      "pinnedBy": "auto:spec",
-      "note": "Multi-agent instructions",
-      "pinnedAt": 1788386665126,
-      "auto": "spec",
-      "role": "spec"
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/samples/irixsrc/IRIX-6.5.17-Src/README.md",
       "pinnedBy": "auto:editor",
-      "note": "Project README (samples/irixsrc/IRIX-6.5.17-Src)",
-      "pinnedAt": 1788388854342,
+      "note": "Multi-agent instructions",
+      "pinnedAt": 1788395029905,
       "auto": "spec",
       "role": "spec",
-      "expiresAt": 1788392454342
+      "expiresAt": 1788398629905
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/samples/irixsrc/irix-657m-src/README.md",
@@ -107,13 +100,6 @@
       "pinnedAt": 1788386665126,
       "auto": "spec",
       "role": "spec"
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/emu/CMakeLists.txt",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788387975395,
-      "auto": "recent-edit",
-      "expiresAt": 1788391575395
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1/README.md",
@@ -212,20 +198,90 @@
       "role": "spec"
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/.gitignore",
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu_interface.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788389667673,
+      "pinnedAt": 1788396051815,
       "auto": "recent-edit",
-      "expiresAt": 1788393267673
+      "expiresAt": 1788399651814
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/README",
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/tests/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788389168305,
-      "auto": "dwell",
-      "expiresAt": 1788392768305
+      "pinnedAt": 1788394155548,
+      "auto": "recent-edit",
+      "expiresAt": 1788397755548
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/tests/test_cpu_interface.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788396127327,
+      "auto": "recent-edit",
+      "expiresAt": 1788399727327
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/bus.h",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394220702,
+      "auto": "recent-edit",
+      "expiresAt": 1788397820702
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/logging.h",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394332458,
+      "auto": "recent-edit",
+      "expiresAt": 1788397932458
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/memory_map.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788395548615,
+      "auto": "recent-edit",
+      "expiresAt": 1788399148615
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/main.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394744871,
+      "auto": "recent-edit",
+      "expiresAt": 1788398344871
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/vice.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394728336,
+      "auto": "recent-edit",
+      "expiresAt": 1788398328336
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/crime.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394406644,
+      "auto": "recent-edit",
+      "expiresAt": 1788398006644
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/mace.cpp",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788394749837,
+      "auto": "recent-edit",
+      "expiresAt": 1788398349837
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/cpu_interface.h",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788395820207,
+      "auto": "recent-edit",
+      "expiresAt": 1788399420207
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/memory_map.h",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788395625442,
+      "auto": "recent-edit",
+      "expiresAt": 1788399225442
     }
   ],
   "skills": [],
-  "updatedAt": 1788390310930
+  "updatedAt": 1788396140570
 }

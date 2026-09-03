@@ -4,6 +4,10 @@
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 
 namespace o2emu {
 
