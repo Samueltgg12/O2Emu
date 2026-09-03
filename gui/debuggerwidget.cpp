@@ -370,7 +370,7 @@ void DebuggerWidget::updateDisassembly() {
   bool ok;
   u32 addr = disasm_addr_edit_->text().toUInt(&ok, 0);
   if (!ok)
-    addr = cpu_->state().pc;
+    addr = cpu_->pc();
 
   disasm_table_->setRowCount(0);
 
@@ -401,7 +401,7 @@ void DebuggerWidget::updateDisassembly() {
     disasm_table_->setItem(row, 2, mnemonic_item);
 
     // Highlight current PC
-    if (addr == cpu_->state().pc) {
+    if (addr == cpu_->pc()) {
       for (int c = 0; c < 3; ++c) {
         disasm_table_->item(row, c)->setBackground(QBrush(Qt::yellow));
       }
