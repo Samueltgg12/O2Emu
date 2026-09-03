@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra -Wpedantic -Werror -O3 -DNDEBUG -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/o2emu.dir/link.d CMakeFiles/o2emu.dir/src/main.cpp.o -o o2emu  libo2emu_core.a

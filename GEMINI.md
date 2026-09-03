@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T02:03:31.786Z","hash":"sha256:df7bd6c1e5c4ca402232570084b0f1d38fc6344bf602faff99320c9ac5a9e3ee"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T02:30:46.775Z","hash":"sha256:741f7dece00d40a99ca8ef3ca76077c05df010f03602663a388e282e86e74450"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -8,7 +8,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `README.md` _(spec)_ — Project README
 - `AGENTS.md` _(spec)_ — Multi-agent instructions
 - `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
-- `CLAUDE.md` _(spec)_ — Claude Code instructions
 - `.agent/AGENTS.md` _(spec)_ — Multi-agent instructions (.agent)
 - `GEMINI.md` _(spec)_ — Gemini instructions
 - `.cursorrules` _(spec)_ — Cursor rules
@@ -29,6 +28,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `samples/linux/rust/pin-init/README.md` _(spec)_ — Project README (samples/linux/rust/pin-init)
 - `samples/irixsrc/IRIX-6.5.17-Src/README.md` _(spec)_ — Project README (samples/irixsrc/IRIX-6.5.17-Src)
 - `samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0)
+- `CLAUDE.md` _(spec)_ — Claude Code instructions
 
 ## Working files (current focus)
 - `.vscode/settings.json` _(auto:recent-edit)_

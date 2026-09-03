@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/samuel/SGI Projects/O2Emu/emu/build/cmake_install.cmake",
-		"/home/samuel/SGI Projects/O2Emu/emu/build/tests/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
