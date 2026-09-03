@@ -10,7 +10,7 @@
 #include <o2emu/o2emu.h>
 
 namespace o2emu::cpu {
-class CPU;
+class ICpu;
 }
 
 namespace o2emu::memory {
@@ -21,7 +21,7 @@ namespace o2emu::firmware {
 
 class PROMLoader {
 public:
-  PROMLoader(cpu::CPU &cpu, memory::Memory &memory);
+  PROMLoader(cpu::ICpu &cpu, memory::Memory &memory);
   ~PROMLoader() = default;
 
   // Load and prepare PROM for execution
@@ -43,7 +43,7 @@ public:
   PROM &prom() { return prom_; }
 
 private:
-  cpu::CPU &cpu_;
+  cpu::ICpu &cpu_;
   memory::Memory &memory_;
   PROM prom_;
 
