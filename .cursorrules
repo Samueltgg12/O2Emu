@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-03T21:02:07.742Z","hash":"sha256:da2ac421a79333269590f8c2e7c0a7867d480f46f4a618dc1e852dc3b71efc5d"} -->
+<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-03T21:23:07.722Z","hash":"sha256:4bd662b0bceb585d7e4d241a8bf50b5cde2739c124935eed44b32824f2aa421d"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,18 +32,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/include/o2emu/memory/address_space.h` _(auto:recent-edit)_
-- `emu/include/o2emu/memory/crime.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_audio.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
-- `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
-- `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
-- `emu/include/o2emu/system/bus.h` _(auto:recent-edit)_
 - `emu/include/o2emu/system/interrupts.h` _(auto:recent-edit)_
 - `emu/include/o2emu/system/timer.h` _(auto:recent-edit)_
 - `emu/include/o2emu/logging/logger.h` _(auto:recent-edit)_
@@ -65,6 +53,20 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/memory/crime.cpp` _(auto:recent-edit)_
 - `emu/src/memory/mre.cpp` _(auto:recent-edit)_
 - `emu/src/devices/device.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_pci.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
+- `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
+- `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
+- `emu/src/devices/uart.cpp` _(auto:recent-edit)_
+- `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
+- `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
+- `emu/src/system/bus.cpp` _(auto:recent-edit)_
+- `emu/src/system/interrupts.cpp` _(auto:recent-edit)_
+- `emu/src/system/timer.cpp` _(auto:recent-edit)_
+- `emu/src/logging/logger.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
