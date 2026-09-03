@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-03T00:48:47.882Z","hash":"sha256:8029d7333f854a194af1af64d93c0cd7ce3324d5bed1d37550e0d7c1d5641a51"} -->
+<!-- AICB:BEGIN {"version":1,"target":".cursorrules","generatedAt":"2026-09-03T02:03:31.787Z","hash":"sha256:df7bd6c1e5c4ca402232570084b0f1d38fc6344bf602faff99320c9ac5a9e3ee"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,19 +31,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0)
 
 ## Working files (current focus)
-- `emu/src/cpu_interface.cpp` _(auto:recent-edit)_
-- `emu/tests/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/tests/test_cpu_interface.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/bus.h` _(auto:recent-edit)_
-- `emu/include/o2emu/logging.h` _(auto:recent-edit)_
-- `emu/src/memory_map.cpp` _(auto:recent-edit)_
-- `emu/src/main.cpp` _(auto:recent-edit)_
-- `emu/src/vice.cpp` _(auto:recent-edit)_
-- `emu/src/crime.cpp` _(auto:recent-edit)_
-- `emu/src/mace.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/include/o2emu/memory_map.h` _(auto:recent-edit)_
-- `.aicb/state.json` _(auto:recent-edit)_
 - `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
