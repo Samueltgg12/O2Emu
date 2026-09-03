@@ -78,15 +78,18 @@ Collected under [`docs/datasheets/`](datasheets/):
   - Linux driver: `samples/linux/drivers/scsi/aic7xxx/` — `aic7xxx.h`,
     `aic7xxx.reg` (full register definitions), `aic7xxx.seq` (sequencer
     microcode source), `aic7xxx_pci.c` (PCI attachment incl. AIC-7880)
-- **MACE audio codec (AD1843)** — Analog Devices AD1843 codec, register map
-  collected from IRIX:
+- **MACE audio codec (AD1843)** — Analog Devices AD1843 SoundComm codec:
+  - **Datasheet collected**: `docs/datasheets/ad1843/AD1843.pdf` (+ `.md`),
+    `AD1843JST.pdf` / `AD1843JS.PDF` (package variants). Serial-port 16-bit
+    SoundComm codec: stereo ΣΔ ADCs, quad ΣΔ DACs, 13 analog inputs / 7
+    outputs, programmable sample rates 4–54 kHz, FIFO-buffered serial
+    interface.
   - `irix/kern/sys/ad1843.h` — **authoritative AD1843 register map** (codec
     registers, DMA channel assignments: ADC=0, DAC1=1, DAC2=2)
   - `stand/arcs/IP32prom/fw/hello_tune.c` — PROM audio test with AD1843
     reset defaults and MACE DMA ring usage
   - `irix/kern/sys/mace.h` — MACE audio ring/codec control registers
     (`MACE_AUDIO_*` at `MACE_PERIF + 0x00000`)
-  - AD1843 datasheet itself still to collect.
 - **ICE / MRE** — graphics ASIC references:
   - ICE is the **VICE** (Video Image Compression Engine) in IRIX; interrupt 31
     (`VICE_CPU_INTR` in `irix/kern/sys/IP32.h`), error address register

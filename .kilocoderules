@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocoderules","generatedAt":"2026-09-03T15:27:45.562Z","hash":"sha256:d4a8bbd91a5bda2a45cfad85e7df1e70c9806c70a14d5f7758cd13d37e50f184"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocoderules","generatedAt":"2026-09-03T16:09:13.197Z","hash":"sha256:989c0ed60e0df7c38f4000d12bbc1c2dcbbb5b88eb0bee3b247afc538ae681f7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,7 +31,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `.vscode/settings.json` _(auto:recent-edit)_
 - `docs/sources.md` _(auto:recent-edit)_
 - `docs/phase1-checklist.md` _(auto:recent-edit)_
 
