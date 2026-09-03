@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T22:59:09.404Z","hash":"sha256:be18cf5ef355220a6269fd93ba7e7b92f0920164a2200d7e3b13b733e43b803a"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-03T23:07:50.567Z","hash":"sha256:cbe409ed690b07ee0c17d2cda83b6cf72fe4ebe8c23e361da5bde7c4ecb08372"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -50,6 +50,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/resources.qrc` _(auto:recent-edit)_
 - `gui/main.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
+- `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
