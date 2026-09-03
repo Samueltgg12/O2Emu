@@ -28,6 +28,10 @@ add_library(o2emu_core STATIC
     src/system/interrupts.cpp
     src/system/timer.cpp
     src/logging/logger.cpp
+    src/graphics/microprocessor.cpp
+    src/graphics/ice.cpp
+    src/graphics/display_engine.cpp
+    src/graphics/framebuffer.cpp
 )
 
 target_include_directories(o2emu_core PUBLIC

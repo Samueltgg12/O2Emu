@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T22:06:08.478Z","hash":"sha256:de90e95232b539e9a562241ea2146ca719da2a0f0d483d788b521341ba65449b"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-03T22:14:24.621Z","hash":"sha256:86bf68907d29339d5e40b210fc85a6f05e3abb69843b3753228ff57f9903d734"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -118,11 +118,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
-- `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
 - `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
 - `emu/src/devices/uart.cpp` _(auto:recent-edit)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
@@ -141,6 +136,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/include/o2emu/graphics/ice.h` _(auto:recent-edit)_
 - `emu/include/o2emu/graphics/display_engine.h` _(auto:recent-edit)_
 - `emu/include/o2emu/graphics/framebuffer.h` _(auto:recent-edit)_
+- `emu/src/graphics/microprocessor.cpp` _(auto:recent-edit)_
+- `emu/src/graphics/ice.cpp` _(auto:recent-edit)_
+- `emu/src/graphics/display_engine.cpp` _(auto:recent-edit)_
+- `emu/src/graphics/framebuffer.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
