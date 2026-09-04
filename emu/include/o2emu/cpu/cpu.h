@@ -35,6 +35,9 @@ enum class ExceptionCode : uint32_t {
             // ... more as needed
 };
 
+// Alias for backward compatibility with code using Exception:: prefix
+using Exception = ExceptionCode;
+
 enum class InterruptLine : uint32_t {
   INT0 = 0,
   INT1 = 1,
@@ -54,9 +57,6 @@ struct CPUState {
   u32 pc = 0; // Program counter
   u32 hi = 0; // Multiply/divide high
   u32 lo = 0; // Multiply/divide low
-
-  // CP0 (coprocessor 0) - handled by CP0 class
-  CP0 *cp0 = nullptr;
 
   // FPU registers (32 single-precision or 16 double-precision)
   union {
@@ -101,10 +101,10 @@ public:
   using WriteCallback = std::function<void(u32 addr, u32 size, u32 value)>;
 
   void set_memory_read_callback(ReadCallback cb) {
-    mem_read_cb_ = std::move(cb);
+    memory_read_cb_ = std::move(cb);
   }
   void set_memory_write_callback(WriteCallback cb) {
-    mem_write_cb_ = std::move(cb);
+    memory_write_cb_ = std::move(cb);
   }
 
   // Interrupt handling
@@ -116,32 +116,72 @@ public:
   const CPUState &state() const { return state_; }
 
   // CP0 access
-  CP0 &cp0() { return *state_.cp0; }
-  const CP0 &cp0() const { return *state_.cp0; }
+  CP0 &cp0() { return cp0_; }
+  const CP0 &cp0() const { return cp0_; }
 
   // Debugging
   void dump_registers() const;
   void disassemble(u32 addr, char *buffer, size_t size) const;
 
   // Cycle counting
-  u64 cycles_executed() const { return cycles_; }
+  u64 cycles_executed() const { return cycles_executed_; }
 
 private:
   CPUState state_;
-  u64 cycles_ = 0;
+  u64 cycles_executed_ = 0;
+  bool stop_requested_ = false;
 
-  ReadCallback mem_read_cb_;
-  WriteCallback mem_write_cb_;
+  ReadCallback memory_read_cb_;
+  WriteCallback memory_write_cb_;
 
-  // Instruction fetch/decode/execute
-  u32 fetch_instruction(u32 pc);
-  void decode_and_execute(u32 instr);
+  CP0 cp0_;
+
+  // Instruction fetch
+  u32 fetch32(u32 addr);
+  u16 fetch16(u32 addr);
+  u8 fetch8(u32 addr);
+
+  // Instruction decode/execute
+  void execute(u32 instr);
+  void execute_special(u32 instr);
+  void execute_regimm(u32 instr);
+  void execute_j(u32 instr);
+  void execute_jal(u32 instr);
+  void execute_branch(u32 instr);
+  void execute_blez(u32 instr);
+  void execute_bgtz(u32 instr);
+  void execute_addi(u32 instr);
+  void execute_addiu(u32 instr);
+  void execute_slti(u32 instr, bool signed_cmp);
+  void execute_andi(u32 instr);
+  void execute_ori(u32 instr);
+  void execute_xori(u32 instr);
+  void execute_lui(u32 instr);
+  void execute_cop0(u32 instr);
+  void execute_cop1(u32 instr);
+  void execute_fpu_arith(u32 instr);
+
+  // Load/store instructions
+  void execute_load(u32 instr, u32 size, bool sign_extend);
+  void execute_store(u32 instr, u32 size);
+  void execute_lwl(u32 instr);
+  void execute_lwr(u32 instr);
+  void execute_swl(u32 instr);
+  void execute_swr(u32 instr);
+  void execute_ll(u32 instr);
+  void execute_sc(u32 instr);
+  void execute_lwc1(u32 instr);
+  void execute_swc1(u32 instr);
+
+  // Exception handling
+  void exception(ExceptionCode code);
+  void check_interrupts();
 
   // Memory access helpers
   u32 read_memory(u32 addr, u32 size);
   void write_memory(u32 addr, u32 size, u32 value);
 
-  // Exception handling
+  // Exception handling (legacy names)
   void handle_exception(ExceptionCode code, u32 bad_addr = 0);
   void return_from_exception();
 };

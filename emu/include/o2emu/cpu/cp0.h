@@ -10,6 +10,8 @@
 
 namespace o2emu::cpu {
 
+struct CPUState; // Forward declaration
+
 class CP0 {
 public:
   CP0();
@@ -142,6 +144,17 @@ public:
 
   // Reset
   void reset();
+
+  // Exception handling
+  void exception(Exception exc, CPUState &cpu_state);
+  void rfe();
+  void eret(CPUState &cpu_state);
+
+  // Interrupt handling
+  u32 pending_interrupts() const;
+
+  // Debugging
+  void dump() const;
 
 private:
   std::array<u32, 32> regs_ = {};
