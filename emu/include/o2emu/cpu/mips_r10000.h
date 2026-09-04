@@ -152,6 +152,9 @@ struct InstructionEntry {
   bool mem_sign_extend = false;
   bool is_store = false;
   uint32_t store_data = 0;
+  uint8_t shamt = 0;
+  bool actually_taken = false;
+  uint32_t actual_target = 0;
 };
 
 // Reorder buffer entry

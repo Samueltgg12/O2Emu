@@ -189,7 +189,7 @@ void MIPSR10000::tick(uint64_t cycles) {
     // Check for timer interrupt
     if (cp0_[static_cast<int>(R10K_CP0_Register::COUNT)] >=
         cp0_[static_cast<int>(R10K_CP0_Register::COMPARE)]) {
-      cp0_[static_cast<int>(R10K_CP0_Register::CAUSE)] |= CAUSE_TI;
+      cp0_[static_cast<int>(R10K_CP0_Register::CAUSE)] |= MIPSR5000::CAUSE_TI;
     }
 
     // Check for performance counter interrupts
@@ -213,7 +213,7 @@ void MIPSR10000::fetch_stage() {
     if (branch_delay_) {
       // Fetch from next_pc_ (delay slot)
       uint32_t instr = 0;
-      if (!bus_->read(next_pc_, 4, instr)) {
+      if (!bus_->read8(next_pc_, 4, instr)) {
         // Bus error - will be handled in decode
         InstructionEntry entry;
         entry.pc = next_pc_;
@@ -229,7 +229,7 @@ void MIPSR10000::fetch_stage() {
     } else {
       // Normal fetch from pc_
       uint32_t instr = 0;
-      if (!bus_->read(pc_, 4, instr)) {
+      if (!bus_->read8(pc_, 4, instr)) {
         InstructionEntry entry;
         entry.pc = pc_;
         entry.instr = 0;
@@ -751,14 +751,14 @@ void MIPSR10000::handle_exception(uint32_t exc_code, uint32_t bad_addr) {
   uint32_t cause = cp0_[static_cast<int>(R10K_CP0_Register::CAUSE)];
 
   // Set exception code
-  cause = (cause & ~CAUSE_EXCMASK) | (exc_code << 2);
+  cause = (cause & ~MIPSR5000::CAUSE_EXCMASK) | (exc_code << 2);
 
   // Set BD bit if in delay slot
   if (branch_delay_) {
-    cause |= CAUSE_BD;
+    cause |= MIPSR5000::CAUSE_BD;
     cp0_[static_cast<int>(R10K_CP0_Register::EPC)] = pc_ - 4;
   } else {
-    cause &= ~CAUSE_BD;
+    cause &= ~MIPSR5000::CAUSE_BD;
     cp0_[static_cast<int>(R10K_CP0_Register::EPC)] = pc_;
   }
 
@@ -1247,19 +1247,19 @@ bool MIPSR10000::access_memory(InstructionEntry &entry) {
   if (entry.is_store) {
     switch (entry.mem_size) {
     case 1:
-      return bus_->write(entry.mem_addr, 1, entry.store_data & 0xFF);
+      return bus_->write8(entry.mem_addr, 1, entry.store_data & 0xFF);
     case 2:
-      return bus_->write(entry.mem_addr, 2, entry.store_data & 0xFFFF);
+      return bus_->write8(entry.mem_addr, 2, entry.store_data & 0xFFFF);
     case 4:
-      return bus_->write(entry.mem_addr, 4, entry.store_data);
+      return bus_->write8(entry.mem_addr, 4, entry.store_data);
     case 8:
-      return bus_->write(entry.mem_addr, 4, entry.store_data & 0xFFFFFFFF) &&
-             bus_->write(entry.mem_addr + 4, 4,
-                         (entry.store_data >> 32) & 0xFFFFFFFF);
+      return bus_->write8(entry.mem_addr, 4, entry.store_data & 0xFFFFFFFF) &&
+             bus_->write8(entry.mem_addr + 4, 4,
+                          (static_cast<uint64_t>(entry.store_data) >> 32));
     }
   } else {
     uint32_t data = 0;
-    bool result = bus_->read(entry.mem_addr, entry.mem_size, data);
+    bool result = bus_->read8(entry.mem_addr, entry.mem_size, data);
     entry.result = data;
     return result;
   }
