@@ -3,6 +3,7 @@
  * @brief MIPS CPU core implementation
  */
 
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <o2emu/cpu/cp0.h>
@@ -18,11 +19,29 @@ CPU::CPU() : mem_read_cb_(nullptr), mem_write_cb_(nullptr), cycles_(0) {
 CPU::~CPU() = default;
 
 void CPU::reset(u32 pc) {
-  std::memset(&state_, 0, sizeof(CPUState));
+  // Manually initialize CPUState since it has non-trivial members (union with
+  // cp0 pointer)
   state_.pc = pc;
+  state_.delay_slot_pc = 0;
+  state_.in_delay_slot = false;
+  state_.llbit = false;
+  state_.next_pc = pc + 4;
+  for (int i = 0; i < 32; ++i) {
+    state_.gpr[i] = 0;
+  }
   state_.gpr[0] = 0;           // $zero is always 0
   state_.gpr[29] = 0x80000000; // Initial stack pointer (kseg0)
   state_.gpr[28] = 0x80000000; // Global pointer
+  state_.hi = 0;
+  state_.lo = 0;
+  for (int i = 0; i < 32; ++i) {
+    state_.fpr[i] = 0;
+  }
+  state_.fcr0 = 0;
+  state_.fcr31 = 0;
+  // Preserve cp0 pointer if it exists
+  CP0 *cp0_ptr = state_.cp0;
+  state_.cp0 = cp0_ptr;
 
   // Initialize CP0
   if (state_.cp0) {
@@ -38,7 +57,7 @@ void CPU::reset(u32 pc) {
 
   cycles_ = 0;
 
-  O2EMU_LOG_INFO("CPU reset, PC = 0x" << std::hex << pc << std::dec);
+  O2EMU_LOG_INFO_F("CPU reset, PC = 0x%08x", pc);
 }
 
 void CPU::step() {
@@ -93,6 +112,9 @@ u8 CPU::fetch8(u32 addr) {
 }
 
 void CPU::execute(u32 instr) {
+  // Save PC to detect if branch/jump modified it
+  u32 pc_before = state_.pc;
+
   // Decode instruction
   u32 opcode = (instr >> 26) & 0x3F;
 
@@ -242,15 +264,13 @@ void CPU::execute(u32 instr) {
     exception(Exception::RI);
     break;
   default:
-    O2EMU_LOG_WARN("Unknown opcode: 0x" << std::hex << opcode << " at PC 0x"
-                                        << state_.pc << std::dec);
+    O2EMU_LOG_WARN_F("Unknown opcode: 0x%08x at PC 0x%08x", opcode, state_.pc);
     exception(Exception::RI);
     break;
   }
 
   // Advance PC (unless branch/jump modified it)
-  if (state_.pc == state_.pc) { // This is a placeholder - actual PC update
-                                // happens in each instruction
+  if (state_.pc == pc_before) {
     state_.pc += 4;
   }
 }
@@ -405,8 +425,7 @@ void CPU::execute_special(u32 instr) {
     }
     break;
   default:
-    O2EMU_LOG_WARN("Unknown SPECIAL funct: 0x" << std::hex << funct
-                                               << std::dec);
+    O2EMU_LOG_WARN_F("Unknown SPECIAL funct: 0x%02x", funct);
     exception(Exception::RI);
     break;
   }
@@ -446,7 +465,7 @@ void CPU::execute_regimm(u32 instr) {
     }
     break;
   default:
-    O2EMU_LOG_WARN("Unknown REGIMM rt: 0x" << std::hex << rt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown REGIMM rt: 0x%02x", rt);
     exception(Exception::RI);
     break;
   }
@@ -568,13 +587,13 @@ void CPU::execute_cop0(u32 instr) {
   {
     u32 rt = (instr >> 16) & 0x1F;
     u32 rd = (instr >> 11) & 0x1F;
-    state_.gpr[rt] = cp0_.read(rd);
+    state_.gpr[rt] = cp0_.read(static_cast<CP0::Register>(rd));
   } break;
   case 0x04: // MTC0
   {
     u32 rt = (instr >> 16) & 0x1F;
     u32 rd = (instr >> 11) & 0x1F;
-    cp0_.write(rd, state_.gpr[rt]);
+    cp0_.write(static_cast<CP0::Register>(rd), state_.gpr[rt]);
   } break;
   case 0x10: // COP0 ops
   {
@@ -599,13 +618,13 @@ void CPU::execute_cop0(u32 instr) {
       cp0_.eret(state_);
       return; // PC modified
     default:
-      O2EMU_LOG_WARN("Unknown COP0 funct: 0x" << std::hex << funct << std::dec);
+      O2EMU_LOG_WARN_F("Unknown COP0 funct: 0x%02x", funct);
       exception(Exception::RI);
       break;
     }
   } break;
   default:
-    O2EMU_LOG_WARN("Unknown COP0 fmt: 0x" << std::hex << fmt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown COP0 fmt: 0x%02x", fmt);
     exception(Exception::RI);
     break;
   }
@@ -650,7 +669,7 @@ void CPU::execute_cop1(u32 instr) {
     execute_fpu_arith(instr);
     break;
   default:
-    O2EMU_LOG_WARN("Unknown COP1 fmt: 0x" << std::hex << fmt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown COP1 fmt: 0x%02x", fmt);
     exception(Exception::RI);
     break;
   }
@@ -658,7 +677,6 @@ void CPU::execute_cop1(u32 instr) {
 
 // FPU arithmetic
 void CPU::execute_fpu_arith(u32 instr) {
-  u32 fmt = (instr >> 21) & 0x1F;
   u32 ft = (instr >> 16) & 0x1F;
   u32 fs = (instr >> 11) & 0x1F;
   u32 fd = (instr >> 6) & 0x1F;
@@ -729,7 +747,7 @@ void CPU::execute_fpu_arith(u32 instr) {
     // Comparison ops - set condition bit in FCR31
     break;
   default:
-    O2EMU_LOG_WARN("Unknown FPU funct: 0x" << std::hex << funct << std::dec);
+    O2EMU_LOG_WARN_F("Unknown FPU funct: 0x%02x", funct);
     exception(Exception::RI);
     return;
   }
@@ -914,7 +932,7 @@ void CPU::check_interrupts() {
   }
 }
 
-void CPU::disassemble(u32 addr, char *buffer, size_t size) {
+void CPU::disassemble(u32 addr, char *buffer, size_t size) const {
   u32 instr = fetch32(addr);
   u32 opcode = (instr >> 26) & 0x3F;
 
@@ -928,12 +946,11 @@ void CPU::disassemble(u32 addr, char *buffer, size_t size) {
 
 void CPU::dump_registers() const {
   O2EMU_LOG_INFO("=== CPU Registers ===");
-  O2EMU_LOG_INFO("PC: 0x" << std::hex << state_.pc << std::dec);
+  O2EMU_LOG_INFO_F("PC: 0x%08x", state_.pc);
   for (int i = 0; i < 32; ++i) {
-    O2EMU_LOG_INFO("$" << i << ": 0x" << std::hex << state_.gpr[i] << std::dec);
+    O2EMU_LOG_INFO_F("$%d: 0x%08x", i, state_.gpr[i]);
   }
-  O2EMU_LOG_INFO("HI: 0x" << std::hex << state_.hi << " LO: 0x" << state_.lo
-                          << std::dec);
+  O2EMU_LOG_INFO_F("HI: 0x%08x LO: 0x%08x", state_.hi, state_.lo);
   cp0_.dump();
 }
 

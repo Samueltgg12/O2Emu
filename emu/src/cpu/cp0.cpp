@@ -163,8 +163,7 @@ void CP0::exception(Exception exc, CPU::State &cpu_state) {
     cpu_state.pc = 0x80000000 + (exc_code * 0x80);
   }
 
-  O2EMU_LOG_DEBUG("Exception: " << exc_code << ", EPC=0x" << std::hex
-                                << regs_[REG_EPC] << std::dec);
+  O2EMU_LOG_DEBUG_F("Exception: %d, EPC=0x%08x", exc_code, regs_[REG_EPC]);
 }
 
 void CP0::rfe() {
@@ -195,40 +194,33 @@ u32 CP0::pending_interrupts() const {
 }
 
 void CP0::dump() const {
-  O2EMU_LOG_INFO("=== CP0 Registers ===");
-  O2EMU_LOG_INFO("Index:     0x" << std::hex << regs_[REG_INDEX] << std::dec);
-  O2EMU_LOG_INFO("Random:    0x" << std::hex << regs_[REG_RANDOM] << std::dec);
-  O2EMU_LOG_INFO("EntryLo0:  0x" << std::hex << regs_[REG_ENTRYLO0]
-                                 << std::dec);
-  O2EMU_LOG_INFO("EntryLo1:  0x" << std::hex << regs_[REG_ENTRYLO1]
-                                 << std::dec);
-  O2EMU_LOG_INFO("Context:   0x" << std::hex << regs_[REG_CONTEXT] << std::dec);
-  O2EMU_LOG_INFO("PageMask:  0x" << std::hex << regs_[REG_PAGEMASK]
-                                 << std::dec);
-  O2EMU_LOG_INFO("Wired:     0x" << std::hex << regs_[REG_WIRED] << std::dec);
-  O2EMU_LOG_INFO("BadVAddr:  0x" << std::hex << regs_[REG_BADVADDR]
-                                 << std::dec);
-  O2EMU_LOG_INFO("Count:     0x" << std::hex << regs_[REG_COUNT] << std::dec);
-  O2EMU_LOG_INFO("EntryHi:   0x" << std::hex << regs_[REG_ENTRYHI] << std::dec);
-  O2EMU_LOG_INFO("Compare:   0x" << std::hex << regs_[REG_COMPARE] << std::dec);
-  O2EMU_LOG_INFO("Status:    0x" << std::hex << regs_[REG_STATUS] << std::dec);
-  O2EMU_LOG_INFO("Cause:     0x" << std::hex << regs_[REG_CAUSE] << std::dec);
-  O2EMU_LOG_INFO("EPC:       0x" << std::hex << regs_[REG_EPC] << std::dec);
-  O2EMU_LOG_INFO("PRId:      0x" << std::hex << regs_[REG_PRID] << std::dec);
-  O2EMU_LOG_INFO("Config:    0x" << std::hex << regs_[REG_CONFIG] << std::dec);
-  O2EMU_LOG_INFO("LLAddr:    0x" << std::hex << regs_[REG_LLADDR] << std::dec);
-  O2EMU_LOG_INFO("WatchLo:   0x" << std::hex << regs_[REG_WATCHLO] << std::dec);
-  O2EMU_LOG_INFO("WatchHi:   0x" << std::hex << regs_[REG_WATCHHI] << std::dec);
-  O2EMU_LOG_INFO("XContext:  0x" << std::hex << regs_[REG_XCONTEXT]
-                                 << std::dec);
-  O2EMU_LOG_INFO("Parity:    0x" << std::hex << regs_[REG_PARITY] << std::dec);
-  O2EMU_LOG_INFO("CacheErr:  0x" << std::hex << regs_[REG_CACHEERR]
-                                 << std::dec);
-  O2EMU_LOG_INFO("TagLo:     0x" << std::hex << regs_[REG_TAGLO] << std::dec);
-  O2EMU_LOG_INFO("TagHi:     0x" << std::hex << regs_[REG_TAGHI] << std::dec);
-  O2EMU_LOG_INFO("ErrorEPC:  0x" << std::hex << regs_[REG_ERROREPC]
-                                 << std::dec);
-  O2EMU_LOG_INFO("DESAVE:    0x" << std::hex << regs_[REG_DESAVE] << std::dec);
+  O2EMU_LOG_INFO_F("=== CP0 Registers ===");
+  O2EMU_LOG_INFO_F("Index:     0x%08x", regs_[REG_INDEX]);
+  O2EMU_LOG_INFO_F("Random:    0x%08x", regs_[REG_RANDOM]);
+  O2EMU_LOG_INFO_F("EntryLo0:  0x%08x", regs_[REG_ENTRYLO0]);
+  O2EMU_LOG_INFO_F("EntryLo1:  0x%08x", regs_[REG_ENTRYLO1]);
+  O2EMU_LOG_INFO_F("Context:   0x%08x", regs_[REG_CONTEXT]);
+  O2EMU_LOG_INFO_F("PageMask:  0x%08x", regs_[REG_PAGEMASK]);
+  O2EMU_LOG_INFO_F("Wired:     0x%08x", regs_[REG_WIRED]);
+  O2EMU_LOG_INFO_F("BadVAddr:  0x%08x", regs_[REG_BADVADDR]);
+  O2EMU_LOG_INFO_F("Count:     0x%08x", regs_[REG_COUNT]);
+  O2EMU_LOG_INFO_F("EntryHi:   0x%08x", regs_[REG_ENTRYHI]);
+  O2EMU_LOG_INFO_F("Compare:   0x%08x", regs_[REG_COMPARE]);
+  O2EMU_LOG_INFO_F("Status:    0x%08x", regs_[REG_STATUS]);
+  O2EMU_LOG_INFO_F("Cause:     0x%08x", regs_[REG_CAUSE]);
+  O2EMU_LOG_INFO_F("EPC:       0x%08x", regs_[REG_EPC]);
+  O2EMU_LOG_INFO_F("PRId:      0x%08x", regs_[REG_PRID]);
+  O2EMU_LOG_INFO_F("Config:    0x%08x", regs_[REG_CONFIG]);
+  O2EMU_LOG_INFO_F("LLAddr:    0x%08x", regs_[REG_LLADDR]);
+  O2EMU_LOG_INFO_F("WatchLo:   0x%08x", regs_[REG_WATCHLO]);
+  O2EMU_LOG_INFO_F("WatchHi:   0x%08x", regs_[REG_WATCHHI]);
+  O2EMU_LOG_INFO_F("XContext:  0x%08x", regs_[REG_XCONTEXT]);
+  O2EMU_LOG_INFO_F("Parity:    0x%08x", regs_[REG_PARITY]);
+  O2EMU_LOG_INFO_F("CacheErr:  0x%08x", regs_[REG_CACHEERR]);
+  O2EMU_LOG_INFO_F("TagLo:     0x%08x", regs_[REG_TAGLO]);
+  O2EMU_LOG_INFO_F("TagHi:     0x%08x", regs_[REG_TAGHI]);
+  O2EMU_LOG_INFO_F("ErrorEPC:  0x%08x", regs_[REG_ERROREPC]);
+  O2EMU_LOG_INFO_F("DESAVE:    0x%08x", regs_[REG_DESAVE]);
 }
 
 } // namespace o2emu::cpu

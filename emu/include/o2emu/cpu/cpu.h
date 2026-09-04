@@ -147,7 +147,7 @@ private:
   void execute_regimm(u32 instr);
   void execute_j(u32 instr);
   void execute_jal(u32 instr);
-  void execute_branch(u32 instr);
+  void execute_branch(u32 instr, bool eq);
   void execute_blez(u32 instr);
   void execute_bgtz(u32 instr);
   void execute_addi(u32 instr);

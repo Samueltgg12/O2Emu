@@ -244,8 +244,7 @@ void MIPSR5000::execute(u32 instr) {
     // Not implemented
     break;
   default:
-    O2EMU_LOG_WARN("Unknown opcode: 0x" << std::hex << opcode << " at PC=0x"
-                                        << pc_ << std::dec);
+    O2EMU_LOG_WARN_F("Unknown opcode: 0x%x at PC=0x%08x", opcode, pc_);
     exception(EXC_RI, pc_);
     break;
   }
@@ -382,8 +381,7 @@ void MIPSR5000::execute_special(u32 instr) {
       gpr_[rd] = (gpr_[rs] < gpr_[rt]) ? 1 : 0;
     break;
   default:
-    O2EMU_LOG_WARN("Unknown SPECIAL funct: 0x" << std::hex << funct
-                                               << std::dec);
+    O2EMU_LOG_WARN_F("Unknown SPECIAL funct: 0x%x", funct);
     exception(EXC_RI, pc_);
     break;
   }
@@ -412,7 +410,7 @@ void MIPSR5000::execute_regimm(u32 instr) {
     execute_branch(instr, static_cast<i32>(gpr_[rs]) >= 0);
     break;
   default:
-    O2EMU_LOG_WARN("Unknown REGIMM rt: 0x" << std::hex << rt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown REGIMM rt: 0x%x", rt);
     exception(EXC_RI, pc_);
     break;
   }
@@ -557,13 +555,13 @@ void MIPSR5000::execute_cop0(u32 instr) {
       // Not implemented
       break;
     default:
-      O2EMU_LOG_WARN("Unknown COP0 funct: 0x" << std::hex << funct << std::dec);
+      O2EMU_LOG_WARN_F("Unknown COP0 funct: 0x%x", funct);
       exception(EXC_RI, pc_);
       break;
     }
   } break;
   default:
-    O2EMU_LOG_WARN("Unknown COP0 fmt: 0x" << std::hex << fmt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown COP0 fmt: 0x%x", fmt);
     exception(EXC_RI, pc_);
     break;
   }
@@ -591,7 +589,7 @@ void MIPSR5000::execute_cop1(u32 instr) {
     // FPU arithmetic - not fully implemented
     break;
   default:
-    O2EMU_LOG_WARN("Unknown COP1 fmt: 0x" << std::hex << fmt << std::dec);
+    O2EMU_LOG_WARN_F("Unknown COP1 fmt: 0x%x", fmt);
     exception(EXC_RI, pc_);
     break;
   }
