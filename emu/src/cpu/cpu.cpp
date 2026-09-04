@@ -12,7 +12,8 @@
 
 namespace o2emu::cpu {
 
-CPU::CPU() : mem_read_cb_(nullptr), mem_write_cb_(nullptr), cycles_(0) {
+CPU::CPU()
+    : mem_read_cb_(nullptr), mem_write_cb_(nullptr), cycles_(0), cp0_(*this) {
   reset(0);
 }
 
@@ -39,9 +40,8 @@ void CPU::reset(u32 pc) {
   }
   state_.fcr0 = 0;
   state_.fcr31 = 0;
-  // Preserve cp0 pointer if it exists
-  CP0 *cp0_ptr = state_.cp0;
-  state_.cp0 = cp0_ptr;
+  // Set cp0 pointer to our CP0 instance
+  state_.cp0 = &cp0_;
 
   // Initialize CP0
   if (state_.cp0) {
