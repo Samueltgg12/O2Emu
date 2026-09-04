@@ -90,7 +90,7 @@ void CPU::run(u64 cycles) {
 
 void CPU::stop() { stop_requested_ = true; }
 
-u32 CPU::fetch32(u32 addr) {
+u32 CPU::fetch32(u32 addr) const {
   if (memory_read_cb_) {
     return memory_read_cb_(addr, 4);
   }
@@ -174,10 +174,10 @@ void CPU::execute(u32 instr) {
     execute_cop1(instr);
     break;
   case 0x12: // COP2 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x13: // COP3 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x20: // LB
     execute_load(instr, 1, true);
@@ -222,22 +222,22 @@ void CPU::execute(u32 instr) {
     execute_lwc1(instr);
     break;
   case 0x32: // LWC2 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x33: // LWC3 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x34:                  // LLD
-    exception(Exception::RI); // 64-bit only
+    exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x35:                  // LDC1
-    exception(Exception::RI); // 64-bit only
+    exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x36: // LDC2 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x37: // LDC3 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x38: // SC
     execute_sc(instr);
@@ -246,26 +246,26 @@ void CPU::execute(u32 instr) {
     execute_swc1(instr);
     break;
   case 0x3A: // SWC2 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x3B: // SWC3 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x3C:                  // SCD
-    exception(Exception::RI); // 64-bit only
+    exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x3D:                  // SDC1
-    exception(Exception::RI); // 64-bit only
+    exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x3E: // SDC2 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   case 0x3F: // SDC3 (not implemented)
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   default:
     O2EMU_LOG_WARN_F("Unknown opcode: 0x%08x at PC 0x%08x", opcode, state_.pc);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   }
 
@@ -311,10 +311,10 @@ void CPU::execute_special(u32 instr) {
     state_.pc = state_.gpr[rs];
     return;
   case 0x0C: // SYSCALL
-    exception(Exception::SYS);
+    exception(ExceptionCode::SYS);
     break;
   case 0x0D: // BREAK
-    exception(Exception::BP);
+    exception(ExceptionCode::BP);
     break;
   case 0x0F: // SYNC
     // No-op in emulator
@@ -396,37 +396,37 @@ void CPU::execute_special(u32 instr) {
     break;
   case 0x2C: // TGE
     if (static_cast<i32>(state_.gpr[rs]) >= static_cast<i32>(state_.gpr[rt])) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   case 0x2D: // TGEU
     if (state_.gpr[rs] >= state_.gpr[rt]) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   case 0x2E: // TLT
     if (static_cast<i32>(state_.gpr[rs]) < static_cast<i32>(state_.gpr[rt])) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   case 0x2F: // TLTU
     if (state_.gpr[rs] < state_.gpr[rt]) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   case 0x30: // TEQ
     if (state_.gpr[rs] == state_.gpr[rt]) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   case 0x32: // TNE
     if (state_.gpr[rs] != state_.gpr[rt]) {
-      exception(Exception::TR);
+      exception(ExceptionCode::TR);
     }
     break;
   default:
     O2EMU_LOG_WARN_F("Unknown SPECIAL funct: 0x%02x", funct);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   }
 }
@@ -466,7 +466,7 @@ void CPU::execute_regimm(u32 instr) {
     break;
   default:
     O2EMU_LOG_WARN_F("Unknown REGIMM rt: 0x%02x", rt);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   }
 }
@@ -619,13 +619,13 @@ void CPU::execute_cop0(u32 instr) {
       return; // PC modified
     default:
       O2EMU_LOG_WARN_F("Unknown COP0 funct: 0x%02x", funct);
-      exception(Exception::RI);
+      exception(ExceptionCode::RI);
       break;
     }
   } break;
   default:
     O2EMU_LOG_WARN_F("Unknown COP0 fmt: 0x%02x", fmt);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   }
 }
@@ -670,7 +670,7 @@ void CPU::execute_cop1(u32 instr) {
     break;
   default:
     O2EMU_LOG_WARN_F("Unknown COP1 fmt: 0x%02x", fmt);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     break;
   }
 }
@@ -748,7 +748,7 @@ void CPU::execute_fpu_arith(u32 instr) {
     break;
   default:
     O2EMU_LOG_WARN_F("Unknown FPU funct: 0x%02x", funct);
-    exception(Exception::RI);
+    exception(ExceptionCode::RI);
     return;
   }
 
@@ -928,13 +928,12 @@ void CPU::check_interrupts() {
   u32 pending = cp0_.pending_interrupts();
   if (pending && (cp0_.status() & 0x0001) &&
       (cp0_.status() & 0x0004)) { // IE and IM bits
-    exception(Exception::INT);
+    exception(ExceptionCode::INT);
   }
 }
 
 void CPU::disassemble(u32 addr, char *buffer, size_t size) const {
   u32 instr = fetch32(addr);
-  u32 opcode = (instr >> 26) & 0x3F;
 
   std::snprintf(buffer, size, "0x%08X: ", addr);
   char *p = buffer + std::strlen(buffer);

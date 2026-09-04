@@ -146,9 +146,12 @@ public:
   void reset();
 
   // Exception handling
-  void exception(Exception exc, CPUState &cpu_state);
+  void exception(ExceptionCode exc, CPUState &cpu_state);
   void rfe();
   void eret(CPUState &cpu_state);
+
+  // Timer tick
+  void tick(u64 cycles);
 
   // Interrupt handling
   u32 pending_interrupts() const;
