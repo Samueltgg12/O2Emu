@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-04T16:03:08.543Z","hash":"sha256:1aae59c5c1d399c91f3585771f2595964736bdc7638bb620b548c9d793dbaaea"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-04T17:53:29.919Z","hash":"sha256:63742c1fc1651d8a5876d72bd7ee03f080eeca472216cbb5e1f1b1bf23b7ed82"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -119,8 +119,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/src/cpu/cpu.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cp0.h` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu.h` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
