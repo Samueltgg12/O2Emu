@@ -47,6 +47,7 @@ public:
     TAGLO = 28,    // Cache tag low
     TAGHI = 29,    // Cache tag high
     ERROREPC = 30, // Error exception PC
+    DESAVE = 31,   // Debug exception save
   };
 
   // Status register bits
