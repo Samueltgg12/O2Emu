@@ -37,10 +37,11 @@ public:
   virtual void reset() = 0;
 
   // Optional: timer tick for devices that need periodic updates
-  virtual void tick(u64 cycles) {}
+  virtual void tick([[maybe_unused]] u64 cycles) {}
 
   // Optional: interrupt handling
-  virtual void set_interrupt_line(int line, bool asserted) {}
+  virtual void set_interrupt_line([[maybe_unused]] int line,
+                                  [[maybe_unused]] bool asserted) {}
 
 protected:
   std::string name_;

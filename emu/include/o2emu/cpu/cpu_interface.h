@@ -7,38 +7,12 @@
 
 #include <functional>
 #include <memory>
+#include <o2emu/cpu/cpu.h>
 #include <o2emu/o2emu.h>
 
 namespace o2emu::cpu {
 
-enum class ExceptionCode : uint32_t {
-  INT = 0,
-  MOD = 1,
-  TLBL = 2,
-  TLBS = 3,
-  ADEL = 4,
-  ADES = 5,
-  IBE = 6,
-  DBE = 7,
-  SYS = 8,
-  BP = 9,
-  RI = 10,
-  CPU = 11,
-  OV = 12,
-  TR = 13,
-  FPE = 15,
-};
-
-enum class InterruptLine : uint32_t {
-  INT0 = 0,
-  INT1 = 1,
-  INT2 = 2,
-  INT3 = 3,
-  INT4 = 4,
-  INT5 = 5,
-  INT6 = 6,
-  INT7 = 7,
-};
+// ExceptionCode and InterruptLine are defined in cpu.h
 
 enum class CPUType { R5000, R10000, R12000 };
 
