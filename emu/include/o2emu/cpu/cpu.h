@@ -54,15 +54,17 @@ struct CPUState {
   u32 gpr[32] = {}; // $0-$31
 
   // Special registers
-  u32 pc = 0; // Program counter
-  u32 hi = 0; // Multiply/divide high
-  u32 lo = 0; // Multiply/divide low
+  u32 pc = 0;      // Program counter
+  u32 next_pc = 0; // Next PC (for branch delay slots)
+  u32 hi = 0;      // Multiply/divide high
+  u32 lo = 0;      // Multiply/divide low
 
   // FPU registers (32 single-precision or 16 double-precision)
   union {
     float fpr_s[32];
     double fpr_d[16];
     u32 fpr_u[32];
+    u64 fpr[32]; // 64-bit view for double-precision
   };
   u32 fcr0 = 0;  // FPU control/status
   u32 fcr31 = 0; // FPU control/status register
@@ -75,6 +77,9 @@ struct CPUState {
   // Interrupt state
   u32 interrupt_mask = 0;
   u32 interrupt_pending = 0;
+
+  // CP0 reference
+  CP0 *cp0 = nullptr;
 };
 
 class CPU {
@@ -101,10 +106,10 @@ public:
   using WriteCallback = std::function<void(u32 addr, u32 size, u32 value)>;
 
   void set_memory_read_callback(ReadCallback cb) {
-    memory_read_cb_ = std::move(cb);
+    mem_read_cb_ = std::move(cb);
   }
   void set_memory_write_callback(WriteCallback cb) {
-    memory_write_cb_ = std::move(cb);
+    mem_write_cb_ = std::move(cb);
   }
 
   // Interrupt handling
@@ -124,22 +129,22 @@ public:
   void disassemble(u32 addr, char *buffer, size_t size) const;
 
   // Cycle counting
-  u64 cycles_executed() const { return cycles_executed_; }
+  u64 cycles_executed() const { return cycles_; }
 
 private:
   CPUState state_;
-  u64 cycles_executed_ = 0;
+  u64 cycles_ = 0;
   bool stop_requested_ = false;
 
-  ReadCallback memory_read_cb_;
-  WriteCallback memory_write_cb_;
+  ReadCallback mem_read_cb_;
+  WriteCallback mem_write_cb_;
 
   CP0 cp0_;
 
   // Instruction fetch
-  u32 fetch32(u32 addr);
-  u16 fetch16(u32 addr);
-  u8 fetch8(u32 addr);
+  u32 fetch32(u32 addr) const;
+  u16 fetch16(u32 addr) const;
+  u8 fetch8(u32 addr) const;
 
   // Instruction decode/execute
   void execute(u32 instr);
