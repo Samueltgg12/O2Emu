@@ -97,19 +97,25 @@ u32 CPU::fetch32(u32 addr) const {
   return 0;
 }
 
-u16 CPU::fetch16(u32 addr) {
+u16 CPU::fetch16(u32 addr) const {
   if (mem_read_cb_) {
     return mem_read_cb_(addr, 2);
   }
   return 0;
 }
 
-u8 CPU::fetch8(u32 addr) {
+u16 CPU::fetch16(u32 addr) {
+  return const_cast<const CPU *>(this)->fetch16(addr);
+}
+
+u8 CPU::fetch8(u32 addr) const {
   if (mem_read_cb_) {
     return mem_read_cb_(addr, 1);
   }
   return 0;
 }
+
+u8 CPU::fetch8(u32 addr) { return const_cast<const CPU *>(this)->fetch8(addr); }
 
 void CPU::execute(u32 instr) {
   // Save PC to detect if branch/jump modified it
@@ -802,7 +808,7 @@ void CPU::execute_lwl(u32 instr) {
 
   u32 addr = state_.gpr[rs] + imm;
   u32 aligned_addr = addr & ~3;
-  u32 word = memory_read_cb_ ? memory_read_cb_(aligned_addr, 4) : 0;
+  u32 word = mem_read_cb_ ? mem_read_cb_(aligned_addr, 4) : 0;
 
   int shift = (addr & 3) * 8;
   u32 mask = 0xFFFFFFFF << (32 - shift);
@@ -816,7 +822,7 @@ void CPU::execute_lwr(u32 instr) {
 
   u32 addr = state_.gpr[rs] + imm;
   u32 aligned_addr = addr & ~3;
-  u32 word = memory_read_cb_ ? memory_read_cb_(aligned_addr, 4) : 0;
+  u32 word = mem_read_cb_ ? mem_read_cb_(aligned_addr, 4) : 0;
 
   int shift = (3 - (addr & 3)) * 8;
   u32 mask = 0xFFFFFFFF >> (32 - shift);
@@ -832,8 +838,8 @@ void CPU::execute_store(u32 instr, u32 size) {
   u32 addr = state_.gpr[rs] + imm;
   u32 value = state_.gpr[rt];
 
-  if (memory_write_cb_) {
-    memory_write_cb_(addr, size, value);
+  if (mem_write_cb_) {
+    mem_write_cb_(addr, size, value);
   }
 }
 
@@ -844,14 +850,14 @@ void CPU::execute_swl(u32 instr) {
 
   u32 addr = state_.gpr[rs] + imm;
   u32 aligned_addr = addr & ~3;
-  u32 word = memory_read_cb_ ? memory_read_cb_(aligned_addr, 4) : 0;
+  u32 word = mem_read_cb_ ? mem_read_cb_(aligned_addr, 4) : 0;
 
   int shift = (addr & 3) * 8;
   u32 mask = 0xFFFFFFFF << (32 - shift);
   word = (word & ~mask) | (state_.gpr[rt] & mask);
 
-  if (memory_write_cb_) {
-    memory_write_cb_(aligned_addr, 4, word);
+  if (mem_write_cb_) {
+    mem_write_cb_(aligned_addr, 4, word);
   }
 }
 
@@ -862,14 +868,14 @@ void CPU::execute_swr(u32 instr) {
 
   u32 addr = state_.gpr[rs] + imm;
   u32 aligned_addr = addr & ~3;
-  u32 word = memory_read_cb_ ? memory_read_cb_(aligned_addr, 4) : 0;
+  u32 word = mem_read_cb_ ? mem_read_cb_(aligned_addr, 4) : 0;
 
   int shift = (3 - (addr & 3)) * 8;
   u32 mask = 0xFFFFFFFF >> (32 - shift);
   word = (word & ~mask) | (state_.gpr[rt] & mask);
 
-  if (memory_write_cb_) {
-    memory_write_cb_(aligned_addr, 4, word);
+  if (mem_write_cb_) {
+    mem_write_cb_(aligned_addr, 4, word);
   }
 }
 
@@ -880,7 +886,7 @@ void CPU::execute_ll(u32 instr) {
   i16 imm = static_cast<i16>(instr & 0xFFFF);
 
   u32 addr = state_.gpr[rs] + imm;
-  state_.gpr[rt] = memory_read_cb_ ? memory_read_cb_(addr, 4) : 0;
+  state_.gpr[rt] = mem_read_cb_ ? mem_read_cb_(addr, 4) : 0;
   // TODO: Set LL bit for SC
 }
 
@@ -891,8 +897,8 @@ void CPU::execute_sc(u32 instr) {
 
   u32 addr = state_.gpr[rs] + imm;
   // TODO: Check LL bit
-  if (memory_write_cb_) {
-    memory_write_cb_(addr, 4, state_.gpr[rt]);
+  if (mem_write_cb_) {
+    mem_write_cb_(addr, 4, state_.gpr[rt]);
   }
   state_.gpr[rt] = 1; // Success
 }
@@ -904,7 +910,7 @@ void CPU::execute_lwc1(u32 instr) {
   i16 imm = static_cast<i16>(instr & 0xFFFF);
 
   u32 addr = state_.gpr[rs] + imm;
-  state_.fpr_u[ft] = memory_read_cb_ ? memory_read_cb_(addr, 4) : 0;
+  state_.fpr_u[ft] = mem_read_cb_ ? mem_read_cb_(addr, 4) : 0;
 }
 
 void CPU::execute_swc1(u32 instr) {
@@ -913,8 +919,8 @@ void CPU::execute_swc1(u32 instr) {
   i16 imm = static_cast<i16>(instr & 0xFFFF);
 
   u32 addr = state_.gpr[rs] + imm;
-  if (memory_write_cb_) {
-    memory_write_cb_(addr, 4, state_.fpr_u[ft]);
+  if (mem_write_cb_) {
+    mem_write_cb_(addr, 4, state_.fpr_u[ft]);
   }
 }
 
