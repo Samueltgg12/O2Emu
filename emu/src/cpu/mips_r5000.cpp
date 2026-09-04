@@ -11,15 +11,14 @@
 namespace o2emu::cpu {
 
 MIPSR5000::MIPSR5000(Bus *bus)
-    : bus_(bus), state_(), hi_(0), lo_(0), pc_(0), next_pc_(0),
-      branch_delay_(false), llbit_(false), cycles_(0), instr_count_(0) {
+    : bus_(bus), hi_(0), lo_(0), pc_(0), next_pc_(0), branch_delay_(false),
+      llbit_(false), cycles_(0), instr_count_(0) {
   reset();
 }
 
 MIPSR5000::~MIPSR5000() = default;
 
 void MIPSR5000::reset() {
-  std::memset(&state_, 0, sizeof(state_));
   std::memset(gpr_, 0, sizeof(gpr_));
   std::memset(fpr_, 0, sizeof(fpr_));
   std::memset(cp0_, 0, sizeof(cp0_));
@@ -69,6 +68,7 @@ void MIPSR5000::reset() {
 }
 
 void MIPSR5000::tick(u64 cycles) {
+  (void)cycles; // Suppress unused parameter warning
   cycles_ += cycles;
 
   // Execute instructions
@@ -603,7 +603,20 @@ void MIPSR5000::execute_load(u32 instr, u32 size, bool sign_extend) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = 0;
 
-  if (!bus_->read(addr, size, value)) {
+  bool success = false;
+  switch (size) {
+  case 1:
+    success = bus_->read8(addr, value);
+    break;
+  case 2:
+    success = bus_->read16(addr, value);
+    break;
+  case 4:
+    success = bus_->read32(addr, value);
+    break;
+  }
+
+  if (!success) {
     exception(EXC_ADEL, addr);
     return;
   }
@@ -635,7 +648,20 @@ void MIPSR5000::execute_store(u32 instr, u32 size) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = gpr_[rt];
 
-  if (!bus_->write(addr, size, value)) {
+  bool success = false;
+  switch (size) {
+  case 1:
+    success = bus_->write8(addr, value);
+    break;
+  case 2:
+    success = bus_->write16(addr, value);
+    break;
+  case 4:
+    success = bus_->write32(addr, value);
+    break;
+  }
+
+  if (!success) {
     exception(EXC_ADES, addr);
     return;
   }
@@ -649,7 +675,7 @@ void MIPSR5000::execute_ll(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = 0;
 
-  if (!bus_->read(addr, 4, value)) {
+  if (!bus_->read32(addr, value)) {
     exception(EXC_ADEL, addr);
     return;
   }
@@ -668,7 +694,7 @@ void MIPSR5000::execute_sc(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
 
   if (llbit_ && addr == lladdr_) {
-    if (!bus_->write(addr, 4, gpr_[rt])) {
+    if (!bus_->write32(addr, gpr_[rt])) {
       exception(EXC_ADES, addr);
       return;
     }
@@ -689,7 +715,7 @@ void MIPSR5000::execute_lwc1(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = 0;
 
-  if (!bus_->read(addr, 4, value)) {
+  if (!bus_->read32(addr, value)) {
     exception(EXC_ADEL, addr);
     return;
   }
@@ -705,7 +731,7 @@ void MIPSR5000::execute_swc1(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = fpr_[ft];
 
-  if (!bus_->write(addr, 4, value)) {
+  if (!bus_->write32(addr, value)) {
     exception(EXC_ADES, addr);
     return;
   }

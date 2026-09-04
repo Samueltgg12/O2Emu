@@ -5,10 +5,10 @@
  * @brief MIPS CPU core interface
  */
 
+#include "cp0.h"
 #include <functional>
 #include <memory>
 #include <o2emu/o2emu.h>
-
 namespace o2emu::cpu {
 
 // Forward declarations
