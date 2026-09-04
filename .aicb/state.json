@@ -28,11 +28,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788556748030,
+      "pinnedAt": 1788557164793,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788560764793
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -205,9 +206,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu/mips_r5000.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788554875717,
+      "pinnedAt": 1788557643980,
       "auto": "recent-edit",
-      "expiresAt": 1788558475717
+      "expiresAt": 1788561243980
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/cpu/mips_r10000.h",
@@ -219,11 +220,11 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu/mips_r10000.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788556927372,
+      "pinnedAt": 1788557826022,
       "auto": "recent-edit",
-      "expiresAt": 1788560527372
+      "expiresAt": 1788561426022
     }
   ],
   "skills": [],
-  "updatedAt": 1788556927372
+  "updatedAt": 1788557826022
 }

@@ -213,7 +213,7 @@ void MIPSR10000::fetch_stage() {
     if (branch_delay_) {
       // Fetch from next_pc_ (delay slot)
       uint32_t instr = 0;
-      if (!bus_->read8(next_pc_, 4, instr)) {
+      if (!bus_->read(next_pc_, 4, instr)) {
         // Bus error - will be handled in decode
         InstructionEntry entry;
         entry.pc = next_pc_;
@@ -229,7 +229,7 @@ void MIPSR10000::fetch_stage() {
     } else {
       // Normal fetch from pc_
       uint32_t instr = 0;
-      if (!bus_->read8(pc_, 4, instr)) {
+      if (!bus_->read(pc_, 4, instr)) {
         InstructionEntry entry;
         entry.pc = pc_;
         entry.instr = 0;
@@ -952,11 +952,6 @@ void MIPSR10000::execute_alu(InstructionEntry &entry) {
     case 0x2B: // SLTU
       result = (rs_val < rt_val) ? 1 : 0;
       break;
-    case 0x10: // MFHI (already handled)
-    case 0x11: // MTHI (already handled)
-    case 0x12: // MFLO (already handled)
-    case 0x13: // MTLO (already handled)
-      break;
     default:
       entry.exception = true;
       entry.exc_code = static_cast<uint32_t>(ExceptionCode::RI);
@@ -1247,19 +1242,18 @@ bool MIPSR10000::access_memory(InstructionEntry &entry) {
   if (entry.is_store) {
     switch (entry.mem_size) {
     case 1:
-      return bus_->write8(entry.mem_addr, 1, entry.store_data & 0xFF);
+      return bus_->write(entry.mem_addr, 1, entry.store_data & 0xFF);
     case 2:
-      return bus_->write8(entry.mem_addr, 2, entry.store_data & 0xFFFF);
-    case 4:
-      return bus_->write8(entry.mem_addr, 4, entry.store_data);
+    return bus_->write(entry.mem_addr, 2, entry.store_data & 0xFFFF) case 4:
+      return bus_->write(entry.mem_addr, 4, entry.store_data);
     case 8:
-      return bus_->write8(entry.mem_addr, 4, entry.store_data & 0xFFFFFFFF) &&
-             bus_->write8(entry.mem_addr + 4, 4,
-                          (static_cast<uint64_t>(entry.store_data) >> 32));
+      return bus_->write(entry.mem_addr, 4, entry.store_data & 0xFFFFFFFF) &&
+             bus_->write(entry.mem_addr + 4, 4,
+                         (static_cast<uint64_t>(entry.store_data) >> 32));
     }
   } else {
     uint32_t data = 0;
-    bool result = bus_->read8(entry.mem_addr, entry.mem_size, data);
+    bool result = bus_->read(entry.mem_addr, entry.mem_size, data);
     entry.result = data;
     return result;
   }
