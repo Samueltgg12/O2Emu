@@ -16,7 +16,8 @@ struct CPUState;
 
 class CP0 {
 public:
-  CP0();
+  CP0() = default;
+  explicit CP0(class CPU &cpu);
   ~CP0() = default;
 
   // CP0 Register indices
