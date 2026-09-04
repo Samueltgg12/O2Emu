@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-04T00:07:22.809Z","hash":"sha256:ef12c43025cb456f12a30e68a6b9539c605190b7a9b31aa0d334887c57812ae2"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-04T00:29:24.532Z","hash":"sha256:670ca570eb757d8c1edf3f59326d0e22e1910909c66d109483e0efa971145e63"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -120,7 +120,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/src/cpu/cpu_factory.cpp` _(auto:recent-edit)_
 - `gui/mainwindow.h` _(auto:recent-edit)_
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
@@ -131,6 +130,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
 - `.gitignore` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

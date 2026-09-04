@@ -45,7 +45,6 @@ public:
 
 private:
   system::Bus *bus_;
-  CPU::State state_;
   u32 gpr_[32];
   u32 fpr_[32];
   u32 cp0_[32];
