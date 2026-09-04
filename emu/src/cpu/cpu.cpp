@@ -770,16 +770,16 @@ void CPU::execute_load(u32 instr, u32 size, bool sign_extend) {
   u32 addr = state_.gpr[rs] + imm;
   u32 value = 0;
 
-  if (memory_read_cb_) {
+  if (mem_read_cb_) {
     switch (size) {
     case 1:
-      value = memory_read_cb_(addr, 1);
+      value = mem_read_cb_(addr, 1);
       break;
     case 2:
-      value = memory_read_cb_(addr, 2);
+      value = mem_read_cb_(addr, 2);
       break;
     case 4:
-      value = memory_read_cb_(addr, 4);
+      value = mem_read_cb_(addr, 4);
       break;
     }
   }

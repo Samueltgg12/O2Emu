@@ -205,23 +205,23 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu/cpu.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788544856950,
+      "pinnedAt": 1788545234597,
       "auto": "recent-edit",
-      "expiresAt": 1788548456950
+      "expiresAt": 1788548834597
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/cpu/cp0.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788544202715,
+      "pinnedAt": 1788545248078,
       "auto": "recent-edit",
-      "expiresAt": 1788547802715
+      "expiresAt": 1788548848078
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/cpu/cpu.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788544389019,
+      "pinnedAt": 1788545246281,
       "auto": "recent-edit",
-      "expiresAt": 1788547989019
+      "expiresAt": 1788548846281
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.vscode/settings.json",
@@ -232,5 +232,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788544856950
+  "updatedAt": 1788545248078
 }
