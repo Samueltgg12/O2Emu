@@ -5,12 +5,11 @@
  * @brief MIPS CP0 (System Control Coprocessor) registers
  */
 
+#include "cpu.h" // For ExceptionCode and CPUState
 #include <array>
 #include <o2emu/o2emu.h>
 
 namespace o2emu::cpu {
-
-struct CPUState; // Forward declaration
 
 class CP0 {
 public:

@@ -128,7 +128,7 @@ void CP0::tick(u64 cycles) {
   }
 }
 
-void CP0::exception(Exception exc, CPU::State &cpu_state) {
+void CP0::exception(ExceptionCode exc, CPUState &cpu_state) {
   u32 exc_code = static_cast<u32>(exc);
 
   // Set EXL bit in Status

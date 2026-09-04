@@ -5,6 +5,7 @@
  * @brief MIPS CPU core interface
  */
 
+#include "cp0.h"
 #include <functional>
 #include <memory>
 #include <o2emu/o2emu.h>
@@ -12,7 +13,6 @@
 namespace o2emu::cpu {
 
 // Forward declarations
-class CP0;
 class MMU;
 class Cache;
 
@@ -130,14 +130,14 @@ public:
 
   // Cycle counting
   u64 cycles_executed() const { return cycles_; }
+  void stop() { stop_requested_ = true; }
 
 private:
   CPUState state_;
-  u64 cycles_ = 0;
-  bool stop_requested_ = false;
-
   ReadCallback mem_read_cb_;
   WriteCallback mem_write_cb_;
+  u64 cycles_ = 0;
+  bool stop_requested_ = false;
 
   CP0 cp0_;
 
@@ -145,6 +145,8 @@ private:
   u32 fetch32(u32 addr) const;
   u16 fetch16(u32 addr) const;
   u8 fetch8(u32 addr) const;
+  u16 fetch16(u32 addr);
+  u8 fetch8(u32 addr);
 
   // Instruction decode/execute
   void execute(u32 instr);

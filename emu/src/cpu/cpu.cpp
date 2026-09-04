@@ -76,7 +76,7 @@ void CPU::step() {
   // Check for interrupts
   check_interrupts();
 
-  cycles_executed_++;
+  cycles_++;
 
   // $zero is always 0
   state_.gpr[0] = 0;
@@ -91,22 +91,22 @@ void CPU::run(u64 cycles) {
 void CPU::stop() { stop_requested_ = true; }
 
 u32 CPU::fetch32(u32 addr) const {
-  if (memory_read_cb_) {
-    return memory_read_cb_(addr, 4);
+  if (mem_read_cb_) {
+    return mem_read_cb_(addr, 4);
   }
   return 0;
 }
 
 u16 CPU::fetch16(u32 addr) {
-  if (memory_read_cb_) {
-    return memory_read_cb_(addr, 2);
+  if (mem_read_cb_) {
+    return mem_read_cb_(addr, 2);
   }
   return 0;
 }
 
 u8 CPU::fetch8(u32 addr) {
-  if (memory_read_cb_) {
-    return memory_read_cb_(addr, 1);
+  if (mem_read_cb_) {
+    return mem_read_cb_(addr, 1);
   }
   return 0;
 }
@@ -227,10 +227,10 @@ void CPU::execute(u32 instr) {
   case 0x33: // LWC3 (not implemented)
     exception(ExceptionCode::RI);
     break;
-  case 0x34:                  // LLD
+  case 0x34:                      // LLD
     exception(ExceptionCode::RI); // 64-bit only
     break;
-  case 0x35:                  // LDC1
+  case 0x35:                      // LDC1
     exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x36: // LDC2 (not implemented)
@@ -251,10 +251,10 @@ void CPU::execute(u32 instr) {
   case 0x3B: // SWC3 (not implemented)
     exception(ExceptionCode::RI);
     break;
-  case 0x3C:                  // SCD
+  case 0x3C:                      // SCD
     exception(ExceptionCode::RI); // 64-bit only
     break;
-  case 0x3D:                  // SDC1
+  case 0x3D:                      // SDC1
     exception(ExceptionCode::RI); // 64-bit only
     break;
   case 0x3E: // SDC2 (not implemented)
