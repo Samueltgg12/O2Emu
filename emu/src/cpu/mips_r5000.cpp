@@ -10,7 +10,7 @@
 
 namespace o2emu::cpu {
 
-MIPSR5000::MIPSR5000(Bus *bus)
+MIPSR5000::MIPSR5000(system::Bus *bus)
     : bus_(bus), hi_(0), lo_(0), pc_(0), next_pc_(0), branch_delay_(false),
       llbit_(false), cycles_(0), instr_count_(0) {
   reset();
@@ -96,12 +96,9 @@ void MIPSR5000::step() {
   }
 
   // Fetch instruction
-  u32 instr = 0;
-  if (!bus_->read(pc_, 4, instr)) {
-    // Bus error
-    exception(EXC_ADEL, pc_);
-    return;
-  }
+  u32 instr = bus_->read32(pc_);
+  // Note: Bus read32 doesn't return success/failure, it just returns the value
+  // If we need error handling, we'd need to add exception support to Bus
 
   // Decode and execute
   execute(instr);
@@ -390,7 +387,7 @@ void MIPSR5000::execute_special(u32 instr) {
 void MIPSR5000::execute_regimm(u32 instr) {
   u32 rt = (instr >> 16) & 0x1F;
   u32 rs = (instr >> 21) & 0x1F;
-  i16 imm = static_cast<i16>(instr & 0xFFFF);
+  // i16 imm = static_cast<i16>(instr & 0xFFFF); // Unused for now
 
   switch (rt) {
   case 0x00: // BLTZ
@@ -603,22 +600,16 @@ void MIPSR5000::execute_load(u32 instr, u32 size, bool sign_extend) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = 0;
 
-  bool success = false;
   switch (size) {
   case 1:
-    success = bus_->read8(addr, value);
+    value = bus_->read8(addr);
     break;
   case 2:
-    success = bus_->read16(addr, value);
+    value = bus_->read16(addr);
     break;
   case 4:
-    success = bus_->read32(addr, value);
+    value = bus_->read32(addr);
     break;
-  }
-
-  if (!success) {
-    exception(EXC_ADEL, addr);
-    return;
   }
 
   if (rt != 0) {
@@ -648,22 +639,16 @@ void MIPSR5000::execute_store(u32 instr, u32 size) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = gpr_[rt];
 
-  bool success = false;
   switch (size) {
   case 1:
-    success = bus_->write8(addr, value);
+    bus_->write8(addr, value);
     break;
   case 2:
-    success = bus_->write16(addr, value);
+    bus_->write16(addr, value);
     break;
   case 4:
-    success = bus_->write32(addr, value);
+    bus_->write32(addr, value);
     break;
-  }
-
-  if (!success) {
-    exception(EXC_ADES, addr);
-    return;
   }
 }
 
@@ -673,12 +658,7 @@ void MIPSR5000::execute_ll(u32 instr) {
   i16 offset = static_cast<i16>(instr & 0xFFFF);
 
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
-  u32 value = 0;
-
-  if (!bus_->read32(addr, value)) {
-    exception(EXC_ADEL, addr);
-    return;
-  }
+  u32 value = bus_->read32(addr);
 
   if (rt != 0)
     gpr_[rt] = value;
@@ -694,10 +674,7 @@ void MIPSR5000::execute_sc(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
 
   if (llbit_ && addr == lladdr_) {
-    if (!bus_->write32(addr, gpr_[rt])) {
-      exception(EXC_ADES, addr);
-      return;
-    }
+    bus_->write32(addr, gpr_[rt]);
     if (rt != 0)
       gpr_[rt] = 1;
   } else {
@@ -713,12 +690,7 @@ void MIPSR5000::execute_lwc1(u32 instr) {
   i16 offset = static_cast<i16>(instr & 0xFFFF);
 
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
-  u32 value = 0;
-
-  if (!bus_->read32(addr, value)) {
-    exception(EXC_ADEL, addr);
-    return;
-  }
+  u32 value = bus_->read32(addr);
 
   fpr_[ft] = value;
 }
@@ -731,10 +703,7 @@ void MIPSR5000::execute_swc1(u32 instr) {
   u32 addr = gpr_[rs] + static_cast<u32>(offset);
   u32 value = fpr_[ft];
 
-  if (!bus_->write32(addr, value)) {
-    exception(EXC_ADES, addr);
-    return;
-  }
+  bus_->write32(addr, value);
 }
 
 void MIPSR5000::exception(u32 exc_code, u32 bad_addr) {

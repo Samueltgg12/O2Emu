@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-04T19:23:26.139Z","hash":"sha256:01fae5dc1e365105348a1fc048539d1c59db535275599bca86eba773ab3793c0"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-04T19:36:26.171Z","hash":"sha256:2d63cfabf1b21df56d2c1983ed7e131d3c3a96dd8b402791a6df5a8b4df8c144"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,8 +117,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/include/o2emu/cpu/cpu.h` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 - `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
