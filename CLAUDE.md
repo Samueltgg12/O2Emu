@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-04T00:29:24.512Z","hash":"sha256:670ca570eb757d8c1edf3f59326d0e22e1910909c66d109483e0efa971145e63"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-04T00:35:25.071Z","hash":"sha256:ff3cac9a3c8473dece63c89bb2f5b4f3dff199c3c3c16ed5b280b3f5ceeb2a45"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -121,7 +121,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
 - `gui/mainwindow.h` _(auto:recent-edit)_
-- `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
 - `gui/framebufferwidget.h` _(auto:recent-edit)_

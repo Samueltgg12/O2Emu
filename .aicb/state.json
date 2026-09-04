@@ -231,13 +231,6 @@
       "expiresAt": 1788482664115
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/gui/mainwindow.cpp",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788478451070,
-      "auto": "recent-edit",
-      "expiresAt": 1788482051070
-    },
-    {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/firmware/prom_loader.cpp",
       "pinnedBy": "auto:editor",
       "pinnedAt": 1788478855801,
@@ -302,5 +295,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788482104402
+  "updatedAt": 1788482112017
 }
