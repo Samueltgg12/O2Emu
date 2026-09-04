@@ -163,6 +163,7 @@ public:
   void dump() const;
 
 private:
+  class CPU *cpu_ = nullptr;
   std::array<u32, 32> regs_ = {};
 
   // TLB (simplified for now)

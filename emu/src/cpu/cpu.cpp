@@ -88,8 +88,6 @@ void CPU::run(u64 cycles) {
   }
 }
 
-void CPU::stop() { stop_requested_ = true; }
-
 u32 CPU::fetch32(u32 addr) const {
   if (mem_read_cb_) {
     return mem_read_cb_(addr, 4);

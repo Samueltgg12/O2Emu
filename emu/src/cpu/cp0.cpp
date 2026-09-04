@@ -11,6 +11,8 @@ namespace o2emu::cpu {
 
 CP0::CP0() { reset(); }
 
+CP0::CP0(class CPU &cpu) : cpu_(&cpu) { reset(); }
+
 CP0::~CP0() = default;
 
 void CP0::reset() {
