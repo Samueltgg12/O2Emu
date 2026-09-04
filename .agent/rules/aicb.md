@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-04T00:30:28.765Z","hash":"sha256:670ca570eb757d8c1edf3f59326d0e22e1910909c66d109483e0efa971145e63"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-04T01:54:40.148Z","hash":"sha256:ac7e774812d418f3105a96ec7df8a4e899db9b28afb7200b0ef96b32fe702545"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,20 +31,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/CMakeLists.txt` _(auto:recent-edit)_
-- `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `gui/mainwindow.h` _(auto:recent-edit)_
-- `gui/mainwindow.cpp` _(auto:recent-edit)_
-- `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
-- `gui/framebufferwidget.h` _(auto:recent-edit)_
-- `gui/debuggerwidget.h` _(auto:recent-edit)_
-- `gui/framebufferwidget.cpp` _(auto:recent-edit)_
-- `gui/debuggerwidget.cpp` _(auto:recent-edit)_
-- `.gitignore` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
+- `emu/src/cpu/cpu.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

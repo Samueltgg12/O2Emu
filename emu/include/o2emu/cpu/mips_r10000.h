@@ -253,7 +253,8 @@ public:
 
   // Check if CPU is in 64-bit mode
   bool is_64bit_mode() const {
-    return (cp0_[static_cast<int>(R10K_CP0_Register::STATUS)] & STATUS_KX) != 0;
+    return (cp0_[static_cast<int>(R10K_CP0_Register::STATUS)] & 0x00000080) !=
+           0; // KX bit
   }
 
   // Check if FPU is 64-bit mode

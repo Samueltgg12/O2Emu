@@ -11,23 +11,23 @@
 
 namespace o2emu::cpu {
 
-CPU::CPU()
-    : memory_read_cb_(nullptr), memory_write_cb_(nullptr), cycles_executed_(0),
-      stop_requested_(false) {
+CPU::CPU() : mem_read_cb_(nullptr), mem_write_cb_(nullptr), cycles_(0) {
   reset(0);
 }
 
 CPU::~CPU() = default;
 
 void CPU::reset(u32 pc) {
-  std::memset(&state_, 0, sizeof(State));
+  std::memset(&state_, 0, sizeof(CPUState));
   state_.pc = pc;
   state_.gpr[0] = 0;           // $zero is always 0
   state_.gpr[29] = 0x80000000; // Initial stack pointer (kseg0)
   state_.gpr[28] = 0x80000000; // Global pointer
 
   // Initialize CP0
-  cp0_.reset();
+  if (state_.cp0) {
+    state_.cp0->reset();
+  }
 
   // Initialize FPU
   state_.fcr0 = 0;
@@ -36,8 +36,7 @@ void CPU::reset(u32 pc) {
     state_.fpr_u[i] = 0;
   }
 
-  cycles_executed_ = 0;
-  stop_requested_ = false;
+  cycles_ = 0;
 
   O2EMU_LOG_INFO("CPU reset, PC = 0x" << std::hex << pc << std::dec);
 }
