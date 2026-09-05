@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-05T23:35:06.327Z","hash":"sha256:4d2eb3b7ebde7b778ce1d27068daa42625f4d851d2c9e191a047a8aef8ef6c45"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-05T23:52:42.917Z","hash":"sha256:657eecb23245bdd517cc782fdcf27bccb5c44795bba5b705523d4de97ba2096a"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -37,6 +37,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
 - `emu/src/system/bus.cpp` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

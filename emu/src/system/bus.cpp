@@ -11,8 +11,6 @@ namespace o2emu::system {
 
 Bus::Bus() = default;
 
-Bus::~Bus() = default;
-
 void Bus::attach_device(std::unique_ptr<devices::Device> device) {
   if (!device) {
     return;
