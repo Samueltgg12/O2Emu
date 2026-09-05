@@ -10,6 +10,10 @@
 #include <o2emu/cpu/cp0.h>
 #include <o2emu/o2emu.h>
 
+namespace o2emu::system {
+class Bus;
+}
+
 namespace o2emu::cpu {
 
 // ExceptionCode and InterruptLine are defined in cpu.h

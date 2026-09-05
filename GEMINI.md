@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-04T23:39:47.082Z","hash":"sha256:b8eb493d713d29c84cc42918a8ca6f11050b2fec2c01ff5f3f17cbe3d12241e9"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T01:00:11.371Z","hash":"sha256:defbd658f70795459d676da15656008fa62bfdb397bf7bdebd97ba9ae39f04b7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,11 +31,11 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cp0.h` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
+- `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/src/cpu/cpu_factory.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/memory.h` _(auto:recent-edit)_
+- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

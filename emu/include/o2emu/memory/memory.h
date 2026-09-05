@@ -48,10 +48,12 @@ public:
   void init(u32 ram_size_mb = 256);
 
   // Memory access (physical addresses)
-  u32 read32(u32 addr);
-  u16 read16(u32 addr);
-  u8 read8(u32 addr);
+  u64 read64(u32 addr) const;
+  u32 read32(u32 addr) const;
+  u16 read16(u32 addr) const;
+  u8 read8(u32 addr) const;
 
+  void write64(u32 addr, u64 value);
   void write32(u32 addr, u32 value);
   void write16(u32 addr, u16 value);
   void write8(u32 addr, u8 value);
@@ -72,6 +74,12 @@ public:
   u32 ram_size() const { return ram_size_; }
   void set_ram_size(u32 size_mb);
 
+  // Utility functions
+  void clear();
+  const u8 *data() const;
+  u8 *data();
+  u32 size() const;
+
   // CRIME memory controller
   CRIME &crime() { return *crime_; }
   const CRIME &crime() const { return *crime_; }
@@ -89,6 +97,7 @@ public:
 
 private:
   u32 ram_size_ = 0;
+  u32 ram_mask_ = 0;
   std::unique_ptr<u8[]> ram_;
 
   std::unique_ptr<AddressSpace> address_space_;

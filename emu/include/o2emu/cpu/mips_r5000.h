@@ -31,9 +31,6 @@ public:
   u32 gpr(int reg) const;
   void set_gpr(int reg, u32 value);
 
-  u32 cp0_reg(int reg) const;
-  void set_cp0_reg(int reg, u32 value);
-
   u32 pc() const { return pc_; }
   void set_pc(u32 pc) { pc_ = pc; }
 
@@ -42,6 +39,12 @@ public:
 
   // Debugging
   void dump_registers() const;
+
+  // CP0 Cause register bits
+  static constexpr u32 CAUSE_EXCMASK = 0x0000007C;
+  static constexpr u32 CAUSE_IP = 0x0000FF00;
+  static constexpr u32 CAUSE_TI = 0x00008000;
+  static constexpr u32 CAUSE_BD = 0x80000000;
 
 private:
   system::Bus *bus_;
@@ -101,11 +104,9 @@ private:
   static constexpr u32 STATUS_SR = 0x01000000;
   static constexpr u32 STATUS_NMI = 0x02000000;
 
-  // CP0 Cause register bits
-  static constexpr u32 CAUSE_EXCMASK = 0x0000007C;
-  static constexpr u32 CAUSE_IP = 0x0000FF00;
-  static constexpr u32 CAUSE_TI = 0x00008000;
-  static constexpr u32 CAUSE_BD = 0x80000000;
+  // CP0 register access using Register enum
+  u32 cp0_reg(Register reg) const;
+  void set_cp0_reg(Register reg, u32 value);
 
   // Exception codes
   static constexpr u32 EXC_INT = 0;

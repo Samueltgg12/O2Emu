@@ -212,8 +212,8 @@ void MIPSR10000::fetch_stage() {
     // Check for branch delay slot
     if (branch_delay_) {
       // Fetch from next_pc_ (delay slot)
-      uint32_t instr = 0;
-      if (!bus_->read(next_pc_, 4, instr)) {
+      uint32_t instr = bus_->read32(next_pc_);
+      if (instr == 0xFFFFFFFF) { // Bus error indicator
         // Bus error - will be handled in decode
         InstructionEntry entry;
         entry.pc = next_pc_;
@@ -228,8 +228,8 @@ void MIPSR10000::fetch_stage() {
       branch_delay_ = false;
     } else {
       // Normal fetch from pc_
-      uint32_t instr = 0;
-      if (!bus_->read(pc_, 4, instr)) {
+      uint32_t instr = bus_->read32(pc_);
+      if (instr == 0xFFFFFFFF) { // Bus error indicator
         InstructionEntry entry;
         entry.pc = pc_;
         entry.instr = 0;
@@ -1242,18 +1242,37 @@ bool MIPSR10000::access_memory(InstructionEntry &entry) {
   if (entry.is_store) {
     switch (entry.mem_size) {
     case 1:
-      return bus_->write(entry.mem_addr, 1, entry.store_data & 0xFF);
+      return bus_->write8(entry.mem_addr, entry.store_data & 0xFF);
     case 2:
-    return bus_->write(entry.mem_addr, 2, entry.store_data & 0xFFFF) case 4:
-      return bus_->write(entry.mem_addr, 4, entry.store_data);
+      return bus_->write16(entry.mem_addr, entry.store_data & 0xFFFF);
+    case 4:
+      return bus_->write32(entry.mem_addr, entry.store_data);
     case 8:
-      return bus_->write(entry.mem_addr, 4, entry.store_data & 0xFFFFFFFF) &&
-             bus_->write(entry.mem_addr + 4, 4,
-                         (static_cast<uint64_t>(entry.store_data) >> 32));
+      return bus_->write32(entry.mem_addr, entry.store_data & 0xFFFFFFFF) &&
+             bus_->write32(entry.mem_addr + 4,
+                           (static_cast<uint64_t>(entry.store_data) >> 32));
     }
   } else {
     uint32_t data = 0;
-    bool result = bus_->read(entry.mem_addr, entry.mem_size, data);
+    bool result = false;
+    switch (entry.mem_size) {
+    case 1:
+      result = bus_->read8(entry.mem_addr, data);
+      break;
+    case 2:
+      result = bus_->read16(entry.mem_addr, data);
+      break;
+    case 4:
+      result = bus_->read32(entry.mem_addr, data);
+      break;
+    case 8: {
+      uint32_t low = 0, high = 0;
+      result = bus_->read32(entry.mem_addr, low) &&
+               bus_->read32(entry.mem_addr + 4, high);
+      data = low | (static_cast<uint64_t>(high) << 32);
+      break;
+    }
+    }
     entry.result = data;
     return result;
   }

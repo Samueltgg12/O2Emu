@@ -5,14 +5,19 @@
 
 #include <algorithm>
 #include <cstring>
+#include <memory>
+#include <new>
 #include <o2emu/logging/logger.h>
+#include <o2emu/memory/address_space.h>
+#include <o2emu/memory/crime.h>
 #include <o2emu/memory/memory.h>
+#include <o2emu/memory/mre.h>
 
 namespace o2emu::memory {
 
-Memory::Memory() : ram_(nullptr), ram_size_(0), ram_mask_(0) {}
+Memory::Memory() : ram_size_(0), ram_mask_(0), ram_(nullptr) {}
 
-Memory::~Memory() { delete[] ram_; }
+Memory::~Memory() = default;
 
 bool Memory::init(u32 size_mb) {
   if (size_mb == 0 || size_mb > 1024) {
@@ -24,14 +29,16 @@ bool Memory::init(u32 size_mb) {
   ram_mask_ = ram_size_ - 1;
 
   // Allocate RAM (aligned to 64KB for performance)
-  ram_ = new (std::align_val_t(65536)) u8[ram_size_];
+  ram_ = std::unique_ptr<u8[], void (*)(u8 *)>(
+      static_cast<u8 *>(std::aligned_alloc(65536, ram_size_)),
+      [](u8 *p) { std::free(p); });
   if (!ram_) {
     O2EMU_LOG_ERROR("Failed to allocate " << size_mb << " MB RAM");
     return false;
   }
 
   // Clear RAM
-  std::memset(ram_, 0, ram_size_);
+  std::memset(ram_.get(), 0, ram_size_);
 
   O2EMU_LOG_INFO("Initialized " << size_mb << " MB RAM (" << ram_size_
                                 << " bytes)");
