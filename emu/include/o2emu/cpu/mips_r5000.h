@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <o2emu/cpu/cp0.h>
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/system/bus.h>
 

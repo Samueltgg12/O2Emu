@@ -22,6 +22,7 @@
 #pragma once
 
 #include <array>
+#include <o2emu/cpu/cp0.h>
 #include <o2emu/cpu/mips_r5000.h>
 #include <o2emu/system/bus.h>
 #include <vector>
