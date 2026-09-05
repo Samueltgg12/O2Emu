@@ -118,10 +118,11 @@ jobs:
             build-essential \
             cmake \
             qt6-base-dev \
+            libgtest-dev \
             libqt6core6 \
             pkg-config \
             ccache
-            libgtest-dev \
+            
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
