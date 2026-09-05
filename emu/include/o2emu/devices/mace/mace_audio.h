@@ -16,10 +16,10 @@ namespace o2emu::devices {
 
 class MACE;
 
-class MACEAudio : public Device {
+class MACEAudio {
 public:
   explicit MACEAudio(MACE &mace);
-  ~MACEAudio() override = default;
+  ~MACEAudio() = default;
 
   // MACE Audio register offsets (from MACE base + 0x300000)
   enum Register : uint32_t {
@@ -81,8 +81,8 @@ public:
   bool read(u32 offset, u32 size, u32 &value);
   bool write(u32 offset, u32 size, u32 value);
 
-  void reset() override;
-  void tick(u64 cycles) override;
+  void reset();
+  void tick(u64 cycles);
   u32 interrupt_status() const;
 
   // Audio control

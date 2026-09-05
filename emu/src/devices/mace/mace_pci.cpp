@@ -10,9 +10,7 @@
 
 namespace o2emu::devices {
 
-MACEPCI::MACEPCI(MACE &mace) : Device("MACEPCI", 0x080000, 0x200), mace_(mace) {
-  reset();
-}
+MACEPCI::MACEPCI(MACE &mace) : mace_(mace) { reset(); }
 
 MACEPCI::~MACEPCI() = default;
 

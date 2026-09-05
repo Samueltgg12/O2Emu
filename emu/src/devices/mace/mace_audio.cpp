@@ -8,12 +8,7 @@
 
 namespace o2emu::devices {
 
-MACEAudio::MACEAudio(MACE &mace)
-    : Device("MACEAudio", 0x300000, 0x10000), mace_(mace) {
-  reset();
-}
-
-MACEAudio::~MACEAudio() = default;
+MACEAudio::MACEAudio(MACE &mace) : mace_(mace) { reset(); }
 
 void MACEAudio::reset() {
   regs_.fill(0);
@@ -137,9 +132,8 @@ void MACEAudio::start_playback() {
   u32 play_ptr = regs_[REG_PLAY_PTR];
   u32 play_end = regs_[REG_PLAY_END];
 
-  O2EMU_LOG_DEBUG("Audio playback start: base=0x"
-                  << std::hex << play_base << " ptr=0x" << play_ptr << " end=0x"
-                  << play_end << std::dec);
+  O2EMU_LOG_DEBUG_F("Audio playback start: base=0x%X ptr=0x%X end=0x%X",
+                    play_base, play_ptr, play_end);
 
   // Simulate playback completion
   regs_[REG_PLAY_PTR] = play_end;
@@ -151,9 +145,8 @@ void MACEAudio::start_record() {
   u32 rec_ptr = regs_[REG_REC_PTR];
   u32 rec_end = regs_[REG_REC_END];
 
-  O2EMU_LOG_DEBUG("Audio record start: base=0x"
-                  << std::hex << rec_base << " ptr=0x" << rec_ptr << " end=0x"
-                  << rec_end << std::dec);
+  O2EMU_LOG_DEBUG_F("Audio record start: base=0x%X ptr=0x%X end=0x%X", rec_base,
+                    rec_ptr, rec_end);
 
   // Simulate record completion
   regs_[REG_REC_PTR] = rec_end;
@@ -180,10 +173,6 @@ bool MACEAudio::write(u32 offset, u32 size, u32 value) {
 
 void MACEAudio::tick([[maybe_unused]] u64 cycles) {
   // Audio doesn't need periodic updates in this simple implementation
-}
-
-u32 MACEAudio::interrupt_status() const {
-  return regs_[REG_INT_STATUS] & regs_[REG_INT_MASK];
 }
 
 } // namespace o2emu::devices

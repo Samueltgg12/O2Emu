@@ -16,10 +16,10 @@ namespace o2emu::devices {
 
 class MACE;
 
-class MACEPCI : public Device {
+class MACEPCI {
 public:
   explicit MACEPCI(MACE &mace);
-  ~MACEPCI() override;
+  ~MACEPCI();
 
   // PCI register offsets (from MACE base + 0x080000)
   // All registers are 32-bit, accessed at 4-byte offsets
@@ -77,7 +77,7 @@ public:
   void tick(u64 cycles);
   u32 interrupt_status() const;
 
-  void reset() override;
+  void reset();
 
   // Interrupt mapping (from fixup-ip32.c)
   // Slot 0: SCSI0 (devfn 1<<3), Slot 1: SCSI1 (devfn 2<<3), Slot 2: Expansion

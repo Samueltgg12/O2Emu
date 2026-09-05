@@ -19,10 +19,10 @@ namespace o2emu::devices {
 
 class MACE;
 
-class MACEISA : public Device {
+class MACEISA {
 public:
   explicit MACEISA(MACE &mace);
-  ~MACEISA() override = default;
+  ~MACEISA() = default;
 
   // ISA register indices (32-bit word indices, not byte offsets)
   enum Register : uint32_t {
@@ -70,13 +70,13 @@ public:
   };
 
   // Device interface
-  u32 read32(u32 offset) override;
-  u16 read16(u32 offset) override;
-  u8 read8(u32 offset) override;
+  u32 read32(u32 offset);
+  u16 read16(u32 offset);
+  u8 read8(u32 offset);
 
-  void write32(u32 offset, u32 value) override;
-  void write16(u32 offset, u16 value) override;
-  void write8(u32 offset, u8 value) override;
+  void write32(u32 offset, u32 value);
+  void write16(u32 offset, u16 value);
+  void write8(u32 offset, u8 value);
 
   // Register-level access (used by MACE)
   u32 read_reg(u32 offset);
@@ -92,11 +92,8 @@ public:
   bool read(u32 offset, [[maybe_unused]] u32 size, u32 &value);
   bool write(u32 offset, [[maybe_unused]] u32 size, u32 value);
 
-  void reset() override;
-  void tick(u64 cycles) override;
-
-  u32 interrupt_status() const override;
-  void clear_interrupt(u32 mask) override;
+  void reset();
+  void tick(u64 cycles);
 
   // UART callbacks
   using UartCallback = std::function<void(u8 data)>;

@@ -18,10 +18,10 @@ namespace o2emu::devices {
 
 class MACE;
 
-class MACEEthernet : public Device {
+class MACEEthernet {
 public:
   explicit MACEEthernet(MACE &mace);
-  ~MACEEthernet() override;
+  ~MACEEthernet();
 
   // MAC110 register offsets (from MACE base + 0x280000)
   // All registers are 32-bit, accessed at 4-byte offsets
@@ -108,7 +108,7 @@ public:
   void tick(u64 cycles);
   u32 interrupt_status() const;
 
-  void reset() override;
+  void reset();
 
   // MAC address
   void set_mac_address(const u8 addr[6]);

@@ -8,10 +8,7 @@
 #include <o2emu/logging/logger.h>
 namespace o2emu::devices {
 
-MACEISA::MACEISA(MACE &mace)
-    : Device("MACEISA", 0x20000, 0x10000), mace_(mace) {
-  reset();
-}
+MACEISA::MACEISA(MACE &mace) : mace_(mace) { reset(); }
 
 MACEISA::~MACEISA() = default;
 
@@ -136,8 +133,23 @@ void MACEISA::write_reg(u32 offset, u32 value) {
     regs_[reg] = value;
     break;
 
-  case REG_UART_BASE ... REG_UART_BASE + 0x1FF:
-    // UART registers
+  case REG_UART_BASE:
+  case REG_UART_BASE + 1:
+  case REG_UART_BASE + 2:
+  case REG_UART_BASE + 3:
+  case REG_UART_BASE + 4:
+  case REG_UART_BASE + 5:
+  case REG_UART_BASE + 6:
+  case REG_UART_BASE + 7:
+  case REG_UART_BASE + 0x100:
+  case REG_UART_BASE + 0x101:
+  case REG_UART_BASE + 0x102:
+  case REG_UART_BASE + 0x103:
+  case REG_UART_BASE + 0x104:
+  case REG_UART_BASE + 0x105:
+  case REG_UART_BASE + 0x106:
+  case REG_UART_BASE + 0x107:
+    // UART registers (2x 16550 compatible, 8 registers each)
     regs_[reg] = value;
     break;
 
@@ -180,9 +192,8 @@ void MACEISA::start_dma() {
   u32 dma_count = regs_[REG_DMA_COUNT];
   u32 dma_ctrl = regs_[REG_DMA_CTRL];
 
-  O2EMU_LOG_DEBUG("ISA DMA start: addr=0x"
-                  << std::hex << dma_addr << " count=" << dma_count
-                  << " ctrl=0x" << dma_ctrl << std::dec);
+  O2EMU_LOG_DEBUG_F("ISA DMA start: addr=0x{:x} count={} ctrl=0x{:x}", dma_addr,
+                    dma_count, dma_ctrl);
 
   // Simulate DMA completion
   regs_[REG_DMA_STATUS] = 0x1;
@@ -215,11 +226,5 @@ void MACEISA::tick(u64 cycles) {
     }
   }
 }
-
-u32 MACEISA::interrupt_status() const {
-  return regs_[REG_INT_STATUS] & regs_[REG_INT_MASK];
-}
-
-void MACEISA::clear_interrupt(u32 mask) { regs_[REG_INT_STATUS] &= ~mask; }
 
 } // namespace o2emu::devices
