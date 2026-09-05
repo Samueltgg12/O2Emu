@@ -54,9 +54,8 @@ public:
 
     // RTC (DS12887-compatible) at offset 0x20000
     RTC_BASE = 0x20000,
-    RTC_REG(x) = (0x20000 + ((x) << 8)), // Registers at 256-byte intervals
 
-    // RTC standard registers (indexed via RTC_REG)
+    // RTC standard registers (indices, combined with RTC_BASE + (index << 8))
     RTC_SECONDS = 0x00,
     RTC_SECONDS_ALARM = 0x01,
     RTC_MINUTES = 0x02,
@@ -90,6 +89,11 @@ public:
     PARALLEL_STATUS = 0x30004,
     PARALLEL_CTRL = 0x30008,
   };
+
+  // Calculate RTC register offset from index (registers at 256-byte intervals)
+  static constexpr u32 rtc_reg_offset(u8 index) {
+    return RTC_BASE + (static_cast<u32>(index) << 8);
+  }
 
   // UART LCR bits
   enum UartLcrBit : uint8_t {

@@ -77,8 +77,8 @@ public:
   static constexpr u32 LOW_MEMORY_BASE = 0x1A000000;
   static constexpr u32 LOW_MEMORY_SIZE = 0x02000000; // 32 MB
   static constexpr u32 LOW_IO_BASE = 0x18000000;
-  static constexpr u32 HI_MEMORY_BASE = 0x280000000; // 64-bit
-  static constexpr u32 HI_IO_BASE = 0x100000000;     // 64-bit
+  static constexpr u64 HI_MEMORY_BASE = 0x280000000ULL; // 64-bit
+  static constexpr u64 HI_IO_BASE = 0x100000000ULL;     // 64-bit
 
   // Config space access
   u32 config_read(u32 bus, u32 devfn, u32 reg, u32 size);
