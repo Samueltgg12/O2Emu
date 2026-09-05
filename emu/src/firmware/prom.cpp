@@ -93,4 +93,143 @@ u32 PROM::entry_point() const {
 
 const PROMImage *PROM::image() const { return image_.get(); }
 
+// PROMImage implementation
+bool PROMImage::load(const std::string &path) {
+  // Read file into buffer
+  FILE *f = fopen(path.c_str(), "rb");
+  if (!f) {
+    O2EMU_LOG_ERROR("Failed to open PROM image: " << path);
+    return false;
+  }
+
+  fseek(f, 0, SEEK_END);
+  long size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  if (size <= 0) {
+    fclose(f);
+    return false;
+  }
+
+  image_.resize(size);
+  size_t read = fread(image_.data(), 1, size, f);
+  fclose(f);
+
+  if (read != static_cast<size_t>(size)) {
+    O2EMU_LOG_ERROR("Failed to read PROM image: " << path);
+    return false;
+  }
+
+  // Parse SHDR header
+  if (!parse_shdr()) {
+    O2EMU_LOG_ERROR("Invalid SHDR header in PROM image");
+    return false;
+  }
+
+  // Parse embedded ELF
+  if (!parse_elf()) {
+    O2EMU_LOG_WARN("No embedded ELF found in PROM image");
+  }
+
+  return true;
+}
+
+bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
+  if (!data || size == 0) {
+    return false;
+  }
+
+  image_.assign(data, data + size);
+
+  if (!parse_shdr()) {
+    O2EMU_LOG_ERROR("Invalid SHDR header in PROM buffer");
+    return false;
+  }
+
+  if (!parse_elf()) {
+    O2EMU_LOG_WARN("No embedded ELF found in PROM buffer");
+  }
+
+  return true;
+}
+
+bool PROMImage::parse_shdr() {
+  if (image_.size() < sizeof(SHDRHeader)) {
+    return false;
+  }
+
+  const SHDRHeader *shdr = reinterpret_cast<const SHDRHeader *>(image_.data());
+
+  // Check magic "SHDR" (0x48445253)
+  if (shdr->magic != 0x48445253) {
+    O2EMU_LOG_ERROR("Invalid SHDR magic: 0x" << std::hex << shdr->magic
+                                             << std::dec);
+    return false;
+  }
+
+  // Verify checksum
+  u32 computed = compute_checksum(image_.data(), image_.size());
+  if (computed != 0) {
+    O2EMU_LOG_WARN("SHDR checksum mismatch: computed 0x" << std::hex << computed
+                                                         << std::dec);
+  }
+
+  return true;
+}
+
+bool PROMImage::parse_elf() {
+  if (image_.size() < sizeof(SHDRHeader)) {
+    return false;
+  }
+
+  const SHDRHeader *shdr = reinterpret_cast<const SHDRHeader *>(image_.data());
+
+  // Check if we have enough sections
+  if (shdr->num_sections < 5) {
+    return false;
+  }
+
+  // Section table follows header
+  const SHDRSection *sections = reinterpret_cast<const SHDRSection *>(
+      image_.data() + shdr->section_offset);
+
+  // Section 4 should be the embedded ELF
+  if (shdr->num_sections > 4) {
+    const SHDRSection &elf_sect = sections[4];
+    if (elf_sect.type == SECT_ELF && elf_sect.size >= sizeof(ELFHeader)) {
+      const ELFHeader *elf = reinterpret_cast<const ELFHeader *>(
+          image_.data() + elf_sect.file_offset);
+
+      // Check ELF magic
+      if (elf->ident[0] == 0x7F && elf->ident[1] == 'E' &&
+          elf->ident[2] == 'L' && elf->ident[3] == 'F') {
+        entry_point_ = elf->entry;
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+u32 PROMImage::compute_checksum(const u8 *data, size_t size) {
+  u32 sum = 0;
+  for (size_t i = 0; i < size; i += 4) {
+    u32 word = 0;
+    if (i + 3 < size) {
+      word = (static_cast<u32>(data[i]) << 24) |
+             (static_cast<u32>(data[i + 1]) << 16) |
+             (static_cast<u32>(data[i + 2]) << 8) |
+             static_cast<u32>(data[i + 3]);
+    } else {
+      // Handle partial word at end
+      for (size_t j = 0; j < 4 && (i + j) < size; ++j) {
+        word |= static_cast<u32>(data[i + j]) << (24 - j * 8);
+      }
+    }
+    sum += word;
+  }
+  return sum;
+}
+
 } // namespace o2emu::firmware
