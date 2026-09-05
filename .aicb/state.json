@@ -28,11 +28,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788629952368,
+      "pinnedAt": 1788631814339,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788635414339
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -205,9 +206,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/mace/mace_isa.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788630783065,
+      "pinnedAt": 1788631899913,
       "auto": "recent-edit",
-      "expiresAt": 1788634383065
+      "expiresAt": 1788635499913
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/mace/mace_audio.cpp",
@@ -226,16 +227,16 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/devices/mace/mace_isa.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788630867572,
+      "pinnedAt": 1788631675725,
       "auto": "recent-edit",
-      "expiresAt": 1788634467572
+      "expiresAt": 1788635275724
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/devices/mace/mace_pci.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788630036205,
+      "pinnedAt": 1788631676727,
       "auto": "recent-edit",
-      "expiresAt": 1788633636205
+      "expiresAt": 1788635276727
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/mace/mace_pci.cpp",
@@ -247,25 +248,25 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/devices/mace/mace_ethernet.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788630309195,
+      "pinnedAt": 1788631674708,
       "auto": "recent-edit",
-      "expiresAt": 1788633909195
+      "expiresAt": 1788635274708
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/devices/mace/mace_audio.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788630165526,
+      "pinnedAt": 1788631673081,
       "auto": "recent-edit",
-      "expiresAt": 1788633765526
+      "expiresAt": 1788635273081
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788629941039,
+      "pinnedAt": 1788631942817,
       "auto": "dwell",
-      "expiresAt": 1788633541039
+      "expiresAt": 1788635542817
     }
   ],
   "skills": [],
-  "updatedAt": 1788630867572
+  "updatedAt": 1788631942817
 }
