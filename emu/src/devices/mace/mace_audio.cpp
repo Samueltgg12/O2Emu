@@ -161,6 +161,7 @@ void MACEAudio::start_record() {
 }
 
 bool MACEAudio::read(u32 offset, u32 size, u32 &value) {
+  [[maybe_unused]] auto sz = size;
   if (offset < sizeof(regs_)) {
     value = read_reg(offset);
     return true;
@@ -169,6 +170,7 @@ bool MACEAudio::read(u32 offset, u32 size, u32 &value) {
 }
 
 bool MACEAudio::write(u32 offset, u32 size, u32 value) {
+  [[maybe_unused]] auto sz = size;
   if (offset < sizeof(regs_)) {
     write_reg(offset, value);
     return true;
@@ -176,7 +178,7 @@ bool MACEAudio::write(u32 offset, u32 size, u32 value) {
   return false;
 }
 
-void MACEAudio::tick(u64 cycles) {
+void MACEAudio::tick([[maybe_unused]] u64 cycles) {
   // Audio doesn't need periodic updates in this simple implementation
 }
 
