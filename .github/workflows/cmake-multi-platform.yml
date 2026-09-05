@@ -121,7 +121,7 @@ jobs:
             libqt6core6 \
             pkg-config \
             ccache
-            libgtest-dev
+            libgtest-dev \
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
