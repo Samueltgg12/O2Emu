@@ -2,17 +2,23 @@
 
 /**
  * @file prom.h
- * @brief IP32 PROM firmware structures and loading
+ * @brief IP32 PROM firmware structures, loading, and execution
  *
  * Based on decompiled PROM (samples/decompiled-prom/) and IRIX stand/arcs/
  */
 
 #include <cstdint>
+#include <memory>
 #include <o2emu/o2emu.h>
 #include <string>
 #include <vector>
 
-namespace o2emu::firmware {
+namespace o2emu {
+
+class Bus;
+class CPU;
+
+namespace firmware {
 
 // PROM image format (SHDR - SGI Header)
 #pragma pack(push, 1)
@@ -72,60 +78,61 @@ enum PromSection : uint32_t {
   PROM_SECT_ELF = 4,       // Embedded ELF (main PROM)
 };
 
-class PROM {
+// PROM image container (for execution)
+class PROMImage {
 public:
-  PROM();
-  ~PROM() = default;
+  PROMImage() = default;
+  ~PROMImage() = default;
 
-  // Load PROM from file
-  bool load_from_file(const std::string &path);
-
-  // Load PROM from memory buffer
+  bool load(const std::string &path);
   bool load_from_buffer(const u8 *data, size_t size);
 
-  // Get PROM entry point
+  const u8 *data() const { return image_.data(); }
+  u32 size() const { return static_cast<u32>(image_.size()); }
   u32 entry_point() const { return entry_point_; }
-
-  // Get section data
-  const u8 *section_data(PromSection sect) const;
-  u32 section_size(PromSection sect) const;
-  u32 section_load_addr(PromSection sect) const;
-
-  // Verify checksums
-  bool verify_checksums() const;
-
-  // Get raw PROM image
-  const std::vector<u8> &raw_image() const { return image_; }
-
-  // PROM environment variables (from decompiled env.S)
-  struct EnvVar {
-    std::string name;
-    std::string value;
-  };
-  const std::vector<EnvVar> &environment() const { return env_vars_; }
-
-  // Reset
-  void reset();
+  bool valid() const { return !image_.empty(); }
 
 private:
   std::vector<u8> image_;
-  SHDRHeader shdr_ = {};
-  std::vector<SHDRSection> sections_;
-  ELFHeader elf_ = {};
   u32 entry_point_ = 0;
-  std::vector<EnvVar> env_vars_;
 
-  // Parse SHDR header
   bool parse_shdr();
-
-  // Parse ELF header (embedded in section 4)
   bool parse_elf();
-
-  // Parse environment variables
-  bool parse_environment();
-
-  // Compute two's complement checksum
   static u32 compute_checksum(const u8 *data, size_t size);
 };
 
-} // namespace o2emu::firmware
+class PROM {
+public:
+  PROM(Bus *bus, CPU *cpu);
+  ~PROM() = default;
+
+  // Load PROM image from file
+  bool load_image(const std::string &path);
+
+  // Map PROM image to memory
+  void map_to_memory();
+
+  // Execute PROM (set CPU to entry point)
+  void execute();
+
+  // Reset PROM (re-map and restart)
+  void reset();
+
+  // Check if PROM is loaded
+  bool is_loaded() const { return loaded_; }
+
+  // Get PROM entry point
+  u32 entry_point() const;
+
+  // Get PROM image
+  const PROMImage *image() const { return image_.get(); }
+
+private:
+  Bus *bus_ = nullptr;
+  CPU *cpu_ = nullptr;
+  std::unique_ptr<PROMImage> image_;
+  bool loaded_ = false;
+};
+
+} // namespace firmware
+} // namespace o2emu
