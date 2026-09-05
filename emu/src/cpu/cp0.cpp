@@ -4,6 +4,7 @@
  */
 
 #include <o2emu/cpu/cp0.h>
+#include <o2emu/cpu/mips_r5000.h> // For CPUState
 #include <o2emu/logging/logger.h>
 
 namespace o2emu::cpu {
@@ -137,9 +138,9 @@ void CP0::exception(ExceptionCode exc, CPUState &cpu_state) {
   }
 
   // Set BadVAddr for address-related exceptions
-  if (exc == Exception::ADEL || exc == Exception::ADES ||
-      exc == Exception::TLBL || exc == Exception::TLBS ||
-      exc == Exception::MOD) {
+  if (exc == ExceptionCode::ADEL || exc == ExceptionCode::ADES ||
+      exc == ExceptionCode::TLBL || exc == ExceptionCode::TLBS ||
+      exc == ExceptionCode::MOD) {
     regs_[Register::BADVADDR] = cpu_state.pc; // Should be the faulting address
   }
 
@@ -164,7 +165,7 @@ void CP0::rfe() {
   regs_[Register::STATUS] &= ~0x00000002;
 }
 
-void CP0::eret(CPU::State &cpu_state) {
+void CP0::eret(CPUState &cpu_state) {
   // Return from Exception
   if (regs_[Register::STATUS] & 0x00000004) { // ERL bit
     cpu_state.pc = regs_[Register::ERROREPC];
@@ -208,7 +209,6 @@ void CP0::dump() const {
   O2EMU_LOG_INFO_F("WatchLo:   0x%08x", regs_[Register::WATCHLO]);
   O2EMU_LOG_INFO_F("WatchHi:   0x%08x", regs_[Register::WATCHHI]);
   O2EMU_LOG_INFO_F("XContext:  0x%08x", regs_[Register::XCONTEXT]);
-  O2EMU_LOG_INFO_F("Parity:    0x%08x", regs_[Register::PARITY]);
   O2EMU_LOG_INFO_F("CacheErr:  0x%08x", regs_[Register::CACHEERR]);
   O2EMU_LOG_INFO_F("TagLo:     0x%08x", regs_[Register::TAGLO]);
   O2EMU_LOG_INFO_F("TagHi:     0x%08x", regs_[Register::TAGHI]);

@@ -1242,15 +1242,19 @@ bool MIPSR10000::access_memory(InstructionEntry &entry) {
   if (entry.is_store) {
     switch (entry.mem_size) {
     case 1:
-      return bus_->write8(entry.mem_addr, entry.store_data & 0xFF);
+      bus_->write8(entry.mem_addr, entry.store_data & 0xFF);
+      return true;
     case 2:
-      return bus_->write16(entry.mem_addr, entry.store_data & 0xFFFF);
+      bus_->write16(entry.mem_addr, entry.store_data & 0xFFFF);
+      return true;
     case 4:
-      return bus_->write32(entry.mem_addr, entry.store_data);
+      bus_->write32(entry.mem_addr, entry.store_data);
+      return true;
     case 8:
-      return bus_->write32(entry.mem_addr, entry.store_data & 0xFFFFFFFF) &&
-             bus_->write32(entry.mem_addr + 4,
-                           (static_cast<uint64_t>(entry.store_data) >> 32));
+      bus_->write32(entry.mem_addr, entry.store_data & 0xFFFFFFFF);
+      bus_->write32(entry.mem_addr + 4,
+                    (static_cast<uint64_t>(entry.store_data) >> 32));
+      return true;
     }
   } else {
     uint32_t data = 0;
@@ -1385,16 +1389,18 @@ void MIPSR10000::set_gpr64(int reg, uint64_t value) {
   }
 }
 
-uint32_t MIPSR10000::cp0_reg(int reg) const {
-  if (reg < 0 || reg >= 32)
+uint32_t MIPSR10000::cp0_reg(CP0::Register reg) const {
+  int reg_idx = static_cast<int>(reg);
+  if (reg_idx < 0 || reg_idx >= 32)
     return 0;
-  return cp0_[reg];
+  return cp0_[reg_idx];
 }
 
-void MIPSR10000::set_cp0_reg(int reg, uint32_t value) {
-  if (reg < 0 || reg >= 32)
+void MIPSR10000::set_cp0_reg(CP0::Register reg, uint32_t value) {
+  int reg_idx = static_cast<int>(reg);
+  if (reg_idx < 0 || reg_idx >= 32)
     return;
-  cp0_[reg] = value;
+  cp0_[reg_idx] = value;
 }
 
 uint64_t MIPSR10000::get_perf_counter(int idx) const {

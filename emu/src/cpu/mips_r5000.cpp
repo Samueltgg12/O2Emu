@@ -775,15 +775,17 @@ void MIPSR5000::set_gpr(int reg, u32 value) {
     gpr_[reg] = value;
 }
 
-u32 MIPSR5000::cp0_reg(int reg) const {
-  if (reg >= 0 && reg < 32)
-    return cp0_[reg];
+u32 MIPSR5000::cp0_reg(CP0::Register reg) const {
+  int reg_idx = static_cast<int>(reg);
+  if (reg_idx >= 0 && reg_idx < 32)
+    return cp0_[reg_idx];
   return 0;
 }
 
-void MIPSR5000::set_cp0_reg(int reg, u32 value) {
-  if (reg >= 0 && reg < 32)
-    cp0_[reg] = value;
+void MIPSR5000::set_cp0_reg(CP0::Register reg, u32 value) {
+  int reg_idx = static_cast<int>(reg);
+  if (reg_idx >= 0 && reg_idx < 32)
+    cp0_[reg_idx] = value;
 }
 
 u64 MIPSR5000::cycles() const { return cycles_; }
