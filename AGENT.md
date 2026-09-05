@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-05T13:41:27.102Z","hash":"sha256:d410851f2143fdfd654fda61a4a2177a0bc550bfbcf9be0a5655069e74f7fc18"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-05T14:34:24.806Z","hash":"sha256:a9e68ecaa25b18f557081598027b65d21c6d29dfd864dab75c58027b42abe1d6"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,8 +31,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `.vscode/settings.json` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

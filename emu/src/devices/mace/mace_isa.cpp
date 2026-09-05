@@ -220,4 +220,6 @@ u32 MACEISA::interrupt_status() const {
   return regs_[REG_INT_STATUS] & regs_[REG_INT_MASK];
 }
 
+void MACEISA::clear_interrupt(u32 mask) { regs_[REG_INT_STATUS] &= ~mask; }
+
 } // namespace o2emu::devices

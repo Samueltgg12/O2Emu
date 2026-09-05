@@ -155,6 +155,12 @@ public:
   void reset() override;
   void tick(u64 cycles) override;
 
+  u32 interrupt_status() const override;
+  void clear_interrupt(u32 mask) override;
+
+  // Configuration write (called by MACE for ISA config space)
+  void config_write(u32 reg, u32 value);
+
   // UART callbacks
   using UartCallback = std::function<void(u8 data)>;
   void set_uart1_output(UartCallback cb) { uart1_output_cb_ = std::move(cb); }
