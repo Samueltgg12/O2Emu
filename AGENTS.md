@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T01:00:11.368Z","hash":"sha256:defbd658f70795459d676da15656008fa62bfdb397bf7bdebd97ba9ae39f04b7"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T02:16:18.571Z","hash":"sha256:a776b63a71eb585a66cb17dcfc2fe57aa061b7758584c1448c1390697185f115"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -119,9 +119,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/include/o2emu/memory/memory.h` _(auto:recent-edit)_
-- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
+- `emu/src/cpu/cpu_factory.cpp` _(auto:recent-edit)_
+- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

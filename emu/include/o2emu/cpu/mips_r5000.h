@@ -106,8 +106,8 @@ private:
   static constexpr u32 STATUS_NMI = 0x02000000;
 
   // CP0 register access using Register enum
-  u32 cp0_reg(Register reg) const;
-  void set_cp0_reg(Register reg, u32 value);
+  u32 cp0_reg(CP0::Register reg) const;
+  void set_cp0_reg(CP0::Register reg, u32 value);
 
   // Exception codes
   static constexpr u32 EXC_INT = 0;

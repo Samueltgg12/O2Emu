@@ -3,20 +3,13 @@
  * @brief CP0 (System Control Coprocessor) implementation
  */
 
-#include <cstring>
 #include <o2emu/cpu/cp0.h>
 #include <o2emu/logging/logger.h>
 
 namespace o2emu::cpu {
 
-CP0::CP0() { reset(); }
-
-CP0::CP0(class CPU &cpu) : cpu_(&cpu) { reset(); }
-
-CP0::~CP0() = default;
-
 void CP0::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
+  regs_.fill(0);
 
   // PRId register - R5000
   regs_[Register::PRID] = 0x00002700; // R5000, revision 0
@@ -65,9 +58,6 @@ void CP0::reset() {
   // XContext
   regs_[Register::XCONTEXT] = 0;
 
-  // Parity Error
-  regs_[Register::PARITY] = 0;
-
   // Cache Error
   regs_[Register::CACHEERR] = 0;
 
@@ -82,14 +72,13 @@ void CP0::reset() {
   regs_[Register::DESAVE] = 0;
 }
 
-u32 CP0::read(u32 reg) const {
-  if (reg < 32) {
-    return regs_[reg];
-  }
-  return 0;
+u32 CP0::read(Register reg, int sel) const {
+  (void)sel; // Select not used for most registers
+  return regs_[static_cast<uint32_t>(reg)];
 }
 
-void CP0::write(u32 reg, u32 value) {
+void CP0::write(Register reg, u32 value, int sel) {
+  (void)sel; // Select not used for most registers
   if (reg >= 32)
     return;
 

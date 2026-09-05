@@ -218,8 +218,8 @@ public:
   uint64_t gpr64(int reg) const;
   void set_gpr64(int reg, uint64_t value);
 
-  uint32_t cp0_reg(Register reg) const;
-  void set_cp0_reg(Register reg, uint32_t value);
+  uint32_t cp0_reg(CP0::Register reg) const;
+  void set_cp0_reg(CP0::Register reg, uint32_t value);
 
   uint32_t pc() const { return pc_; }
   void set_pc(uint32_t pc) { pc_ = pc; }

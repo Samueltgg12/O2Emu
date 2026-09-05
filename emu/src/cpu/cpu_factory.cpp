@@ -4,6 +4,7 @@
  */
 
 #include <memory>
+#include <o2emu/cpu/cp0.h>
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/cpu/cpu_interface.h>
 #include <o2emu/cpu/mips_r10000.h>
@@ -59,11 +60,11 @@ public:
 
   void set_pc(uint32_t pc) override { cpu_->state().pc = pc; }
 
-  uint32_t cp0_reg(Register reg) const override {
+  uint32_t cp0_reg(CP0::Register reg) const override {
     return cpu_->cp0().read(reg);
   }
 
-  void set_cp0_reg(Register reg, uint32_t value) override {
+  void set_cp0_reg(CP0::Register reg, uint32_t value) override {
     cpu_->cp0().write(reg, value);
   }
 
@@ -136,9 +137,11 @@ public:
 
   void set_pc(uint32_t pc) override { cpu_->set_pc(pc); }
 
-  uint32_t cp0_reg(Register reg) const override { return cpu_->cp0_reg(reg); }
+  uint32_t cp0_reg(CP0::Register reg) const override {
+    return cpu_->cp0_reg(reg);
+  }
 
-  void set_cp0_reg(Register reg, uint32_t value) override {
+  void set_cp0_reg(CP0::Register reg, uint32_t value) override {
     cpu_->set_cp0_reg(reg, value);
   }
 
@@ -207,9 +210,11 @@ public:
 
   void set_pc(uint32_t pc) override { cpu_->set_pc(pc); }
 
-  uint32_t cp0_reg(Register reg) const override { return cpu_->cp0_reg(reg); }
+  uint32_t cp0_reg(CP0::Register reg) const override {
+    return cpu_->cp0_reg(reg);
+  }
 
-  void set_cp0_reg(Register reg, uint32_t value) override {
+  void set_cp0_reg(CP0::Register reg, uint32_t value) override {
     cpu_->set_cp0_reg(reg, value);
   }
 
