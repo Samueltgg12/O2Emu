@@ -297,7 +297,7 @@ void PS2::handle_mouse_command(u8 cmd) {
   }
 }
 
-bool PS2::read(u32 offset, u32 size, u32 &value) {
+bool PS2::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < 8) {
     value = read_reg(offset);
     return true;
@@ -305,7 +305,7 @@ bool PS2::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool PS2::write(u32 offset, u32 size, u32 value) {
+bool PS2::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < 8) {
     write_reg(offset, value);
     return true;

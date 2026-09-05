@@ -219,9 +219,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/ps2.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788638189522,
+      "pinnedAt": 1788641310451,
       "auto": "recent-edit",
-      "expiresAt": 1788641789522
+      "expiresAt": 1788644910451
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/rtc.cpp",
@@ -239,5 +239,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788641249163
+  "updatedAt": 1788641310451
 }
