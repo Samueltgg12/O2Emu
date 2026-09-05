@@ -28,4 +28,4 @@ set_target_properties(o2emu-gui PROPERTIES
 )
 
 # Resources
-qt6_add_resources(o2emu-gui "resources.qrc")
+qt6_add_resources(o2emu-gui "resources.qrc" PREFIX "/")
