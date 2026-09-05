@@ -219,18 +219,18 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/firmware/prom.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788646673571,
+      "pinnedAt": 1788646992770,
       "auto": "recent-edit",
-      "expiresAt": 1788650273571
+      "expiresAt": 1788650592770
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/firmware/prom.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788646886796,
+      "pinnedAt": 1788647020914,
       "auto": "recent-edit",
-      "expiresAt": 1788650486796
+      "expiresAt": 1788650620914
     }
   ],
   "skills": [],
-  "updatedAt": 1788646886796
+  "updatedAt": 1788647020914
 }

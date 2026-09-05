@@ -100,7 +100,7 @@ private:
 
 class PROM {
 public:
-  PROM(o2emu::Bus *bus, o2emu::CPU *cpu);
+  PROM(o2emu::system::Bus *bus, o2emu::cpu::CPU *cpu);
   ~PROM() = default;
 
   // Load PROM image from file
@@ -125,8 +125,8 @@ public:
   const PROMImage *image() const { return image_.get(); }
 
 private:
-  o2emu::Bus *bus_ = nullptr;
-  o2emu::CPU *cpu_ = nullptr;
+  o2emu::system::Bus *bus_ = nullptr;
+  o2emu::cpu::CPU *cpu_ = nullptr;
   std::unique_ptr<PROMImage> image_;
   bool loaded_ = false;
 };
