@@ -131,5 +131,6 @@ private:
   bool loaded_ = false;
 };
 
-}
-}
+} // namespace firmware
+} // namespace o2emu
+} // namespace o2emu::firmware
