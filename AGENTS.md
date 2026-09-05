@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T22:19:44.428Z","hash":"sha256:f69ed31db60e5ea460c1102d474453ff3d6ec1a9ddfd76ce4f2bb8832741aba7"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T22:36:44.447Z","hash":"sha256:dfdea740fd152092fe79b3a63817d3bc239784b4a4f97e69a4fd89c82d37a649"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -118,7 +118,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:dwell)_
-- `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
 
