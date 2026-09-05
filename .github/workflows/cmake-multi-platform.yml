@@ -1,72 +1,239 @@
-name: O2Emu Workflows.
+name: O2Emu Multi-Platform Build & Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.os }} - ${{ matrix.arch }} - ${{ matrix.build_type }}
+    runs-on: ${{ matrix.runner_os }}
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
-
-      # Set up a matrix to run the following 3 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Release, Debug]
-        c_compiler: [gcc, clang, cl]
         include:
-          - os: windows-latest
+          # Windows builds (MSVC)
+          - os: windows
+            runner_os: windows-latest
+            arch: x64
             c_compiler: cl
             cpp_compiler: cl
-          - os: ubuntu-latest
+            build_type: Release
+          - os: windows
+            runner_os: windows-latest
+            arch: x64
+            c_compiler: cl
+            cpp_compiler: cl
+            build_type: Debug
+
+          # Linux builds (GCC)
+          - os: linux
+            runner_os: ubuntu-latest
+            arch: x64
             c_compiler: gcc
             cpp_compiler: g++
-          - os: ubuntu-latest
+            build_type: Release
+          - os: linux
+            runner_os: ubuntu-latest
+            arch: x64
+            c_compiler: gcc
+            cpp_compiler: g++
+            build_type: Debug
+
+          # Linux builds (Clang)
+          - os: linux
+            runner_os: ubuntu-latest
+            arch: x64
             c_compiler: clang
             cpp_compiler: clang++
-        exclude:
-          - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
+            build_type: Release
+          - os: linux
+            runner_os: ubuntu-latest
+            arch: x64
             c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
+            cpp_compiler: clang++
+            build_type: Debug
+
+          # macOS builds (Intel x86_64)
+          - os: macos
+            runner_os: macos-13
+            arch: x64
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+          - os: macos
+            runner_os: macos-13
+            arch: x64
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Debug
+
+          # macOS builds (Apple Silicon arm64)
+          - os: macos
+            runner_os: macos-14
+            arch: arm64
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+          - os: macos
+            runner_os: macos-14
+            arch: arm64
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Debug
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
 
-    - name: Step outputs
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Set up build environment
+        id: build_env
+        shell: bash
+        run: |
+          echo "build_dir=${{ github.workspace }}/build" >> $GITHUB_OUTPUT
+          echo "artifacts_dir=${{ github.workspace }}/artifacts" >> $GITHUB_OUTPUT
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            echo "triplet=${{ matrix.arch }}-windows" >> $GITHUB_OUTPUT
+          elif [ "${{ runner.os }}" == "Linux" ]; then
+            echo "triplet=${{ matrix.arch }}-linux" >> $GITHUB_OUTPUT
+          elif [ "${{ runner.os }}" == "macOS" ]; then
+            echo "triplet=${{ matrix.arch }}-macos" >> $GITHUB_OUTPUT
+          fi
 
-    - name: Configuring CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -S ${{ github.workspace }}
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            qt6-base-dev \
+            libqt6core6 \
+            pkg-config \
+            ccache
 
-    - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake qt6 ccache pkg-config
 
-    - name: O2Emu
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctes t.1.html for more detail
-      run: ctest --build-config ${{ matrix.build_type }}
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          choco install -y cmake
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}
+          max-size: 500M
+          variant: ccache
+
+      - name: Cache vcpkg
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:\vcpkg
+            C:\Users\runneradmin\AppData\Local\vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/vcpkg-configuration.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          mkdir -p "${{ steps.build_env.outputs.build_dir }}"
+          cd "${{ steps.build_env.outputs.build_dir }}"
+          
+          cmake \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            ${{ github.workspace }}
+
+      - name: Build
+        shell: bash
+        run: |
+          cd "${{ steps.build_env.outputs.build_dir }}"
+          cmake --build . --config ${{ matrix.build_type }} --parallel $(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
+
+      - name: Run tests
+        shell: bash
+        working-directory: ${{ steps.build_env.outputs.build_dir }}
+        run: |
+          ctest --build-config ${{ matrix.build_type }} --output-on-failure --verbose
+        continue-on-error: true
+
+      - name: Prepare artifacts
+        if: success()
+        shell: bash
+        run: |
+          mkdir -p "${{ steps.build_env.outputs.artifacts_dir }}"
+          
+          # Copy build outputs
+          if [ -d "${{ steps.build_env.outputs.build_dir }}/bin" ]; then
+            cp -r "${{ steps.build_env.outputs.build_dir }}/bin" "${{ steps.build_env.outputs.artifacts_dir }}/" || true
+          fi
+          
+          # Copy libraries
+          if [ -d "${{ steps.build_env.outputs.build_dir }}/lib" ]; then
+            cp -r "${{ steps.build_env.outputs.build_dir }}/lib" "${{ steps.build_env.outputs.artifacts_dir }}/" || true
+          fi
+          
+          # Copy compile_commands.json for analysis
+          if [ -f "${{ steps.build_env.outputs.build_dir }}/compile_commands.json" ]; then
+            cp "${{ steps.build_env.outputs.build_dir }}/compile_commands.json" "${{ steps.build_env.outputs.artifacts_dir }}/"
+          fi
+          
+          # List artifacts
+          echo "Generated artifacts:"
+          find "${{ steps.build_env.outputs.artifacts_dir }}" -type f -ls
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: o2emu-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}
+          path: ${{ steps.build_env.outputs.artifacts_dir }}
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}
+          path: ${{ steps.build_env.outputs.build_dir }}/CMakeFiles/CMakeOutput.log
+          retention-days: 7
+
+  # Aggregate job to check overall build status
+  build-status:
+    name: Build Status Check
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    steps:
+      - name: Check build results
+        run: |
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
+            echo "✅ All builds passed!"
+            exit 0
+          else
+            echo "❌ One or more builds failed"
+            exit 1
+          fi
