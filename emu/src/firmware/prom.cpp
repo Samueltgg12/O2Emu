@@ -13,7 +13,7 @@
 
 namespace o2emu::firmware {
 
-PROM::PROM(Bus *bus, CPU *cpu)
+PROM::PROM(o2emu::system::Bus *bus, o2emu::cpu::CPU *cpu)
     : bus_(bus), cpu_(cpu), image_(nullptr), loaded_(false) {}
 
 // Destructor is defaulted in header
