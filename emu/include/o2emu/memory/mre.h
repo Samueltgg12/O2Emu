@@ -112,7 +112,7 @@ public:
   };
 
   // Read/write registers (by byte offset)
-  u32 read(u32 offset);
+  u32 read(u32 offset) const;
   void write(u32 offset, u32 value);
 
   // Render interface

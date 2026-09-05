@@ -215,7 +215,7 @@ void MRE::write(u32 offset, u32 value) {
   }
 }
 
-void MRE::handle_control_write(u32 value) {
+void MRE::handle_control_write([[maybe_unused]] u32 value) {
   // Bit 0: MRE enable
   // Bit 1: Display list enable
   // Bit 2: Tile rendering enable
@@ -224,7 +224,7 @@ void MRE::handle_control_write(u32 value) {
   // Bit 5: Texture enable
   // Bit 6: Fog enable
   // Bit 7: Antialiasing enable
-  O2EMU_LOG_DEBUG("MRE_CONTROL write: 0x{:08x}", value);
+  O2EMU_LOG_DEBUG_F("MRE_CONTROL write: 0x{:08x}", value);
 }
 
 void MRE::update_framebuffer_config() {
@@ -235,8 +235,8 @@ void MRE::update_framebuffer_config() {
   fb_depth_ = regs_[REG_FB_DEPTH];
   fb_format_ = regs_[REG_FB_FORMAT];
 
-  O2EMU_LOG_DEBUG("Framebuffer config: base=0x{:08x} stride={} {}x{}x{}",
-                  fb_base_, fb_stride_, fb_width_, fb_height_, fb_depth_);
+  O2EMU_LOG_DEBUG_F("Framebuffer config: base=0x{:08x} stride={} {}x{}x{}",
+                    fb_base_, fb_stride_, fb_width_, fb_height_, fb_depth_);
 }
 
 void MRE::process_display_list() {
@@ -244,7 +244,7 @@ void MRE::process_display_list() {
   u32 dl_end = regs_[REG_DL_END];
   u32 dl_ptr = regs_[REG_DL_PTR];
 
-  O2EMU_LOG_DEBUG(
+  O2EMU_LOG_DEBUG_F(
       "Processing display list: base=0x{:08x} ptr=0x{:08x} end=0x{:08x}",
       dl_base, dl_ptr, dl_end);
 

@@ -52,7 +52,7 @@ void AddressSpace::map(u32 base, u32 size, Device *device, u32 offset) {
   std::sort(mappings_.begin(), mappings_.end(),
             [](const Mapping &a, const Mapping &b) { return a.base < b.base; });
 
-  O2EMU_LOG_DEBUG("Mapped device at 0x{:x} size 0x{:x}", base, size);
+  O2EMU_LOG_DEBUG_F("Mapped device at 0x{:x} size 0x{:x}", base, size);
 }
 
 void AddressSpace::unmap(u32 base, u32 size) {
