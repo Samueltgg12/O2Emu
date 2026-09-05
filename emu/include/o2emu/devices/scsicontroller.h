@@ -222,9 +222,9 @@ public:
   void tick(u64 cycles) override;
 
   // Device interface (base class virtual methods)
-  bool read(u32 offset, u32 size, u32 &value) override;
-  bool write(u32 offset, u32 size, u32 value) override;
-  u32 interrupt_status() const override;
+  bool read(u32 offset, u32 size, u32 &value);
+  bool write(u32 offset, u32 size, u32 value);
+  u32 interrupt_status() const;
 
   // PCI config space access
   u32 config_read(u32 reg, u32 size);
