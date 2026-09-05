@@ -21,27 +21,24 @@ Memory::~Memory() = default;
 
 bool Memory::init(u32 size_mb) {
   if (size_mb == 0 || size_mb > 1024) {
-    O2EMU_LOG_ERROR("Invalid RAM size: " << size_mb << " MB");
+    O2EMU_LOG_ERROR_F("Invalid RAM size: {} MB", size_mb);
     return false;
   }
 
   ram_size_ = size_mb * 1024 * 1024;
   ram_mask_ = ram_size_ - 1;
 
-  // Allocate RAM (aligned to 64KB for performance)
-  ram_ = std::unique_ptr<u8[], void (*)(u8 *)>(
-      static_cast<u8 *>(std::aligned_alloc(65536, ram_size_)),
-      [](u8 *p) { std::free(p); });
+  // Allocate RAM (aligned to 16 bytes for SIMD)
+  ram_.reset(new (std::align_val_t(16)) u8[ram_size_]);
   if (!ram_) {
-    O2EMU_LOG_ERROR("Failed to allocate " << size_mb << " MB RAM");
+    O2EMU_LOG_ERROR_F("Failed to allocate {} MB RAM", size_mb);
     return false;
   }
 
   // Clear RAM
   std::memset(ram_.get(), 0, ram_size_);
 
-  O2EMU_LOG_INFO("Initialized " << size_mb << " MB RAM (" << ram_size_
-                                << " bytes)");
+  O2EMU_LOG_INFO_F("Initialized {} MB RAM ({} bytes)", size_mb, ram_size_);
   return true;
 }
 

@@ -11,10 +11,8 @@ namespace o2emu::memory {
 
 CRIME::CRIME(Memory &memory) : memory_(memory) { reset(); }
 
-CRIME::~CRIME() = default;
-
 void CRIME::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
+  regs_.fill(0);
 
   // CRIME register defaults (from Linux driver and IRIX source)
   // CRIME_ID: 0x0000
@@ -146,7 +144,7 @@ void CRIME::handle_control_write(u32 value) {
   // Bit 1: ECC enable
   // Bit 2: Scrub enable
   // Bit 3: Refresh enable
-  O2EMU_LOG_DEBUG("CRIME_CONTROL write: 0x" << std::hex << value << std::dec);
+  O2EMU_LOG_DEBUG_F("CRIME_CONTROL write: 0x{:x}", value);
 }
 
 void CRIME::handle_dma_write(u32 reg_offset, u32 value) {
@@ -172,8 +170,7 @@ void CRIME::handle_timer_write(u32 reg_offset, u32 value) {
     // Bit 0: Enable
     // Bit 1: Periodic mode
     // Bit 2: Interrupt enable
-    O2EMU_LOG_DEBUG("CRIME Timer " << timer << " control: 0x" << std::hex
-                                   << value << std::dec);
+    O2EMU_LOG_DEBUG_F("CRIME Timer {} control: 0x{:x}", timer, value);
   }
 }
 
@@ -184,9 +181,8 @@ void CRIME::start_dma(u32 channel) {
   u32 count = regs_[base + 2];
   u32 ctrl = regs_[base + 3];
 
-  O2EMU_LOG_DEBUG("DMA channel " << channel << " start: src=0x" << std::hex
-                                 << src << " dst=0x" << dst
-                                 << " count=" << count << std::dec);
+  O2EMU_LOG_DEBUG_F("DMA channel {} start: src=0x{:x} dst=0x{:x} count={}",
+                    channel, src, dst, count);
 
   // Simple DMA implementation - just copy memory
   bool to_device = (ctrl >> 1) & 1;
