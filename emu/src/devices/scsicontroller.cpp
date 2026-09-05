@@ -12,21 +12,18 @@ namespace o2emu::devices {
 SCSIController::SCSIController()
     : Device("AIC-7880", 0xC0000000, 0x10000) // ISA I/O space
       ,
-      script_ram_(nullptr) {
+      script_ram_(4096) {
   reset();
 }
 
-SCSIController::~SCSIController() { delete[] script_ram_; }
+SCSIController::~SCSIController() = default;
 
 void SCSIController::reset() {
   Device::reset();
-  std::memset(regs_, 0, sizeof(regs_));
+  std::memset(regs_.data(), 0, regs_.size() * sizeof(u32));
 
   // Allocate script RAM (4KB)
-  if (!script_ram_) {
-    script_ram_ = new u8[4096];
-  }
-  std::memset(script_ram_, 0, 4096);
+  script_ram_.assign(4096, 0);
 
   // AIC-7880 register defaults
   // SEQCTL: 0x00

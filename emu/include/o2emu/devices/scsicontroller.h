@@ -22,49 +22,134 @@ public:
 
   // AIC-7880 register offsets (from PCI BAR0)
   enum Register : uint32_t {
-    // Sequencer Control
-    SEQCTL = 0x0000,
-    SEQADDR0 = 0x0004,
-    SEQADDR1 = 0x0008,
-    SEQADDR2 = 0x000C,
-    SEQADDR3 = 0x0010,
+    // Sequencer Control (0x0000 - 0x0010)
+    REG_SEQCTL = 0x0000,
+    REG_SEQADDR0 = 0x0004,
+    REG_SEQADDR1 = 0x0008,
+    REG_SEQADDR2 = 0x000C,
+    REG_SEQADDR3 = 0x0010,
+    REG_SEQCNT = 0x0014,
+    REG_SEQFLAGS = 0x0018,
+    REG_SEQCTL2 = 0x001C,
 
-    // Host Control
-    HCNTRL = 0x0014,
-    HCNTRL_PCI = 0x0018,
+    // SCSI Control (0x0020 - 0x003C)
+    REG_SCSISIG = 0x0020,
+    REG_SCSIRATE = 0x0024,
+    REG_SCSIID = 0x0028,
+    REG_SCSILUN = 0x002C,
+    REG_SCSISEQ = 0x0030,
+    REG_SCSICNTL = 0x0034,
+    REG_SCSISTAT = 0x0038,
+    REG_SCSIFIFO = 0x003C,
 
-    // Interrupt
-    INTSTAT = 0x001C,
-    INTEN = 0x0020,
+    // Interrupt Control (0x0040 - 0x005C)
+    REG_CLRINT = 0x0040,
+    REG_INTSTAT = 0x0044,
+    REG_SCSIINT = 0x0048,
+    REG_SCSIINTEN = 0x004C,
+    REG_SEQINT = 0x0050,
+    REG_SEQINTEN = 0x0054,
+    REG_BRKADDR = 0x0058,
+    REG_BRKCTL = 0x005C,
 
-    // SCSI Control
-    SCSICMD = 0x0024,
-    SCSISEQ = 0x0028,
-    SCSISIG = 0x002C,
-    SCSIRATE = 0x0030,
-    SCSIID = 0x0034,
-    SCSILUN = 0x0038,
+    // DMA / Data Pointers (0x0060 - 0x008C)
+    REG_DATAPTR0 = 0x0060,
+    REG_DATAPTR1 = 0x0064,
+    REG_DATAPTR2 = 0x0068,
+    REG_DATAPTR3 = 0x006C,
+    REG_DATACNT0 = 0x0070,
+    REG_DATACNT1 = 0x0074,
+    REG_DATACNT2 = 0x0078,
+    REG_DATACNT3 = 0x007C,
+    REG_HOSTADDR0 = 0x0080,
+    REG_HOSTADDR1 = 0x0084,
+    REG_HOSTADDR2 = 0x0088,
+    REG_HOSTADDR3 = 0x008C,
 
-    // Data FIFO
-    DFIFO = 0x003C,
-    DFDAT = 0x0040,
+    // SCB (SCSI Control Block) Registers (0x0090 - 0x00D0)
+    REG_HCNT0 = 0x0090,
+    REG_HCNT1 = 0x0094,
+    REG_HCNT2 = 0x0098,
+    REG_HCNT3 = 0x009C,
+    REG_SCBPTR = 0x00A0,
+    REG_SCBCNT = 0x00A4,
+    REG_SCBCTL = 0x00A8,
+    REG_SCBARRAY0 = 0x00AC,
+    REG_SCBARRAY1 = 0x00B0,
+    REG_SCBARRAY2 = 0x00B4,
+    REG_SCBARRAY3 = 0x00B8,
+    REG_SCB_TAG = 0x00BC,
+    REG_SCB_LUN = 0x00C0,
+    REG_SCB_CDBPTR0 = 0x00C4,
+    REG_SCB_CDBPTR1 = 0x00C8,
+    REG_SCB_CDBPTR2 = 0x00CC,
+    REG_SCB_CDBPTR3 = 0x00D0,
+    REG_SCB_CDBLEN = 0x00D4,
+    REG_SCB_SGPTR0 = 0x00D8,
+    REG_SCB_SGPTR1 = 0x00DC,
+    REG_SCB_SGPTR2 = 0x00E0,
+    REG_SCB_SGPTR3 = 0x00E4,
+    REG_SCB_SGCNT = 0x00E8,
+    REG_SCB_RESID0 = 0x00EC,
+    REG_SCB_RESID1 = 0x00F0,
+    REG_SCB_RESID2 = 0x00F4,
+    REG_SCB_RESID3 = 0x00F8,
+    REG_SCB_STATUS = 0x00FC,
+    REG_SCB_SENSE = 0x0100,
+    REG_SCB_MSG = 0x0104,
+    REG_SCB_HFLAGS = 0x0108,
 
-    // Transfer Count
-    TCH = 0x0044,
-    TCM = 0x0048,
-    TCL = 0x004C,
+    // Host Configuration (0x010C - 0x011C)
+    REG_HCONFIG = 0x010C,
+    REG_HCONFIG2 = 0x0110,
+    REG_HCONFIG3 = 0x0114,
+    REG_HCONFIG4 = 0x0118,
 
-    // SCSI FIFO
-    SFIFO = 0x0050,
-    SFDAT = 0x0054,
+    // Global Control/Status (0x011C - 0x0130)
+    REG_GCTRL = 0x011C,
+    REG_GSTAT = 0x0120,
+    REG_BUSTIME = 0x0124,
+    REG_BUSFREE = 0x0128,
+    REG_SCSIOFF = 0x012C,
+    REG_SCSION = 0x0130,
+    REG_STIMEO = 0x0134,
+    REG_SBLKCTL = 0x0138,
 
-    // SCSI Status
-    SCSISTAT = 0x0058,
-    SCSISTAT1 = 0x005C,
+    // SCSI Rate/Offset/Timeout 2 (0x013C - 0x0148)
+    REG_SCSIRATE2 = 0x013C,
+    REG_SCSIOFF2 = 0x0140,
+    REG_SCSION2 = 0x0144,
+    REG_STIMEO2 = 0x0148,
 
-    // Queue Control
-    QCTRL = 0x0060,
-    QADDR = 0x0064,
+    // SEEPROM (0x014C - 0x0158)
+    REG_SEEPROM = 0x014C,
+    REG_SEECTL = 0x0150,
+    REG_SEEADDR = 0x0154,
+    REG_SEEDATA = 0x0158,
+
+    // Sequencer RAM Access (0x015C - 0x0168)
+    REG_RAMPS = 0x015C,
+    REG_RAMWS = 0x0160,
+    REG_RAMRD = 0x0164,
+    REG_RAMWD = 0x0168,
+
+    // Scratch Registers (0x016C - 0x01AC)
+    REG_SCRATCH0 = 0x016C,
+    REG_SCRATCH1 = 0x0170,
+    REG_SCRATCH2 = 0x0174,
+    REG_SCRATCH3 = 0x0178,
+    REG_SCRATCH4 = 0x017C,
+    REG_SCRATCH5 = 0x0180,
+    REG_SCRATCH6 = 0x0184,
+    REG_SCRATCH7 = 0x0188,
+    REG_SCRATCH8 = 0x018C,
+    REG_SCRATCH9 = 0x0190,
+    REG_SCRATCH10 = 0x0194,
+    REG_SCRATCH11 = 0x0198,
+    REG_SCRATCH12 = 0x019C,
+    REG_SCRATCH13 = 0x01A0,
+    REG_SCRATCH14 = 0x01A4,
+    REG_SCRATCH15 = 0x01A8,
 
     // PCI Configuration (in PCI config space)
     PCI_VENDOR_ID = 0x00,
@@ -170,6 +255,9 @@ private:
   // Sequencer state (simplified)
   bool sequencer_running_ = false;
   u32 sequencer_pc_ = 0;
+
+  // Sequencer RAM (4KB)
+  std::vector<u8> script_ram_;
 };
 
 } // namespace o2emu::devices

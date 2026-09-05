@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T18:21:46.442Z","hash":"sha256:817a3a2cb2e040b295f093007cb7467c1ef9d386ab30f17a00d9e48039711f64"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T19:13:22.954Z","hash":"sha256:577ef1a4c7b0ad277ea458d1be57831ff62c99784b3d3eee32d210a6a73f1498"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -118,13 +118,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_audio.h` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:dwell)_
+- `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
+- `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
