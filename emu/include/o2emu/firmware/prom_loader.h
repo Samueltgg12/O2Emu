@@ -5,23 +5,22 @@
  * @brief PROM loading and execution
  */
 
-#include <memory>
 #include <o2emu/firmware/prom.h>
 #include <o2emu/o2emu.h>
 
-namespace o2emu::cpu {
-class ICpu;
+namespace o2emu::system {
+class Bus;
 }
 
-namespace o2emu::memory {
-class Memory;
+namespace o2emu::cpu {
+class CPU;
 }
 
 namespace o2emu::firmware {
 
 class PROMLoader {
 public:
-  PROMLoader(cpu::ICpu &cpu, memory::Memory &memory);
+  PROMLoader(system::Bus *bus, cpu::CPU *cpu);
   ~PROMLoader() = default;
 
   // Load and prepare PROM for execution
@@ -43,8 +42,8 @@ public:
   PROM &prom() { return prom_; }
 
 private:
-  cpu::ICpu &cpu_;
-  memory::Memory &memory_;
+  system::Bus *bus_;
+  cpu::CPU *cpu_;
   PROM prom_;
 
   // Map PROM sections into memory

@@ -9,115 +9,124 @@
 
 namespace o2emu::system {
 
-Bus::Bus() : devices_(), memory_(nullptr) {}
+Bus::Bus() = default;
 
 Bus::~Bus() = default;
 
-void Bus::attach_memory(memory::Memory *memory) { memory_ = memory; }
+void Bus::attach_device(std::unique_ptr<devices::Device> device) {
+  if (!device) {
+    return;
+  }
 
-void Bus::attach_device(Device *device) {
+  u32 base = device->base_addr();
+  u32 size = device->size();
+
+  // Store the device pointer before moving ownership
+  devices::Device *device_ptr = device.get();
+
+  // Add to owned devices (takes ownership)
+  owned_devices_.push_back(std::move(device));
+
+  // Add to device lookup table
+  devices_.push_back({base, size, device_ptr});
+
+  // Sort by base address for efficient lookup
+  std::sort(devices_.begin(), devices_.end(),
+            [](const DeviceEntry &a, const DeviceEntry &b) {
+              return a.base < b.base;
+            });
+
+  O2EMU_LOG_DEBUG_F("Attached device: %s at 0x%08X size 0x%08X",
+                    device_ptr->name().c_str(), base, size);
+}
+
+devices::Device *Bus::find_device(u32 phys_addr) const {
+  for (const auto &entry : devices_) {
+    if (phys_addr >= entry.base && phys_addr < entry.base + entry.size) {
+      return entry.device;
+    }
+  }
+  return nullptr;
+}
+
+u32 Bus::read32(u32 phys_addr) {
+  devices::Device *device = find_device(phys_addr);
   if (device) {
-    devices_.push_back(device);
-    // Sort by base address for efficient lookup
-    std::sort(devices_.begin(), devices_.end(), [](Device *a, Device *b) {
-      return a->base_addr() < b->base_addr();
-    });
-    O2EMU_LOG_DEBUG("Attached device: " << device->name() << " at 0x"
-                                        << std::hex << device->base_addr()
-                                        << " size 0x" << device->size()
-                                        << std::dec);
+    u32 offset = phys_addr - device->base_addr();
+    return device->read32(offset);
   }
+
+  O2EMU_LOG_WARN_F("Bus read32 from unmapped address: 0x%08X", phys_addr);
+  return 0xFFFFFFFF;
 }
 
-void Bus::detach_device(Device *device) {
-  auto it = std::find(devices_.begin(), devices_.end(), device);
-  if (it != devices_.end()) {
-    devices_.erase(it);
+u16 Bus::read16(u32 phys_addr) {
+  devices::Device *device = find_device(phys_addr);
+  if (device) {
+    u32 offset = phys_addr - device->base_addr();
+    return device->read16(offset);
   }
+
+  O2EMU_LOG_WARN_F("Bus read16 from unmapped address: 0x%08X", phys_addr);
+  return 0xFFFF;
 }
 
-bool Bus::read(u32 addr, u32 size, u32 &value) {
-  // Check devices first
-  for (Device *device : devices_) {
-    if (addr >= device->base_addr() &&
-        addr < device->base_addr() + device->size()) {
-      u32 offset = addr - device->base_addr();
-      if (device->read(offset, size, value)) {
-        return true;
-      }
-    }
+u8 Bus::read8(u32 phys_addr) {
+  devices::Device *device = find_device(phys_addr);
+  if (device) {
+    u32 offset = phys_addr - device->base_addr();
+    return device->read8(offset);
   }
 
-  // Check memory
-  if (memory_) {
-    switch (size) {
-    case 1:
-      value = memory_->read8(addr);
-      return true;
-    case 2:
-      value = memory_->read16(addr);
-      return true;
-    case 4:
-      value = memory_->read32(addr);
-      return true;
-    case 8:
-      value = static_cast<u32>(memory_->read64(addr));
-      return true;
-    }
-  }
-
-  // Unmapped address
-  O2EMU_LOG_WARN("Bus read from unmapped address: 0x" << std::hex << addr
-                                                      << std::dec);
-  value = 0xFFFFFFFF;
-  return false;
+  O2EMU_LOG_WARN_F("Bus read8 from unmapped address: 0x%08X", phys_addr);
+  return 0xFF;
 }
 
-bool Bus::write(u32 addr, u32 size, u32 value) {
-  // Check devices first
-  for (Device *device : devices_) {
-    if (addr >= device->base_addr() &&
-        addr < device->base_addr() + device->size()) {
-      u32 offset = addr - device->base_addr();
-      if (device->write(offset, size, value)) {
-        return true;
-      }
-    }
+void Bus::write32(u32 phys_addr, u32 value) {
+  devices::Device *device = find_device(phys_addr);
+  if (device) {
+    u32 offset = phys_addr - device->base_addr();
+    device->write32(offset, value);
+    return;
   }
 
-  // Check memory
-  if (memory_) {
-    switch (size) {
-    case 1:
-      memory_->write8(addr, value);
-      return true;
-    case 2:
-      memory_->write16(addr, value);
-      return true;
-    case 4:
-      memory_->write32(addr, value);
-      return true;
-    case 8:
-      memory_->write64(addr, value);
-      return true;
-    }
+  O2EMU_LOG_WARN_F("Bus write32 to unmapped address: 0x%08X value=0x%08X",
+                   phys_addr, value);
+}
+
+void Bus::write16(u32 phys_addr, u16 value) {
+  devices::Device *device = find_device(phys_addr);
+  if (device) {
+    u32 offset = phys_addr - device->base_addr();
+    device->write16(offset, value);
+    return;
   }
 
-  // Unmapped address
-  O2EMU_LOG_WARN("Bus write to unmapped address: 0x"
-                 << std::hex << addr << " value=0x" << value << std::dec);
-  return false;
+  O2EMU_LOG_WARN_F("Bus write16 to unmapped address: 0x%08X value=0x%04X",
+                   phys_addr, value);
+}
+
+void Bus::write8(u32 phys_addr, u8 value) {
+  devices::Device *device = find_device(phys_addr);
+  if (device) {
+    u32 offset = phys_addr - device->base_addr();
+    device->write8(offset, value);
+    return;
+  }
+
+  O2EMU_LOG_WARN_F("Bus write8 to unmapped address: 0x%08X value=0x%02X",
+                   phys_addr, value);
 }
 
 void Bus::tick(u64 cycles) {
-  for (Device *device : devices_) {
-    device->tick(cycles);
+  for (const auto &entry : devices_) {
+    entry.device->tick(cycles);
   }
 }
 
 void Bus::reset() {
-  for (Device *device : devices_) {
-    device->reset();
+  for (const auto &entry : devices_) {
+    entry.device->reset();
   }
 }
 
