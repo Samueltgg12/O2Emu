@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-05T14:34:24.851Z","hash":"sha256:a9e68ecaa25b18f557081598027b65d21c6d29dfd864dab75c58027b42abe1d6"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-05T15:10:28.512Z","hash":"sha256:1090207c4f3ac643d1d286916c0bf3018e5bfb01dfd376228d2a42cf15e69bcc"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -34,6 +34,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
