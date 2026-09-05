@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T19:25:17.506Z","hash":"sha256:1a9e99ad191bd4500da5dcf10197f30529da870d9a67fd3ab5ace170bfe2a8a2"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-05T20:11:04.308Z","hash":"sha256:a8d8fe55607c3b64a9beb7ba6e46d8071af24f121ac7b6facc00d733148cd4e8"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -121,6 +121,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
 - `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
+- `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

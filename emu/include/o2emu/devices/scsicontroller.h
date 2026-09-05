@@ -262,6 +262,11 @@ private:
 
   // Sequencer RAM (4KB)
   std::vector<u8> script_ram_;
+
+  // Internal helper methods
+  void start_sequencer();
+  void execute_scb();
+  void handle_ram_access(u32 offset, u32 value);
 };
 
 } // namespace o2emu::devices

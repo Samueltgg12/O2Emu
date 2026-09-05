@@ -21,7 +21,7 @@ RTC::~RTC() { delete[] cmos_ram_; }
 
 void RTC::reset() {
   Device::reset();
-  std::memset(regs_, 0, sizeof(regs_));
+  std::memset(regs_.data(), 0, regs_.size());
 
   // Allocate CMOS RAM (128 bytes)
   if (!cmos_ram_) {
