@@ -341,7 +341,7 @@ void SCSIController::handle_ram_access(u32 reg, u32 value) {
   }
 }
 
-bool SCSIController::read(u32 offset, u32 size, u32 &value) {
+bool SCSIController::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < sizeof(regs_)) {
     value = read_reg(offset);
     return true;
@@ -349,7 +349,7 @@ bool SCSIController::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool SCSIController::write(u32 offset, u32 size, u32 value) {
+bool SCSIController::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < sizeof(regs_)) {
     write_reg(offset, value);
     return true;
@@ -357,7 +357,7 @@ bool SCSIController::write(u32 offset, u32 size, u32 value) {
   return false;
 }
 
-void SCSIController::tick(u64 cycles) {
+void SCSIController::tick([[maybe_unused]] u64 cycles) {
   // SCSI controller doesn't need periodic updates in this simple implementation
 }
 
