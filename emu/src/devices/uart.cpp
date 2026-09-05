@@ -192,7 +192,7 @@ bool UART::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   return false;
 }
 
-bool UART::write(u32 offset, u32 size, u32 value) {
+bool UART::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < 8) {
     write_reg(offset, value);
     return true;
@@ -200,7 +200,7 @@ bool UART::write(u32 offset, u32 size, u32 value) {
   return false;
 }
 
-void UART::tick(u64 cycles) {
+void UART::tick([[maybe_unused]] u64 cycles) {
   // Simulate character reception (for testing)
   // In a real implementation, this would be connected to a terminal
 }
