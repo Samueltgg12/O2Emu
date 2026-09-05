@@ -41,6 +41,10 @@ public:
   // Debugging
   void dump_registers() const;
 
+  // CP0 register access using Register enum
+  u32 cp0_reg(CP0::Register reg) const;
+  void set_cp0_reg(CP0::Register reg, u32 value);
+
   // CP0 Cause register bits
   static constexpr u32 CAUSE_EXCMASK = 0x0000007C;
   static constexpr u32 CAUSE_IP = 0x0000FF00;
@@ -104,10 +108,6 @@ private:
   static constexpr u32 STATUS_TS = 0x00800000;
   static constexpr u32 STATUS_SR = 0x01000000;
   static constexpr u32 STATUS_NMI = 0x02000000;
-
-  // CP0 register access using Register enum
-  u32 cp0_reg(CP0::Register reg) const;
-  void set_cp0_reg(CP0::Register reg, u32 value);
 
   // Exception codes
   static constexpr u32 EXC_INT = 0;

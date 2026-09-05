@@ -53,8 +53,8 @@ public:
   virtual uint32_t pc() const = 0;
   virtual void set_pc(uint32_t pc) = 0;
 
-  virtual uint32_t cp0_reg(Register reg) const = 0;
-  virtual void set_cp0_reg(Register reg, uint32_t value) = 0;
+  virtual uint32_t cp0_reg(CP0::Register reg) const = 0;
+  virtual void set_cp0_reg(CP0::Register reg, uint32_t value) = 0;
 
   virtual uint64_t cycles() const = 0;
   virtual uint64_t instructions() const = 0;

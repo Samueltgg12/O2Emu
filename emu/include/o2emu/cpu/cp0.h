@@ -103,7 +103,7 @@ public:
   };
 
   // Read/write CP0 register
-  u32 read(Register reg, int sel = 0);
+  u32 read(Register reg, int sel = 0) const;
   void write(Register reg, u32 value, int sel = 0);
 
   // Direct access to key registers

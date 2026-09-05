@@ -1261,19 +1261,22 @@ bool MIPSR10000::access_memory(InstructionEntry &entry) {
     bool result = false;
     switch (entry.mem_size) {
     case 1:
-      result = bus_->read8(entry.mem_addr, data);
+      data = bus_->read8(entry.mem_addr);
+      result = true;
       break;
     case 2:
-      result = bus_->read16(entry.mem_addr, data);
+      data = bus_->read16(entry.mem_addr);
+      result = true;
       break;
     case 4:
-      result = bus_->read32(entry.mem_addr, data);
+      data = bus_->read32(entry.mem_addr);
+      result = true;
       break;
     case 8: {
-      uint32_t low = 0, high = 0;
-      result = bus_->read32(entry.mem_addr, low) &&
-               bus_->read32(entry.mem_addr + 4, high);
+      uint32_t low = bus_->read32(entry.mem_addr);
+      uint32_t high = bus_->read32(entry.mem_addr + 4);
       data = low | (static_cast<uint64_t>(high) << 32);
+      result = true;
       break;
     }
     }
