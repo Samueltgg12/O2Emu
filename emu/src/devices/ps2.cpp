@@ -19,7 +19,7 @@ PS2::~PS2() = default;
 
 void PS2::reset() {
   Device::reset();
-  std::memset(regs_, 0, sizeof(regs_));
+  std::memset(regs_.data(), 0, regs_.size());
 
   // PS/2 controller register defaults (8042 compatible)
   // Data port: 0x00
@@ -139,8 +139,7 @@ void PS2::handle_controller_command(u8 cmd) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("PS/2 unknown controller command: 0x"
-                    << std::hex << (int)cmd << std::dec);
+    O2EMU_LOG_DEBUG("PS/2 unknown controller command: 0x" + to_hex((int)cmd));
     break;
   }
 }
@@ -194,8 +193,7 @@ void PS2::handle_keyboard_command(u8 cmd) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("PS/2 unknown keyboard command: 0x" << std::hex << (int)cmd
-                                                        << std::dec);
+    O2EMU_LOG_DEBUG("PS/2 unknown keyboard command: 0x" + to_hex((int)cmd));
     break;
   }
 }
@@ -285,8 +283,7 @@ void PS2::handle_mouse_command(u8 cmd) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("PS/2 unknown mouse command: 0x" << std::hex << (int)cmd
-                                                     << std::dec);
+    O2EMU_LOG_DEBUG("PS/2 unknown mouse command: 0x" + to_hex((int)cmd));
     break;
   }
 }

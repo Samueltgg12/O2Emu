@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T19:13:22.084Z","hash":"sha256:577ef1a4c7b0ad277ea458d1be57831ff62c99784b3d3eee32d210a6a73f1498"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T19:25:17.407Z","hash":"sha256:1a9e99ad191bd4500da5dcf10197f30529da870d9a67fd3ab5ace170bfe2a8a2"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,11 +117,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:dwell)_
 - `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
 - `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
+- `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
