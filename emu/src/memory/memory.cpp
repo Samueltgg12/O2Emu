@@ -110,13 +110,13 @@ void Memory::write64(u32 addr, u64 value) {
 
 void Memory::clear() {
   if (ram_) {
-    std::memset(ram_, 0, ram_size_);
+    std::memset(ram_.get(), 0, ram_size_);
   }
 }
 
-const u8 *Memory::data() const { return ram_; }
+const u8 *Memory::data() const { return ram_.get(); }
 
-u8 *Memory::data() { return ram_; }
+u8 *Memory::data() { return ram_.get(); }
 
 u32 Memory::size() const { return ram_size_; }
 

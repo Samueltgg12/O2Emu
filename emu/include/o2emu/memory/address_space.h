@@ -5,56 +5,56 @@
  * @brief Address space mapping and translation
  */
 
-#include <functional>
-#include <memory>
 #include <o2emu/o2emu.h>
 #include <vector>
 
 namespace o2emu::memory {
 
-class Device;
-
-struct Mapping {
-  u32 phys_base;
-  u32 size;
-  Device *device = nullptr;
-  bool readable = true;
-  bool writable = true;
-  std::string name;
-};
-
 class AddressSpace {
 public:
+  // Abstract base class for memory-mapped devices
+  class Device {
+  public:
+    virtual ~Device() = default;
+    virtual u32 read(u32 offset) = 0;
+    virtual void write(u32 offset, u32 value) = 0;
+  };
+
+  struct Mapping {
+    u32 base;
+    u32 size;
+    Device *device = nullptr;
+    u32 offset = 0;
+    bool read_only = false;
+  };
+
   AddressSpace();
   ~AddressSpace() = default;
 
-  // Map a device at a physical address range
-  void map_device(u32 phys_base, u32 size, Device *device,
-                  const char *name = "");
+  // Reset address space to default state
+  void reset();
+
+  // Map a device at a virtual address range with device-relative offset
+  void map(u32 base, u32 size, Device *device, u32 offset = 0);
 
   // Unmap a range
-  void unmap(u32 phys_base, u32 size);
+  void unmap(u32 base, u32 size);
 
   // Find device at address
-  Device *find_device(u32 phys_addr) const;
+  Device *find_device(u32 addr) const;
 
-  // Read/write through address space
-  u32 read32(u32 phys_addr);
-  u16 read16(u32 phys_addr);
-  u8 read8(u32 phys_addr);
+  // Translate virtual address to device offset
+  // Returns the mapping's base address, sets offset to device-relative offset
+  u32 translate(u32 addr, u32 &offset) const;
 
-  void write32(u32 phys_addr, u32 value);
-  void write16(u32 phys_addr, u16 value);
-  void write8(u32 phys_addr, u8 value);
+  // Check if address is mapped
+  bool is_mapped(u32 addr) const;
 
-  // Debug
-  void dump_mappings() const;
+  // Check if address is read-only
+  bool is_read_only(u32 addr) const;
 
 private:
   std::vector<Mapping> mappings_;
-
-  // Find mapping index for address
-  int find_mapping(u32 phys_addr) const;
 };
 
 } // namespace o2emu::memory

@@ -3,7 +3,6 @@
  * @brief MRE (Memory & Rendering Engine) implementation
  */
 
-#include <cstring>
 #include <o2emu/logging/logger.h>
 #include <o2emu/memory/mre.h>
 
@@ -11,10 +10,8 @@ namespace o2emu::memory {
 
 MRE::MRE(Memory &memory) : memory_(memory) { reset(); }
 
-MRE::~MRE() = default;
-
 void MRE::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
+  regs_.fill(0);
 
   // MRE register defaults (from Linux crmfb driver and IRIX source)
   // MRE_ID: 0x0000
@@ -227,7 +224,7 @@ void MRE::handle_control_write(u32 value) {
   // Bit 5: Texture enable
   // Bit 6: Fog enable
   // Bit 7: Antialiasing enable
-  O2EMU_LOG_DEBUG("MRE_CONTROL write: 0x" << std::hex << value << std::dec);
+  O2EMU_LOG_DEBUG("MRE_CONTROL write: 0x{:08x}", value);
 }
 
 void MRE::update_framebuffer_config() {
@@ -238,10 +235,8 @@ void MRE::update_framebuffer_config() {
   fb_depth_ = regs_[REG_FB_DEPTH];
   fb_format_ = regs_[REG_FB_FORMAT];
 
-  O2EMU_LOG_DEBUG("Framebuffer config: base=0x"
-                  << std::hex << fb_base_ << " stride=" << fb_stride_ << " "
-                  << fb_width_ << "x" << fb_height_ << "x" << fb_depth_
-                  << std::dec);
+  O2EMU_LOG_DEBUG("Framebuffer config: base=0x{:08x} stride={} {}x{}x{}",
+                  fb_base_, fb_stride_, fb_width_, fb_height_, fb_depth_);
 }
 
 void MRE::process_display_list() {
@@ -249,9 +244,9 @@ void MRE::process_display_list() {
   u32 dl_end = regs_[REG_DL_END];
   u32 dl_ptr = regs_[REG_DL_PTR];
 
-  O2EMU_LOG_DEBUG("Processing display list: base=0x"
-                  << std::hex << dl_base << " ptr=0x" << dl_ptr << " end=0x"
-                  << dl_end << std::dec);
+  O2EMU_LOG_DEBUG(
+      "Processing display list: base=0x{:08x} ptr=0x{:08x} end=0x{:08x}",
+      dl_base, dl_ptr, dl_end);
 
   // Simple display list processing - just mark as done for now
   regs_[REG_DL_PTR] = dl_end;

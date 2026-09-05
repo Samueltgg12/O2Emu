@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-05T03:06:58.443Z","hash":"sha256:6b9498ae7c8f82660fe9bdce875ab7ceca3e036e12f4710a368d5833f6105b58"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-05T04:49:59.683Z","hash":"sha256:c75cba2d3e5cd547993eaa9bee50e3df87431f59b3450bb6215f653d6a953f73"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,12 +31,13 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
-- `emu/src/cpu/mips_r10000.cpp` _(auto:recent-edit)_
-- `emu/src/cpu/mips_r5000.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cp0.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/crime.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/address_space.h` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/memory.h` _(auto:recent-edit)_
+- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
+- `emu/src/memory/address_space.cpp` _(auto:recent-edit)_
+- `emu/include/o2emu/memory/mre.h` _(auto:recent-edit)_
+- `emu/src/memory/mre.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

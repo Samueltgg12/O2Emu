@@ -13,15 +13,72 @@
 
 namespace o2emu::memory {
 
+class Memory;
+
 class MRE {
 public:
-  MRE();
-  ~MRE() = default;
+  explicit MRE(Memory &memory);
+  ~MRE();
 
   // MRE register offsets (from PHYS_BASE_RENDER = 0x15000000)
   // Based on PROM definitions.h and register-maps.md
   enum Register : uint32_t {
-    // Render Interface
+    // Core registers
+    REG_ID = 0x0000,
+    REG_CONFIG = 0x0008,
+    REG_STATUS = 0x0010,
+    REG_CONTROL = 0x0018,
+
+    // Framebuffer configuration
+    REG_FB_BASE = 0x0100,
+    REG_FB_STRIDE = 0x0108,
+    REG_FB_WIDTH = 0x0110,
+    REG_FB_HEIGHT = 0x0118,
+    REG_FB_DEPTH = 0x0120,
+    REG_FB_FORMAT = 0x0128,
+
+    // Tile configuration (GBE - Graphics Back End)
+    REG_TILE_CONFIG = 0x0200,
+    REG_TILE_BASE = 0x0208,
+    REG_TILE_SIZE = 0x0210,
+
+    // Display list / vertex processing
+    REG_DL_BASE = 0x0300,
+    REG_DL_PTR = 0x0308,
+    REG_DL_END = 0x0310,
+    REG_DL_CTRL = 0x0318,
+
+    // Vertex processing
+    REG_VTX_BASE = 0x0400,
+    REG_VTX_STRIDE = 0x0408,
+    REG_VTX_COUNT = 0x0410,
+    REG_VTX_FORMAT = 0x0418,
+
+    // Texture configuration
+    REG_TEX_BASE = 0x0500,
+    REG_TEX_STRIDE = 0x0508,
+    REG_TEX_SIZE = 0x0510,
+    REG_TEX_FORMAT = 0x0518,
+
+    // Rasterization
+    REG_RASTER_CTRL = 0x0600,
+    REG_SCISSOR = 0x0608,
+    REG_ZBUF_BASE = 0x0610,
+    REG_ZBUF_STRIDE = 0x0618,
+
+    // Interrupt registers
+    REG_INT_STATUS = 0x0700,
+    REG_INT_MASK = 0x0708,
+    REG_INT_CLEAR = 0x0710,
+
+    // Performance counters
+    REG_PERF_CTRL = 0x0800,
+    REG_PERF_COUNT0 = 0x0808,
+    REG_PERF_COUNT1 = 0x0810,
+    REG_PERF_COUNT2 = 0x0818,
+    REG_PERF_COUNT3 = 0x0820,
+
+    // Legacy render interface (for compatibility)
     RENDER_INTF_BASE = 0x000000,
     RENDER_INTF_STATUS = 0x000000,
     RENDER_INTF_CONTROL = 0x000004,
@@ -54,9 +111,9 @@ public:
     RENDER_REVISION = 0x00FFFC,
   };
 
-  // Read/write registers
-  u32 read(Register reg);
-  void write(Register reg, u32 value);
+  // Read/write registers (by byte offset)
+  u32 read(u32 offset);
+  void write(u32 offset, u32 value);
 
   // Render interface
   void start_render();
@@ -75,12 +132,43 @@ public:
   // Reset
   void reset();
 
+  // Display list processing
+  void process_display_list();
+
+  // Tick for performance counters
+  void tick(u64 cycles);
+
+  // Interrupt handling
+  u32 interrupt_status() const;
+  void clear_interrupt(u32 bit);
+
+  // Framebuffer accessors
+  u32 fb_base() const;
+  u32 fb_stride() const;
+  u32 fb_width() const;
+  u32 fb_height() const;
+  u32 fb_depth() const;
+  u32 fb_format() const;
+
 private:
-  std::array<u32, 0x10000 / 4> regs_ = {}; // 64KB register space
+  Memory &memory_;
+  std::array<u32, 0x10000 / 4> regs_{}; // 64KB register space
+
+  // Framebuffer state (cached for quick access)
+  u32 fb_base_ = 0;
+  u32 fb_stride_ = 0;
+  u32 fb_width_ = 0;
+  u32 fb_height_ = 0;
+  u32 fb_depth_ = 0;
+  u32 fb_format_ = 0;
 
   // State
   bool render_active_ = false;
   bool dma_active_ = false;
+
+  // Internal helpers
+  void handle_control_write(u32 value);
+  void update_framebuffer_config();
 };
 
 } // namespace o2emu::memory

@@ -45,7 +45,7 @@ public:
   Memory &operator=(Memory &&) = default;
 
   // Initialize memory system
-  void init(u32 ram_size_mb = 256);
+  bool init(u32 ram_size_mb = 256);
 
   // Memory access (physical addresses)
   u64 read64(u32 addr) const;
