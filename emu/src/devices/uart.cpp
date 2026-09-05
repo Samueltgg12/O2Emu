@@ -184,7 +184,7 @@ void UART::update_interrupts() {
   regs_[REG_IIR] = iir;
 }
 
-bool UART::read(u32 offset, u32 size, u32 &value) {
+bool UART::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < 8) {
     value = read_reg(offset);
     return true;
