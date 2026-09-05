@@ -233,9 +233,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/uart.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788641644394,
+      "pinnedAt": 1788642472644,
       "auto": "recent-edit",
-      "expiresAt": 1788645244394
+      "expiresAt": 1788646072644
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/scsicontroller.cpp",
@@ -246,5 +246,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788642200772
+  "updatedAt": 1788642472644
 }
