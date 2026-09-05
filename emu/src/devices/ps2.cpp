@@ -4,10 +4,19 @@
  */
 
 #include <cstring>
+#include <iomanip>
 #include <o2emu/devices/ps2.h>
 #include <o2emu/logging/logger.h>
+#include <sstream>
 
 namespace o2emu::devices {
+
+static std::string to_hex(u32 value) {
+  std::stringstream ss;
+  ss << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
+     << value;
+  return ss.str();
+}
 
 PS2::PS2(u32 base_addr, u32 kbd_irq, u32 mouse_irq)
     : Device("PS/2", base_addr, 0x10), kbd_irq_(kbd_irq), mouse_irq_(mouse_irq),

@@ -229,6 +229,10 @@ public:
   void attach_device(int target_id, int lun, const std::string &image_path);
   void detach_device(int target_id, int lun);
 
+  // Internal register access
+  u32 read_reg(u32 offset);
+  void write_reg(u32 offset, u32 value);
+
 private:
   std::array<u32, 0x1000 / 4> regs_ = {}; // 4KB register space
 
