@@ -247,11 +247,18 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788642904296,
+      "pinnedAt": 1788643139981,
       "auto": "recent-edit",
-      "expiresAt": 1788646504296
+      "expiresAt": 1788646739981
+    },
+    {
+      "path": "/home/samuel/SGI Projects/O2Emu/.github/workflows/cmake-multi-platform.yml",
+      "pinnedBy": "auto:editor",
+      "pinnedAt": 1788643137562,
+      "auto": "recent-edit",
+      "expiresAt": 1788646737562
     }
   ],
   "skills": [],
-  "updatedAt": 1788642931828
+  "updatedAt": 1788643139981
 }

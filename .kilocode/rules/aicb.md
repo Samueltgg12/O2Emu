@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-05T21:15:05.965Z","hash":"sha256:c5b61d5dd9c27fca9979c6b9ea129c237f2172ecf1f166ad28e93ef7a3ea107e"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-05T21:19:01.821Z","hash":"sha256:b1df0f5e2b42cdd1af503635a28f32c21909ef9eaea6157ca48e5fb09b0cab3a"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -38,6 +38,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/src/devices/uart.cpp` _(auto:recent-edit)_
 - `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
 - `gui/CMakeLists.txt` _(auto:recent-edit)_
+- `.github/workflows/cmake-multi-platform.yml` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
