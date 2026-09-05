@@ -3,16 +3,20 @@
  * @brief PROM firmware execution
  */
 
+#include <cstdio>
 #include <cstring>
+#include <o2emu/cpu/cp0.h>
+#include <o2emu/cpu/cpu.h>
 #include <o2emu/firmware/prom.h>
 #include <o2emu/logging/logger.h>
+#include <o2emu/system/bus.h>
 
 namespace o2emu::firmware {
 
 PROM::PROM(Bus *bus, CPU *cpu)
     : bus_(bus), cpu_(cpu), image_(nullptr), loaded_(false) {}
 
-PROM::~PROM() = default;
+// Destructor is defaulted in header
 
 bool PROM::load_image(const std::string &path) {
   image_ = std::make_unique<PROMImage>();
@@ -25,8 +29,8 @@ bool PROM::load_image(const std::string &path) {
   map_to_memory();
   loaded_ = true;
 
-  O2EMU_LOG_INFO("PROM image loaded successfully, entry point: 0x"
-                 << std::hex << image_->entry_point() << std::dec);
+  O2EMU_LOG_INFO_F("PROM image loaded successfully, entry point: 0x%08X",
+                   image_->entry_point());
   return true;
 }
 
@@ -40,19 +44,19 @@ void PROM::map_to_memory() {
   // Map PROM at physical address 0x1FC00000 (KSEG1)
   // Also accessible at 0xBFC00000 (reset vector)
   for (u32 i = 0; i < size; ++i) {
-    bus_->write(0x1FC00000 + i, 1, data[i]);
-    bus_->write(0xBFC00000 + i, 1, data[i]);
+    bus_->write8(0x1FC00000 + i, data[i]);
+    bus_->write8(0xBFC00000 + i, data[i]);
   }
 
   // Also map at VMA 0x81000000 (firmware VMA)
   for (u32 i = 0; i < size; ++i) {
-    bus_->write(0x81000000 + i, 1, data[i]);
+    bus_->write8(0x81000000 + i, data[i]);
   }
 }
 
 void PROM::execute() {
   if (!loaded_ || !image_) {
-    O2EMU_LOG_ERROR("No PROM image loaded");
+    O2EMU_LOG_ERROR_F("No PROM image loaded");
     return;
   }
 
@@ -61,16 +65,15 @@ void PROM::execute() {
     entry = 0xBFC00000; // Default reset vector
   }
 
-  O2EMU_LOG_INFO("Starting PROM execution at 0x" << std::hex << entry
-                                                 << std::dec);
+  O2EMU_LOG_INFO_F("Starting PROM execution at 0x%08X", entry);
 
   // Set CPU PC to entry point
-  cpu_->set_gpr(31, 0); // RA = 0
-  cpu_->set_cp0_reg(CP0_EPC, entry);
-  cpu_->set_cp0_reg(CP0_STATUS, 0x00400004); // BEV=1, KSU=kernel
+  cpu_->state().gpr[31] = 0; // RA = 0
+  cpu_->cp0().set_epc(entry);
+  cpu_->cp0().set_status(0x00400004); // BEV=1, KSU=kernel
 
   // Start execution
-  cpu_->set_gpr(0, 0); // Zero register
+  cpu_->state().gpr[0] = 0; // Zero register
 }
 
 void PROM::reset() {
@@ -83,15 +86,8 @@ void PROM::reset() {
   }
 }
 
-bool PROM::is_loaded() const { return loaded_; }
-
-u32 PROM::entry_point() const {
-  if (image_)
-    return image_->entry_point();
-  return 0;
-}
-
-const PROMImage *PROM::image() const { return image_.get(); }
+// is_loaded() and image() are defined inline in header
+// u32 PROM::entry_point() const is defined inline in header
 
 // PROMImage implementation
 bool PROMImage::load(const std::string &path) {
