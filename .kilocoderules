@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocoderules","generatedAt":"2026-09-05T22:08:44.389Z","hash":"sha256:050ea51a2451b99f65dc1e8e9330d369fd643cc059a874b6fbcc57ad4bef2656"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocoderules","generatedAt":"2026-09-05T22:19:44.433Z","hash":"sha256:f69ed31db60e5ea460c1102d474453ff3d6ec1a9ddfd76ce4f2bb8832741aba7"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -33,8 +33,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:dwell)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
-- `gui/CMakeLists.txt` _(auto:recent-edit)_
-- `.github/workflows/cmake-multi-platform.yml` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
 

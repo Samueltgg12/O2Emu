@@ -94,7 +94,7 @@ bool PROMImage::load(const std::string &path) {
   // Read file into buffer
   FILE *f = fopen(path.c_str(), "rb");
   if (!f) {
-    O2EMU_LOG_ERROR("Failed to open PROM image: " << path);
+    O2EMU_LOG_ERROR_F("Failed to open PROM image: %s", path.c_str());
     return false;
   }
 
@@ -112,7 +112,7 @@ bool PROMImage::load(const std::string &path) {
   fclose(f);
 
   if (read != static_cast<size_t>(size)) {
-    O2EMU_LOG_ERROR("Failed to read PROM image: " << path);
+    O2EMU_LOG_ERROR_F("Failed to read PROM image: %s", path.c_str());
     return false;
   }
 
@@ -158,16 +158,14 @@ bool PROMImage::parse_shdr() {
 
   // Check magic "SHDR" (0x48445253)
   if (shdr->magic != 0x48445253) {
-    O2EMU_LOG_ERROR("Invalid SHDR magic: 0x" << std::hex << shdr->magic
-                                             << std::dec);
+    O2EMU_LOG_ERROR_F("Invalid SHDR magic: 0x%08X", shdr->magic);
     return false;
   }
 
   // Verify checksum
   u32 computed = compute_checksum(image_.data(), image_.size());
   if (computed != 0) {
-    O2EMU_LOG_WARN("SHDR checksum mismatch: computed 0x" << std::hex << computed
-                                                         << std::dec);
+    O2EMU_LOG_WARN_F("SHDR checksum mismatch: computed 0x%08X", computed);
   }
 
   return true;

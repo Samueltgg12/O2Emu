@@ -9,16 +9,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <o2emu/cpu/cpu.h>
 #include <o2emu/o2emu.h>
+#include <o2emu/system/bus.h>
 #include <string>
 #include <vector>
 
-namespace o2emu {
-
-class Bus;
-class CPU;
-
-namespace firmware {
+namespace o2emu::firmware {
 
 // PROM image format (SHDR - SGI Header)
 #pragma pack(push, 1)
@@ -103,7 +100,7 @@ private:
 
 class PROM {
 public:
-  PROM(Bus *bus, CPU *cpu);
+  PROM(o2emu::Bus *bus, o2emu::CPU *cpu);
   ~PROM() = default;
 
   // Load PROM image from file
@@ -128,8 +125,8 @@ public:
   const PROMImage *image() const { return image_.get(); }
 
 private:
-  Bus *bus_ = nullptr;
-  CPU *cpu_ = nullptr;
+  o2emu::Bus *bus_ = nullptr;
+  o2emu::CPU *cpu_ = nullptr;
   std::unique_ptr<PROMImage> image_;
   bool loaded_ = false;
 };
