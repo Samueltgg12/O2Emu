@@ -51,6 +51,7 @@ protected:
   std::string name_;
   u32 base_addr_;
   u32 size_;
+  bool enabled_ = true;
 };
 
 } // namespace o2emu::devices

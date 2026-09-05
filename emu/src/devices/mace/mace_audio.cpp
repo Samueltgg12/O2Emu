@@ -3,18 +3,20 @@
  * @brief MACE Audio implementation
  */
 
-#include <cstring>
 #include <o2emu/devices/mace/mace_audio.h>
 #include <o2emu/logging/logger.h>
 
 namespace o2emu::devices {
 
-MACEAudio::MACEAudio(MACE &mace) : mace_(mace) { reset(); }
+MACEAudio::MACEAudio(MACE &mace)
+    : Device("MACEAudio", 0x300000, 0x10000), mace_(mace) {
+  reset();
+}
 
 MACEAudio::~MACEAudio() = default;
 
 void MACEAudio::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
+  regs_.fill(0);
 
   // MACE Audio register defaults (based on CS4215/CS4231 compatible)
   // AUDIO_CTRL: 0x0000

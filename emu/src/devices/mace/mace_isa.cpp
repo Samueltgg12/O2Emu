@@ -3,18 +3,20 @@
  * @brief MACE ISA bridge implementation
  */
 
-#include <cstring>
 #include <o2emu/devices/mace/mace_isa.h>
 #include <o2emu/logging/logger.h>
 
 namespace o2emu::devices {
 
-MACEISA::MACEISA(MACE &mace) : mace_(mace) { reset(); }
+MACEISA::MACEISA(MACE &mace)
+    : Device("MACEISA", 0x20000, 0x10000), mace_(mace) {
+  reset();
+}
 
 MACEISA::~MACEISA() = default;
 
 void MACEISA::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
+  regs_.fill(0);
 
   // MACE ISA register defaults
   // ISA_CTRL: 0x0000
@@ -187,7 +189,7 @@ void MACEISA::start_dma() {
   regs_[REG_INT_STATUS] |= 0x1; // DMA complete
 }
 
-bool MACEISA::read(u32 offset, u32 size, u32 &value) {
+bool MACEISA::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < sizeof(regs_)) {
     value = read_reg(offset);
     return true;
@@ -195,7 +197,7 @@ bool MACEISA::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool MACEISA::write(u32 offset, u32 size, u32 value) {
+bool MACEISA::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < sizeof(regs_)) {
     write_reg(offset, value);
     return true;

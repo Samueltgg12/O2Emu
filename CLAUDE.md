@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T07:02:55.571Z","hash":"sha256:02c6b6f2011c09b6e34423d54fe6c9589d3643371e8f45ff2ee34d88319b34bc"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T13:34:59.183Z","hash":"sha256:41c641c0fda908b385a58acaf0c9bc437bd4f144599350d838d6275affd95c49"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,12 +117,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/CMakeLists.txt` _(auto:dwell)_
-- `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_pci.cpp` _(auto:recent-edit)_
-- `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

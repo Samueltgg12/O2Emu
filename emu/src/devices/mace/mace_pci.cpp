@@ -128,7 +128,7 @@ void MACEPCI::config_write(u32 reg, u32 value) {
   }
 }
 
-bool MACEPCI::read(u32 offset, u32 size, u32 &value) {
+bool MACEPCI::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < 0x10000) {
     // PCI config space access
     if (offset < 256) {
@@ -139,7 +139,7 @@ bool MACEPCI::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool MACEPCI::write(u32 offset, u32 size, u32 value) {
+bool MACEPCI::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < 0x10000) {
     // PCI config space access
     if (offset < 256) {

@@ -42,7 +42,7 @@ public:
     REG_INT_ROUTE = 0x003C,
   };
 
-  explicit MACE(Memory &memory);
+  explicit MACE(o2emu::memory::Memory &memory);
   ~MACE() override = default;
 
   // Sub-devices
@@ -73,7 +73,7 @@ public:
   void clear_interrupt(u32 mask) { interrupt_status_ &= ~mask; }
 
 private:
-  Memory &memory_;
+  o2emu::memory::Memory &memory_;
   std::unique_ptr<MACEPCI> pci_;
   std::unique_ptr<MACEEthernet> ethernet_;
   std::unique_ptr<MACEAudio> audio_;
