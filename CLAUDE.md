@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T21:18:59.316Z","hash":"sha256:b1df0f5e2b42cdd1af503635a28f32c21909ef9eaea6157ca48e5fb09b0cab3a"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T21:20:43.950Z","hash":"sha256:0c4d7d59b787c2a93dde5f3b4c4f038cc718634743d18c0b1b711ac1dd3b75e8"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -120,7 +120,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/CMakeLists.txt` _(auto:dwell)_
 - `emu/include/o2emu/devices/scsicontroller.h` _(auto:recent-edit)_
 - `emu/src/devices/ps2.cpp` _(auto:recent-edit)_
-- `emu/src/devices/rtc.cpp` _(auto:recent-edit)_
 - `emu/src/devices/uart.cpp` _(auto:recent-edit)_
 - `emu/src/devices/scsicontroller.cpp` _(auto:recent-edit)_
 - `gui/CMakeLists.txt` _(auto:recent-edit)_
