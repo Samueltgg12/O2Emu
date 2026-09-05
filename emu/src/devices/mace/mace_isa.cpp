@@ -3,9 +3,9 @@
  * @brief MACE ISA bridge implementation
  */
 
+#include <functional>
 #include <o2emu/devices/mace/mace_isa.h>
 #include <o2emu/logging/logger.h>
-
 namespace o2emu::devices {
 
 MACEISA::MACEISA(MACE &mace)

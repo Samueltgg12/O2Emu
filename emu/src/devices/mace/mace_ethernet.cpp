@@ -161,7 +161,7 @@ void MACEEthernet::handle_ctrl_write(u32 value) {
     reset();
   }
 
-  O2EMU_LOG_DEBUG("MAC_CTRL write: 0x" << std::hex << value << std::dec);
+  O2EMU_LOG_DEBUG_F("MAC_CTRL write: 0x{:08X}", value);
 }
 
 void MACEEthernet::update_mac_addr() {
@@ -181,9 +181,9 @@ void MACEEthernet::start_tx() {
   u32 tx_ptr = regs_[REG_TX_PTR];
   u32 tx_end = regs_[REG_TX_END];
 
-  O2EMU_LOG_DEBUG("Ethernet TX start: base=0x"
-                  << std::hex << tx_base << " ptr=0x" << tx_ptr << " end=0x"
-                  << tx_end << std::dec);
+  O2EMU_LOG_DEBUG_F(
+      "Ethernet TX start: base=0x{:08X} ptr=0x{:08X} end=0x{:08X}", tx_base,
+      tx_ptr, tx_end);
 
   // Simulate TX completion
   regs_[REG_TX_PTR] = tx_end;
@@ -195,15 +195,15 @@ void MACEEthernet::start_rx() {
   u32 rx_ptr = regs_[REG_RX_PTR];
   u32 rx_end = regs_[REG_RX_END];
 
-  O2EMU_LOG_DEBUG("Ethernet RX start: base=0x"
-                  << std::hex << rx_base << " ptr=0x" << rx_ptr << " end=0x"
-                  << rx_end << std::dec);
+  O2EMU_LOG_DEBUG_F(
+      "Ethernet RX start: base=0x{:08X} ptr=0x{:08X} end=0x{:08X}", rx_base,
+      rx_ptr, rx_end);
 
   // Simulate RX - in real implementation, this would wait for packets
   regs_[REG_INT_STATUS] |= 0x2; // RX complete
 }
 
-bool MACEEthernet::read(u32 offset, u32 size, u32 &value) {
+bool MACEEthernet::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
   if (offset < sizeof(regs_)) {
     value = read_reg(offset);
     return true;
@@ -211,7 +211,7 @@ bool MACEEthernet::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool MACEEthernet::write(u32 offset, u32 size, u32 value) {
+bool MACEEthernet::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   if (offset < sizeof(regs_)) {
     write_reg(offset, value);
     return true;
@@ -219,7 +219,7 @@ bool MACEEthernet::write(u32 offset, u32 size, u32 value) {
   return false;
 }
 
-void MACEEthernet::tick(u64 cycles) {
+void MACEEthernet::tick([[maybe_unused]] u64 cycles) {
   // Ethernet doesn't need periodic updates in this simple implementation
 }
 

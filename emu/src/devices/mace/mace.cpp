@@ -7,7 +7,7 @@
  */
 
 #include <o2emu/devices/mace/mace.h>
-#include <o2emu/logging/logging.h>
+#include <o2emu/logging/logger.h>
 
 namespace o2emu::devices {
 
