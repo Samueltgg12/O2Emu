@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T22:36:44.449Z","hash":"sha256:dfdea740fd152092fe79b3a63817d3bc239784b4a4f97e69a4fd89c82d37a649"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T23:23:59.096Z","hash":"sha256:c531bb9ac23dff0b7cc01d66b4c35ada15a38fdc80653d38b1ddb11955043917"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -34,6 +34,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/CMakeLists.txt` _(auto:dwell)_
 - `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
+- `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
