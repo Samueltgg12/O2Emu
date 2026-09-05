@@ -10,8 +10,6 @@ namespace o2emu::devices {
 
 MACEISA::MACEISA(MACE &mace) : mace_(mace) { reset(); }
 
-MACEISA::~MACEISA() = default;
-
 void MACEISA::reset() {
   regs_.fill(0);
 
