@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T15:16:30.009Z","hash":"sha256:1d4696c5e70afa22397fbee0e9a2f870c7fe54c3c72bd591aff467efa88e1219"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-05T15:36:08.405Z","hash":"sha256:7e776438c496922cae1104ad63f6865b442d414ce0c9eb2bd6d87fbd1b744e2a"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,7 +117,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/src/devices/mace/mace_audio.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace_isa.cpp` _(auto:recent-edit)_
 - `emu/src/devices/mace/mace.cpp` _(auto:recent-edit)_
