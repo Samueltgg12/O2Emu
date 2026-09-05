@@ -79,13 +79,6 @@ public:
 
   void reset() override;
 
-  // PCI address windows
-  static constexpr u32 LOW_MEMORY_BASE = 0x1A000000;
-  static constexpr u32 LOW_MEMORY_SIZE = 0x02000000; // 32 MB
-  static constexpr u32 LOW_IO_BASE = 0x18000000;
-  static constexpr u64 HI_MEMORY_BASE = 0x280000000ULL; // 64-bit
-  static constexpr u64 HI_IO_BASE = 0x100000000ULL;     // 64-bit
-
   // Interrupt mapping (from fixup-ip32.c)
   // Slot 0: SCSI0 (devfn 1<<3), Slot 1: SCSI1 (devfn 2<<3), Slot 2: Expansion
   static int map_irq(int slot, int pin);
