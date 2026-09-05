@@ -313,7 +313,7 @@ bool PS2::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {
   return false;
 }
 
-void PS2::tick(u64 cycles) {
+void PS2::tick([[maybe_unused]] u64 cycles) {
   // PS/2 doesn't need periodic updates in this simple implementation
 }
 

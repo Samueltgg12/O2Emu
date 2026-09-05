@@ -164,7 +164,7 @@ void UART::write_reg(u32 offset, u32 value) {
 void UART::update_baud_rate() {
   // Baud rate = 115200 / divisor
   // For simulation, we don't actually use this
-  O2EMU_LOG_DEBUG("UART baud rate divisor: " << divisor_);
+  O2EMU_LOG_DEBUG("UART baud rate divisor: " << static_cast<u32>(divisor_));
 }
 
 void UART::update_interrupts() {

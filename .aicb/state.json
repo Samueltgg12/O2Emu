@@ -219,9 +219,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/ps2.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788641310451,
+      "pinnedAt": 1788641337627,
       "auto": "recent-edit",
-      "expiresAt": 1788644910451
+      "expiresAt": 1788644937627
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/rtc.cpp",
@@ -233,11 +233,11 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/uart.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788639625043,
+      "pinnedAt": 1788641464515,
       "auto": "recent-edit",
-      "expiresAt": 1788643225043
+      "expiresAt": 1788645064515
     }
   ],
   "skills": [],
-  "updatedAt": 1788641310451
+  "updatedAt": 1788641464515
 }
