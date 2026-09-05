@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T05:54:04.706Z","hash":"sha256:03a2317b924550344c785e5b83b353fde9e9991dbff3d873b9336a988eb2a1a2"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T07:02:55.576Z","hash":"sha256:02c6b6f2011c09b6e34423d54fe6c9589d3643371e8f45ff2ee34d88319b34bc"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,16 +31,12 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `emu/include/o2emu/memory/crime.h` _(auto:recent-edit)_
-- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
-- `emu/src/memory/address_space.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/memory/mre.h` _(auto:recent-edit)_
-- `emu/src/memory/mre.cpp` _(auto:recent-edit)_
-- `emu/src/memory/crime.cpp` _(auto:recent-edit)_
 - `emu/CMakeLists.txt` _(auto:dwell)_
-- `emu/include/o2emu/devices/mace/mace.h` _(auto:recent-edit)_
 - `emu/include/o2emu/devices/mace/mace_pci.h` _(auto:recent-edit)_
-- `emu/include/o2emu/devices/mace/mace_isa.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/mace/mace_ethernet.h` _(auto:recent-edit)_
+- `emu/include/o2emu/devices/device.h` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_pci.cpp` _(auto:recent-edit)_
+- `emu/src/devices/mace/mace_ethernet.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

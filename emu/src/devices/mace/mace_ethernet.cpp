@@ -9,13 +9,16 @@
 
 namespace o2emu::devices {
 
-MACEEthernet::MACEEthernet(MACE &mace) : mace_(mace) { reset(); }
+MACEEthernet::MACEEthernet(MACE &mace)
+    : Device("MACEEthernet", 0x280000, 0x10000), mace_(mace) {
+  reset();
+}
 
 MACEEthernet::~MACEEthernet() = default;
 
 void MACEEthernet::reset() {
-  std::memset(regs_, 0, sizeof(regs_));
-  std::memset(mac_addr_, 0, sizeof(mac_addr_));
+  regs_.fill(0);
+  std::fill(std::begin(mac_addr_), std::end(mac_addr_), 0);
 
   // Default MAC address (SGI OUI: 00:00:5E)
   mac_addr_[0] = 0x00;

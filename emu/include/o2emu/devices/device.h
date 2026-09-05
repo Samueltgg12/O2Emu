@@ -33,6 +33,10 @@ public:
   virtual void write16(u32 offset, u16 value) = 0;
   virtual void write8(u32 offset, u8 value) = 0;
 
+  // Register access (for devices with register arrays)
+  virtual u32 read_reg(u32 offset) { return read32(offset); }
+  virtual void write_reg(u32 offset, u32 value) { write32(offset, value); }
+
   // Reset device state
   virtual void reset() = 0;
 

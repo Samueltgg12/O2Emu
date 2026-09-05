@@ -14,63 +14,46 @@
 
 namespace o2emu::devices {
 
+class MACE;
+
 class MACEPCI : public Device {
 public:
-  MACEPCI();
+  explicit MACEPCI(MACE &mace);
   ~MACEPCI() override;
 
   // PCI register offsets (from MACE base + 0x080000)
+  // All registers are 32-bit, accessed at 4-byte offsets
   enum Register : uint32_t {
-    PCI_ERROR_ADDR = 0x000000,
-    PCI_ERROR_FLAGS = 0x000004,
-    PCI_CONTROL = 0x000008,
-    PCI_REVISION = 0x00000C,
-    PCI_FLUSH = 0x00000C, // Write only
-    PCI_CONFIG_ADDR = 0x000CF8,
-    PCI_CONFIG_DATA = 0x000CFC,
-  };
-
-  // PCI_ERROR_FLAGS bits
-  enum ErrorFlag : uint32_t {
-    ERR_MASTER_ABORT = 0x80000000,
-    ERR_TARGET_ABORT = 0x40000000,
-    ERR_DATA_PARITY = 0x20000000,
-    ERR_RETRY = 0x10000000,
-    ERR_ILLEGAL_CMD = 0x08000000,
-    ERR_SYSTEM = 0x04000000,
-    ERR_INTERRUPT_TEST = 0x02000000,
-    ERR_PARITY = 0x01000000,
-    ERR_OVERRUN = 0x00800000,
-    ERR_MASTER_ABORT_ADDR_VALID = 0x00080000,
-    ERR_TARGET_ABORT_ADDR_VALID = 0x00040000,
-    ERR_DATA_PARITY_ADDR_VALID = 0x00020000,
-    ERR_RETRY_ADDR_VALID = 0x00010000,
-    ERR_SIG_TABORT = 0x00000010,
-    ERR_DEVSEL_MASK = 0x000000C0,
-    ERR_FBB = 0x00000002,
-    ERR_66MHZ = 0x00000001,
-  };
-
-  // PCI_CONTROL bits
-  enum ControlBit : uint32_t {
-    CTRL_INT_MASK = 0x000000FF,
-    CTRL_SERR_ENA = 0x00000100,
-    CTRL_ARB_N6 = 0x00000200,
-    CTRL_PARITY_ERR = 0x00000400,
-    CTRL_MRMRA_ENA = 0x00000800,
-    CTRL_ARB_N3 = 0x00001000,
-    CTRL_ARB_N4 = 0x00002000,
-    CTRL_ARB_N5 = 0x00004000,
-    CTRL_PARK_LIU = 0x00008000,
-    CTRL_INV_INT_MASK = 0x00FF0000,
-    CTRL_OVERRUN_INT = 0x01000000,
-    CTRL_PARITY_INT = 0x02000000,
-    CTRL_SERR_INT = 0x04000000,
-    CTRL_IT_INT = 0x08000000,
-    CTRL_RE_INT = 0x10000000,
-    CTRL_DPED_INT = 0x20000000,
-    CTRL_TAR_INT = 0x40000000,
-    CTRL_MAR_INT = 0x80000000,
+    REG_CTRL = 0x0000,
+    REG_STATUS = 0x0008,
+    REG_CONFIG_ADDR = 0x0010,
+    REG_CONFIG_DATA = 0x0018,
+    REG_ERROR_ADDR = 0x0020,
+    REG_ERROR_FLAGS = 0x0028,
+    REG_FLUSH = 0x0030,
+    REG_INT_STATUS = 0x0038,
+    REG_INT_MASK = 0x0040,
+    REG_INT_CLEAR = 0x0048,
+    REG_REVISION = 0x0050,
+    REG_ARB_CTRL = 0x0058,
+    REG_BAR0 = 0x0100,
+    REG_BAR1 = 0x0108,
+    REG_BAR2 = 0x0110,
+    REG_BAR3 = 0x0118,
+    REG_BAR4 = 0x0120,
+    REG_BAR5 = 0x0128,
+    REG_ROM_BASE = 0x0130,
+    REG_ROM_LIMIT = 0x0138,
+    REG_IO_BASE = 0x0140,
+    REG_IO_LIMIT = 0x0148,
+    REG_MEM_BASE = 0x0150,
+    REG_MEM_LIMIT = 0x0158,
+    REG_PREF_BASE = 0x0160,
+    REG_PREF_LIMIT = 0x0168,
+    REG_PREF_BASE_UPPER = 0x0170,
+    REG_PREF_LIMIT_UPPER = 0x0178,
+    REG_IO_BASE_UPPER = 0x0180,
+    REG_IO_LIMIT_UPPER = 0x0188,
   };
 
   // PCI address windows
@@ -80,35 +63,39 @@ public:
   static constexpr u64 HI_MEMORY_BASE = 0x280000000ULL; // 64-bit
   static constexpr u64 HI_IO_BASE = 0x100000000ULL;     // 64-bit
 
+  // Register access
+  u32 read_reg(u32 offset);
+  void write_reg(u32 offset, u32 value);
+
   // Config space access
-  u32 config_read(u32 bus, u32 devfn, u32 reg, u32 size);
-  void config_write(u32 bus, u32 devfn, u32 reg, u32 size, u32 value);
+  void config_write(u32 reg, u32 value);
 
   // Device interface
-  u32 read32(u32 offset) override;
-  u16 read16(u32 offset) override;
-  u8 read8(u32 offset) override;
+  bool read(u32 offset, u32 size, u32 &value);
+  bool write(u32 offset, u32 size, u32 value);
 
-  void write32(u32 offset, u32 value) override;
-  void write16(u32 offset, u16 value) override;
-  void write8(u32 offset, u8 value) override;
+  void tick(u64 cycles);
+  u32 interrupt_status() const;
 
   void reset() override;
+
+  // PCI address windows
+  static constexpr u32 LOW_MEMORY_BASE = 0x1A000000;
+  static constexpr u32 LOW_MEMORY_SIZE = 0x02000000; // 32 MB
+  static constexpr u32 LOW_IO_BASE = 0x18000000;
+  static constexpr u64 HI_MEMORY_BASE = 0x280000000ULL; // 64-bit
+  static constexpr u64 HI_IO_BASE = 0x100000000ULL;     // 64-bit
 
   // Interrupt mapping (from fixup-ip32.c)
   // Slot 0: SCSI0 (devfn 1<<3), Slot 1: SCSI1 (devfn 2<<3), Slot 2: Expansion
   static int map_irq(int slot, int pin);
 
 private:
-  std::array<u32, 0x1000 / 4> regs_ = {};
+  MACE &mace_;
+  std::array<u32, 0x200 / 4> regs_ = {};
 
-  // Config space access state
-  u32 config_addr_ = 0;
-  union {
-    u8 b[4];
-    u16 w[2];
-    u32 l;
-  } config_data_;
+  // Config space (256 bytes = 64 dwords)
+  std::array<u32, 256 / 4> config_data_ = {};
 
   // PCI devices (simplified)
   struct PCIDevice {
