@@ -221,6 +221,11 @@ public:
   void reset() override;
   void tick(u64 cycles) override;
 
+  // Device interface (base class virtual methods)
+  bool read(u32 offset, u32 size, u32 &value) override;
+  bool write(u32 offset, u32 size, u32 value) override;
+  u32 interrupt_status() const override;
+
   // PCI config space access
   u32 config_read(u32 reg, u32 size);
   void config_write(u32 reg, u32 size, u32 value);

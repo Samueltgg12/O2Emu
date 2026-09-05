@@ -212,9 +212,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/devices/scsicontroller.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788638441680,
+      "pinnedAt": 1788641249163,
       "auto": "recent-edit",
-      "expiresAt": 1788642041680
+      "expiresAt": 1788644849163
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/devices/ps2.cpp",
@@ -239,5 +239,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788641168694
+  "updatedAt": 1788641249163
 }
