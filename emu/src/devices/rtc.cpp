@@ -127,7 +127,8 @@ void RTC::write_reg(u32 offset, u32 value) {
   }
 }
 
-bool RTC::read(u32 offset, u32 size, u32 &value) {
+bool RTC::read([[maybe_unused]] u32 offset, [[maybe_unused]] u32 size,
+               u32 &value) {
   if (offset < sizeof(regs_) + 128) {
     value = read_reg(offset);
     return true;
@@ -135,7 +136,8 @@ bool RTC::read(u32 offset, u32 size, u32 &value) {
   return false;
 }
 
-bool RTC::write(u32 offset, u32 size, u32 value) {
+bool RTC::write([[maybe_unused]] u32 offset, [[maybe_unused]] u32 size,
+                u32 value) {
   if (offset < sizeof(regs_) + 128) {
     write_reg(offset, value);
     return true;

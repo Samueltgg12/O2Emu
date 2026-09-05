@@ -19,7 +19,7 @@ UART::~UART() = default;
 
 void UART::reset() {
   Device::reset();
-  std::memset(regs_, 0, sizeof(regs_));
+  std::memset(regs_.data(), 0, regs_.size());
 
   // 16550 register defaults
   // RBR/THR/DLL: 0x00
