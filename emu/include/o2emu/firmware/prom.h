@@ -18,25 +18,22 @@
 namespace o2emu::firmware {
 
 // PROM image format (SHDR - SGI Header)
+// Based on decompiled PROM (samples/decompiled-prom/rev4.18/definitions.h)
+// The PROM file contains multiple SHDR headers (64 bytes each), one per section
 #pragma pack(push, 1)
-struct SHDRHeader {
-  u32 magic;          // 0x48445253 "SHDR"
-  u32 version;        // Header version
-  u32 num_sections;   // Number of sections (typically 5)
-  u32 section_offset; // Offset to section table
-  u32 checksum;       // Two's complement checksum
-  u32 reserved[3];
-};
-
-struct SHDRSection {
-  u32 type;        // Section type
-  u32 flags;       // Section flags
-  u32 load_addr;   // Load address (VMA)
-  u32 file_offset; // Offset in file
-  u32 size;        // Size in file
-  u32 mem_size;    // Size in memory (may be larger for BSS)
+struct SHDRSectionHeader {
+  u32 magic;       // "SHDR" = 0x53484452 (big-endian)
+  u32 section_len; // Length of section data following this header
+  u8 name_len;     // Length of name string
+  u8 version_len;  // Length of version string
+  u8 section_type; // Section type (bitmask: 1=CODE, 2=DATA, 4=LOADABLE,
+                   // 8=CHECKSUM)
+  u8 padding;      // Padding to align
+  char name[32];   // Section name (null-padded)
+  char version[8]; // Section version (null-padded)
   u32 checksum;    // Section checksum
-  u32 align;       // Alignment requirement
+  // Total: 4 + 4 + 1 + 1 + 1 + 1 + 32 + 8 + 4 = 56 bytes, padded to 64
+  u8 reserved[8]; // Padding to 64 bytes
 };
 
 struct ELFHeader {
@@ -57,13 +54,12 @@ struct ELFHeader {
 };
 #pragma pack(pop)
 
-// Section types
+// Section type bitmasks (from decompiled PROM definitions.h)
 enum SectionType : uint32_t {
-  SECT_TEXT = 0x01,
-  SECT_DATA = 0x02,
-  SECT_BSS = 0x03,
-  SECT_ELF = 0x04, // Embedded ELF header
-  SECT_CHECKSUM = 0x05,
+  SECTION_TYPE_CODE = 1,
+  SECTION_TYPE_DATA = 2,
+  SECTION_TYPE_LOADABLE = 4,
+  SECTION_TYPE_CHECKSUM = 8,
 };
 
 // PROM sections (from decompiled PROM)
@@ -73,6 +69,15 @@ enum PromSection : uint32_t {
   PROM_SECT_SLOADER = 2,   // Secondary loader
   PROM_SECT_ENV = 3,       // Environment variables
   PROM_SECT_ELF = 4,       // Embedded ELF (main PROM)
+};
+
+// Section info for parsed SHDR sections
+struct SectionInfo {
+  uint32_t type;
+  uint32_t offset;
+  uint32_t size;
+  std::string name;
+  std::string version;
 };
 
 // PROM image container (for execution)
@@ -88,12 +93,14 @@ public:
   u32 size() const { return static_cast<u32>(image_.size()); }
   u32 entry_point() const { return entry_point_; }
   bool valid() const { return !image_.empty(); }
+  const std::vector<SectionInfo> &sections() const { return sections_; }
 
 private:
   std::vector<u8> image_;
   u32 entry_point_ = 0;
+  std::vector<SectionInfo> sections_;
 
-  bool parse_shdr();
+  bool parse_shdr_sections();
   bool parse_elf();
   static u32 compute_checksum(const u8 *data, size_t size);
 };

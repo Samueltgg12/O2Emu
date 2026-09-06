@@ -119,13 +119,13 @@ bool PROMImage::load(const std::string &path) {
     return false;
   }
 
-  // Parse SHDR header
-  if (!parse_shdr()) {
-    O2EMU_LOG_ERROR("Invalid SHDR header in PROM image");
+  // Parse SHDR sections
+  if (!parse_shdr_sections()) {
+    O2EMU_LOG_ERROR("Invalid SHDR sections in PROM image");
     return false;
   }
 
-  // Parse embedded ELF
+  // Parse embedded ELF from firmware section
   if (!parse_elf()) {
     O2EMU_LOG_WARN("No embedded ELF found in PROM image");
   }
@@ -140,8 +140,8 @@ bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
 
   image_.assign(data, data + size);
 
-  if (!parse_shdr()) {
-    O2EMU_LOG_ERROR("Invalid SHDR header in PROM buffer");
+  if (!parse_shdr_sections()) {
+    O2EMU_LOG_ERROR("Invalid SHDR sections in PROM buffer");
     return false;
   }
 
@@ -152,68 +152,88 @@ bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
   return true;
 }
 
-bool PROMImage::parse_shdr() {
-  // The SHDR header is at offset 8 in the PROM image (after initial branch +
-  // nop)
-  constexpr size_t kShdrOffset = 8;
+bool PROMImage::parse_shdr_sections() {
+  // The first SHDR header is at offset 8 (after initial branch + nop)
+  constexpr size_t kFirstShdrOffset = 8;
+  constexpr size_t kShdrHeaderSize = 64; // SHDR_SIZE from definitions.h
 
-  if (image_.size() < kShdrOffset + sizeof(SHDRHeader)) {
+  if (image_.size() < kFirstShdrOffset + kShdrHeaderSize) {
+    O2EMU_LOG_ERROR("PROM image too small for SHDR header");
     return false;
   }
 
-  const SHDRHeader *shdr =
-      reinterpret_cast<const SHDRHeader *>(image_.data() + kShdrOffset);
+  size_t offset = kFirstShdrOffset;
+  sections_.clear();
 
-  // Check magic: "SHDR" = 0x53484452 (big-endian ASCII), reads as 0x52444853
-  // on little-endian
-  if (shdr->magic != 0x52444853) {
-    O2EMU_LOG_ERROR_F("Invalid SHDR magic: 0x%08X", shdr->magic);
+  while (offset + kShdrHeaderSize <= image_.size()) {
+    const SHDRSectionHeader *shdr =
+        reinterpret_cast<const SHDRSectionHeader *>(image_.data() + offset);
+
+    // Check magic: "SHDR" = 0x53484452 (big-endian), reads as 0x52444853 on LE
+    if (shdr->magic != 0x52444853) {
+      // Not a valid SHDR header, stop parsing
+      break;
+    }
+
+    // Extract section info
+    SectionInfo info;
+    info.type = shdr->section_type;
+    info.offset = offset + kShdrHeaderSize;
+    info.size = shdr->section_len;
+
+    // Validate section bounds
+    if (info.offset + info.size > image_.size()) {
+      O2EMU_LOG_WARN_F("Section at offset %zu exceeds file size", offset);
+      break;
+    }
+
+    // Extract name and version (null-terminated)
+    info.name = std::string(shdr->name, strnlen(shdr->name, 32));
+    info.version = std::string(shdr->version, strnlen(shdr->version, 8));
+
+    O2EMU_LOG_DEBUG_F(
+        "Found SHDR section: name='%s', version='%s', type=0x%02X, "
+        "offset=%zu, size=%u",
+        info.name.c_str(), info.version.c_str(), info.type, info.offset,
+        info.size);
+
+    sections_.push_back(info);
+
+    // Move to next SHDR header (aligned to 64 bytes)
+    offset += kShdrHeaderSize + info.size;
+    // Align to 64-byte boundary
+    offset = (offset + kShdrHeaderSize - 1) & ~(kShdrHeaderSize - 1);
+  }
+
+  if (sections_.empty()) {
+    O2EMU_LOG_ERROR("No valid SHDR sections found");
     return false;
   }
 
-  // Verify checksum (compute over entire image including the 8-byte prefix)
-  u32 computed = compute_checksum(image_.data(), image_.size());
-  if (computed != 0) {
-    O2EMU_LOG_WARN_F("SHDR checksum mismatch: computed 0x%08X", computed);
-  }
-
+  O2EMU_LOG_INFO_F("Parsed %zu SHDR sections", sections_.size());
   return true;
 }
 
 bool PROMImage::parse_elf() {
-  // The SHDR header is at offset 8 in the PROM image (after initial branch +
-  // nop)
-  constexpr size_t kShdrOffset = 8;
+  // Find the firmware section (type = SECTION_TYPE_CODE | SECTION_TYPE_LOADABLE
+  // = 5) Actually from decompiled PROM, firmware has type 3 (CODE | DATA) Let's
+  // search for a section containing an ELF header
+  for (const auto &sect : sections_) {
+    if (sect.size < sizeof(ELFHeader)) {
+      continue;
+    }
 
-  if (image_.size() < kShdrOffset + sizeof(SHDRHeader)) {
-    return false;
-  }
+    const ELFHeader *elf =
+        reinterpret_cast<const ELFHeader *>(image_.data() + sect.offset);
 
-  const SHDRHeader *shdr =
-      reinterpret_cast<const SHDRHeader *>(image_.data() + kShdrOffset);
-
-  // Check if we have enough sections
-  if (shdr->num_sections < 5) {
-    return false;
-  }
-
-  // Section table follows header
-  const SHDRSection *sections = reinterpret_cast<const SHDRSection *>(
-      image_.data() + kShdrOffset + shdr->section_offset);
-
-  // Section 4 should be the embedded ELF
-  if (shdr->num_sections > 4) {
-    const SHDRSection &elf_sect = sections[4];
-    if (elf_sect.type == SECT_ELF && elf_sect.size >= sizeof(ELFHeader)) {
-      const ELFHeader *elf = reinterpret_cast<const ELFHeader *>(
-          image_.data() + elf_sect.file_offset);
-
-      // Check ELF magic
-      if (elf->ident[0] == 0x7F && elf->ident[1] == 'E' &&
-          elf->ident[2] == 'L' && elf->ident[3] == 'F') {
-        entry_point_ = elf->entry;
-        return true;
-      }
+    // Check ELF magic: 0x7F 'E' 'L' 'F'
+    if (elf->ident[0] == 0x7F && elf->ident[1] == 'E' && elf->ident[2] == 'L' &&
+        elf->ident[3] == 'F') {
+      entry_point_ = elf->entry;
+      O2EMU_LOG_INFO_F(
+          "Found embedded ELF in section '%s', entry point: 0x%08X",
+          sect.name.c_str(), entry_point_);
+      return true;
     }
   }
 
