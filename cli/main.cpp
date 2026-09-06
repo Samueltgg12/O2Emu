@@ -183,12 +183,12 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    O2EMU_LOG_INFO("Emulation stopped after " << cpu.cycles_executed()
-                                              << " cycles");
+    O2EMU_LOG_INFO_F("Emulation stopped after %llu cycles",
+                     cpu.cycles_executed());
     cpu.dump_registers();
 
   } catch (const std::exception &e) {
-    O2EMU_LOG_FATAL("Exception: " << e.what());
+    O2EMU_LOG_FATAL_F("Exception: %s", e.what());
     return 1;
   }
 
