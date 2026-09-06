@@ -75,7 +75,7 @@ public:
 };
 
 // Factory function
-std::unique_ptr<ICpu> create_cpu(CPUType type,
-                                 o2emu::system::Bus *bus = nullptr);
+std::unique_ptr<CPU> create_cpu(CPUType type,
+                                o2emu::system::Bus *bus = nullptr);
 
 } // namespace o2emu::cpu

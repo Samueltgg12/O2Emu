@@ -6,6 +6,7 @@
 #include "mainwindow.h"
 #include "debuggerwidget.h"
 #include "framebufferwidget.h"
+#include <QApplication>
 #include <QCloseEvent>
 #include <QDockWidget>
 #include <QFileDialog>
@@ -191,14 +192,14 @@ void MainWindow::initializeEmulator() {
   bus_->attach_memory(memory_.get());
 
   // Load PROM
-  prom_loader_ = std::make_unique<o2emu::firmware::PROMLoader>(*cpu_, *memory_);
+  prom_loader_ =
+      std::make_unique<o2emu::firmware::PROMLoader>(bus_.get(), cpu_.get());
   if (!prom_loader_->load_prom(prom_path_.toStdString())) {
     QMessageBox::critical(this, "Error", "Failed to load PROM: " + prom_path_);
     return;
   }
 
-  prom_loader_->map_prom_sections();
-  prom_loader_->init_cpu_for_prom();
+  prom_loader_->execute_bootstrap();
 
   // Connect framebuffer widget
   framebuffer_widget_->setMemory(memory_.get());
@@ -249,7 +250,7 @@ void MainWindow::onStop() {
 void MainWindow::onReset() {
   if (cpu_) {
     cpu_->reset(o2emu::ip32::PROM_RESET_VECTOR);
-    prom_loader_->init_cpu_for_prom();
+    prom_loader_->execute_bootstrap();
     framebuffer_widget_->clear();
     debugger_widget_->clear();
   }

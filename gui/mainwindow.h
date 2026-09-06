@@ -20,7 +20,7 @@ class QStatusBar;
 class QDockWidget;
 
 namespace o2emu::cpu {
-class ICpu;
+class CPU;
 }
 namespace o2emu::memory {
 class Memory;
@@ -71,7 +71,7 @@ private:
   void shutdownEmulator();
 
   // Emulator components
-  std::unique_ptr<o2emu::cpu::ICpu> cpu_;
+  std::unique_ptr<o2emu::cpu::CPU> cpu_;
   std::unique_ptr<o2emu::memory::Memory> memory_;
   std::unique_ptr<o2emu::firmware::PROMLoader> prom_loader_;
   std::unique_ptr<o2emu::system::Bus> bus_;
