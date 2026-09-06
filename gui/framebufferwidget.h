@@ -10,6 +10,7 @@
 #include <QOpenGLWidget>
 #include <QTimer>
 #include <memory>
+#include <o2emu/o2emu.h>
 
 namespace o2emu::memory {
 class Memory;
