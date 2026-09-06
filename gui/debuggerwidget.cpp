@@ -152,7 +152,7 @@ void DebuggerWidget::createUI() {
   });
 }
 
-void DebuggerWidget::setCPU(o2emu::cpu::ICpu *cpu) { cpu_ = cpu; }
+void DebuggerWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
 
 void DebuggerWidget::setMemory(o2emu::memory::Memory *memory) {
   memory_ = memory;
@@ -256,7 +256,7 @@ void DebuggerWidget::updateRegisters() {
       new QTreeWidgetItem(reg_tree_, {"Special", "", ""});
   uint32_t pc_val = cpu_->pc();
   QString pc_hex = QString("0x%1").arg(pc_val, 8, 16, QChar('0')).toUpper();
-  // HI/LO not directly accessible via ICpu, show as 0 for now
+  // HI/LO not directly accessible via CPU, show as 0 for now
   QString hi_hex = "0x00000000";
   QString lo_hex = "0x00000000";
   new QTreeWidgetItem(special_root, {"PC", pc_hex, QString::number(pc_val)});

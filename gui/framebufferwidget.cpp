@@ -46,14 +46,15 @@ FramebufferWidget::FramebufferWidget(QWidget *parent) : QOpenGLWidget(parent) {
 
 FramebufferWidget::~FramebufferWidget() {
   makeCurrent();
+  initializeOpenGLFunctions();
   if (texture_id_)
-    this->glDeleteTextures(1, &texture_id_);
+    glDeleteTextures(1, &texture_id_);
   if (vao_)
-    this->glDeleteVertexArrays(1, &vao_);
+    glDeleteVertexArrays(1, &vao_);
   if (vbo_)
-    this->glDeleteBuffers(1, &vbo_);
+    glDeleteBuffers(1, &vbo_);
   if (shader_program_)
-    this->glDeleteProgram(shader_program_);
+    glDeleteProgram(shader_program_);
   doneCurrent();
 }
 
@@ -61,7 +62,7 @@ void FramebufferWidget::setMemory(o2emu::memory::Memory *memory) {
   memory_ = memory;
 }
 
-void FramebufferWidget::setCPU(o2emu::cpu::ICpu *cpu) { cpu_ = cpu; }
+void FramebufferWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
 
 void FramebufferWidget::clear() {
   makeCurrent();
@@ -96,38 +97,38 @@ void FramebufferWidget::initializeGL() {
   initializeOpenGLFunctions();
 
   // Create shader program
-  shader_program_ = this->glCreateProgram();
+  shader_program_ = glCreateProgram();
 
-  GLuint vs = this->glCreateShader(GL_VERTEX_SHADER);
-  this->glShaderSource(vs, 1, &vertex_shader_source, nullptr);
-  this->glCompileShader(vs);
+  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vs, 1, &vertex_shader_source, nullptr);
+  glCompileShader(vs);
 
-  GLuint fs = this->glCreateShader(GL_FRAGMENT_SHADER);
-  this->glShaderSource(fs, 1, &fragment_shader_source, nullptr);
-  this->glCompileShader(fs);
+  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fs, 1, &fragment_shader_source, nullptr);
+  glCompileShader(fs);
 
-  this->glAttachShader(shader_program_, vs);
-  this->glAttachShader(shader_program_, fs);
-  this->glLinkProgram(shader_program_);
+  glAttachShader(shader_program_, vs);
+  glAttachShader(shader_program_, fs);
+  glLinkProgram(shader_program_);
 
-  this->glDeleteShader(vs);
-  this->glDeleteShader(fs);
+  glDeleteShader(vs);
+  glDeleteShader(fs);
 
   // Check for errors
   GLint success;
-  this->glGetProgramiv(shader_program_, GL_LINK_STATUS, &success);
+  glGetProgramiv(shader_program_, GL_LINK_STATUS, &success);
   if (!success) {
     char log[512];
-    this->glGetProgramInfoLog(shader_program_, 512, nullptr, log);
+    glGetProgramInfoLog(shader_program_, 512, nullptr, log);
     qDebug() << "Shader link error:" << log;
   }
 
   // Create VAO and VBO for full-screen quad
-  this->glGenVertexArrays(1, &vao_);
-  this->glGenBuffers(1, &vbo_);
+  glGenVertexArrays(1, &vao_);
+  glGenBuffers(1, &vbo_);
 
-  this->glBindVertexArray(vao_);
-  this->glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+  glBindVertexArray(vao_);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
   // Full-screen quad vertices (position, texCoord)
   float vertices[] = {
@@ -138,48 +139,46 @@ void FramebufferWidget::initializeGL() {
       1.0f,  -1.0f, 1.0f, 1.0f, // Bottom-right
   };
 
-  this->glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
-                     GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  this->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
-                              (void *)0);
-  this->glEnableVertexAttribArray(0);
-  this->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
-                              (void *)(2 * sizeof(float)));
-  this->glEnableVertexAttribArray(1);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
+                        (void *)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
-  this->glBindVertexArray(0);
+  glBindVertexArray(0);
 
   // Create texture
-  this->glGenTextures(1, &texture_id_);
-  this->glBindTexture(GL_TEXTURE_2D, texture_id_);
-  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glGenTextures(1, &texture_id_);
+  glBindTexture(GL_TEXTURE_2D, texture_id_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
   // Initialize with black
-  static std::vector<u8> black(1280 * 1024 * 4, 0);
-  this->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 1024, 0, GL_RGBA,
-                     GL_UNSIGNED_BYTE, black.data());
+  static std::vector<o2emu::u8> black(1280 * 1024 * 4, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 1024, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, black.data());
 
-  this->glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
-  this->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
-void FramebufferWidget::resizeGL(int w, int h) { this->glViewport(0, 0, w, h); }
+void FramebufferWidget::resizeGL(int w, int h) { glViewport(0, 0, w, h); }
 
 void FramebufferWidget::paintGL() {
-  this->glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   if (shader_program_ && texture_id_) {
-    this->glUseProgram(shader_program_);
-    this->glBindVertexArray(vao_);
-    this->glBindTexture(GL_TEXTURE_2D, texture_id_);
-    this->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    this->glBindVertexArray(0);
-    this->glUseProgram(0);
+    glUseProgram(shader_program_);
+    glBindVertexArray(vao_);
+    glBindTexture(GL_TEXTURE_2D, texture_id_);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+    glUseProgram(0);
   }
 }
 
@@ -194,7 +193,7 @@ void FramebufferWidget::updateTexture() {
   const int height = 1024;
   const int bytes_per_pixel = 4;
 
-  static std::vector<u8> pixels(width * height * bytes_per_pixel);
+  static std::vector<o2emu::u8> pixels(width * height * bytes_per_pixel);
 
   // Generate test pattern (color bars)
   for (int y = 0; y < height; ++y) {
@@ -247,8 +246,8 @@ void FramebufferWidget::updateTexture() {
     }
   }
 
-  this->glBindTexture(GL_TEXTURE_2D, texture_id_);
-  this->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
-                        GL_UNSIGNED_BYTE, pixels.data());
-  this->glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(GL_TEXTURE_2D, texture_id_);
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
+                  GL_UNSIGNED_BYTE, pixels.data());
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
