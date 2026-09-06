@@ -276,4 +276,6 @@ u32 MRE::fb_height() const { return fb_height_; }
 u32 MRE::fb_depth() const { return fb_depth_; }
 u32 MRE::fb_format() const { return fb_format_; }
 
+MRE::~MRE() = default;
+
 } // namespace o2emu::memory
