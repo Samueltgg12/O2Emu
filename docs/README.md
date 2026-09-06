@@ -1,11 +1,11 @@
 # SGI O2 Emulator — Hardware Documentation
 
-**Phase 1 (Research) is complete.** Every hardware subsystem has a sourced
-register map. These docs are the authoritative reference for the Phase 2 C++
-emulator.
+**Phase 1 (Research) and Phase 2 (Emulation) are complete.** Every hardware
+subsystem has a sourced register map, and the full C++ emulator is
+implemented. These docs are the authoritative reference for the emulator.
 
-See [ROADMAP.md](../ROADMAP.md) for the full project plan (Phase 2 = C++
-emulation, Phase 3 = JIT/optimizations/GUI/cross-platform).
+See [ROADMAP.md](../ROADMAP.md) for the full project plan (Phase 3 =
+JIT/optimizations/GUI polish/cross-platform).
 
 ## Machine Overview
 

@@ -5,19 +5,19 @@ Guidance for AI coding agents working in this repository.
 ## Project overview
 
 This is an emulator for the SGI O2 (IP32) workstation. **Phase 1 (Research)
-is complete** — every hardware subsystem has a sourced register map under
-`docs/`. We are now in **Phase 2 (Emulation)**: a full-fledged C++ emulator,
-as accurate to the hardware as the documentation and specs allow.
+and Phase 2 (Emulation) are complete** — every hardware subsystem has a
+sourced register map under `docs/`, and the full-fledged C++ emulator is
+implemented. We are now in **Phase 3 (Performance & polish)**.
 
 ## Phases
 
 - **Phase 1 — Research ✅ complete:** exhaustive, well-sourced hardware
   documentation under `docs/`. All register maps sourced.
-- **Phase 2 — Emulation (current):** a full-fledged **C++** emulator, as
+- **Phase 2 — Emulation ✅ complete:** a full-fledged **C++** emulator, as
   accurate to the hardware as the documentation and specs allow. CPU, memory,
   graphics, I/O, and the PROM firmware, with a GUI.
-- **Phase 3 — Performance & polish:** JIT compilation, optimizations, GUI
-  improvements, cross-platform support, and full-featured emulator features.
+- **Phase 3 — Performance & polish (current):** JIT compilation, optimizations,
+  GUI improvements, cross-platform support, and full-featured emulator features.
 
 See `ROADMAP.md` for the full plan.
 
@@ -79,12 +79,12 @@ BSD 3-Clause License. See [LICENSE](LICENSE).
 
 ## When in doubt
 
-Phase 1 (research) is complete; Phase 2 (emulation) is in scope. When hardware
-behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
-then the driver sources. Ask the user before deviating from documented
-behavior.
+Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
+& polish) is in scope. When hardware behavior is unclear, consult the ASIC
+specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
+before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-06T04:24:06.069Z","hash":"sha256:c5e284b8bd6bec5e7d7a7f757b7de5eeb437541ca56b54626c0d893672bd4dec"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-06T05:02:08.586Z","hash":"sha256:228111b8bd7da414483910074a4620bb4031f26728bec875dd6d12b592ec2e26"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,11 +117,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `CMakeLists.txt` _(auto:recent-edit)_
 - `cli/main.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
-- `emu/src/memory/mre.cpp` _(auto:recent-edit)_
+- `.vscode/launch.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

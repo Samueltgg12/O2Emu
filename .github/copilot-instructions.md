@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-06T04:24:06.093Z","hash":"sha256:c5e284b8bd6bec5e7d7a7f757b7de5eeb437541ca56b54626c0d893672bd4dec"} -->
+<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-06T05:02:08.589Z","hash":"sha256:228111b8bd7da414483910074a4620bb4031f26728bec875dd6d12b592ec2e26"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,11 +31,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `AGENT.md` _(spec)_ — Multi-agent instructions
 
 ## Working files (current focus)
-- `CMakeLists.txt` _(auto:recent-edit)_
 - `cli/main.cpp` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
-- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
-- `emu/src/memory/mre.cpp` _(auto:recent-edit)_
+- `.vscode/launch.json` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

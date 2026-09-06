@@ -9,7 +9,7 @@
       "stopAtEntry": false,
       "externalConsole": false,
       "cwd": ".",
-      "program": "build/Debug/outDebug",
+      "program": "build/cli/o2emu-cli",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

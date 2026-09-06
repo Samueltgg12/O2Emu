@@ -57,63 +57,63 @@ checked.
 
 ---
 
-## Phase 2 — Emulation (C++) (current)
+## Phase 2 — Emulation (C++) ✅ COMPLETE
 
 **Goal:** a full-fledged C++ emulator, as accurate to the hardware as the
 documentation and specs allow. **This is the core implementation phase.**
 
 ### 2.1 Core infrastructure
-- [ ] Project scaffolding (CMake, C++20, cross-platform build)
-- [ ] Memory map / address space abstraction
-- [ ] Logging, tracing, and debug infrastructure
-- [ ] Test harness (unit + integration)
+- [x] Project scaffolding (CMake, C++20, cross-platform build)
+- [x] Memory map / address space abstraction
+- [x] Logging, tracing, and debug infrastructure
+- [x] Test harness (unit + integration)
 
 ### 2.2 CPU
-- [ ] MIPS R5000 core (integer, FPU, MMU/TLB, caches)
-- [ ] R10000/R12000 support (superscalar semantics, as needed)
-- [ ] Exception / interrupt handling
-- [ ] CP0 coprocessor (config, status, cause, EPC, etc.)
+- [x] MIPS R5000 core (integer, FPU, MMU/TLB, caches)
+- [x] R10000/R12000 support (superscalar semantics, as needed)
+- [x] Exception / interrupt handling
+- [x] CP0 coprocessor (config, status, cause, EPC, etc.)
 
 ### 2.3 Memory & system controller
-- [ ] CRIME (memory controller, ECC, refresh, interrupt controller)
-- [ ] MRE (memory & rendering engine)
-- [ ] Physical memory map, bank sizing, ECC behavior
+- [x] CRIME (memory controller, ECC, refresh, interrupt controller)
+- [x] MRE (memory & rendering engine)
+- [x] Physical memory map, bank sizing, ECC behavior
 
 ### 2.4 Graphics (CRM chipset)
-- [ ] Microprocessor (display list / vertex processing)
-- [ ] ICE (imaging & compression engine)
-- [ ] MRE rasterization + texture mapping
-- [ ] Display Engine (analog video out)
-- [ ] Framebuffer (tile-based GBE) + video modes
+- [x] Microprocessor (display list / vertex processing)
+- [x] ICE (imaging & compression engine)
+- [x] MRE rasterization + texture mapping
+- [x] Display Engine (analog video out)
+- [x] Framebuffer (tile-based GBE) + video modes
 
 ### 2.5 I/O (MACE)
-- [ ] MACE ASIC (PCI bridge, ISA, PS/2, Ethernet, audio)
-- [ ] PCI bus + single expansion slot
-- [ ] SCSI (AIC-7880)
-- [ ] Super I/O (serial + parallel)
-- [ ] PS/2 keyboard + mouse
-- [ ] 10/100 Ethernet
+- [x] MACE ASIC (PCI bridge, ISA, PS/2, Ethernet, audio)
+- [x] PCI bus + single expansion slot
+- [x] SCSI (AIC-7880)
+- [x] Super I/O (serial + parallel)
+- [x] PS/2 keyboard + mouse
+- [x] 10/100 Ethernet
 
 ### 2.6 Firmware & boot
-- [ ] PROM image loading (5-section SHDR layout, embedded ELF header)
-- [ ] PROM execution at reset vector `0xBFC00000`
-- [ ] Boot to IRIX and/or a hobbyist OS
+- [x] PROM image loading (5-section SHDR layout, embedded ELF header)
+- [x] PROM execution at reset vector `0xBFC00000`
+- [x] Boot to IRIX and/or a hobbyist OS
 
 > The decompiled PROM (`samples/decompiled-prom/`) gives us the exact POST boot
 > sequence, subsection copy/checksum logic, TLB init, and default environment —
 > a reference for validating the emulator's boot path.
 
 ### 2.7 GUI
-- [ ] Windowed framebuffer display
-- [ ] Keyboard/mouse input
-- [ ] Debugger / inspector (registers, memory, disassembly)
+- [x] Windowed framebuffer display
+- [x] Keyboard/mouse input
+- [x] Debugger / inspector (registers, memory, disassembly)
 
-**Exit criteria:** the emulator boots the PROM and reaches a usable OS prompt
-with accurate hardware behavior.
+**Exit criteria met:** the emulator boots the PROM and reaches a usable OS
+prompt with accurate hardware behavior.
 
 ---
 
-## Phase 3 — Performance & polish
+## Phase 3 — Performance & polish (current)
 
 **Goal:** make the emulator fast, polished, and cross-platform.
 
@@ -132,10 +132,10 @@ feature set.
 
 ## Milestones
 
-| Milestone | Phase | Definition of done |
-|-----------|-------|--------------------|
-| M1 | 1 | All docs complete and sourced; datasheets linked |
-| M2 | 2 | CPU + memory execute the PROM |
-| M3 | 2 | Graphics + I/O functional; OS boots |
-| M4 | 2 | GUI complete; usable emulator |
-| M5 | 3 | JIT + optimizations; cross-platform release |
+| Milestone | Phase | Definition of done | Status |
+|-----------|-------|--------------------|--------|
+| M1 | 1 | All docs complete and sourced; datasheets linked | ✅ |
+| M2 | 2 | CPU + memory execute the PROM | ✅ |
+| M3 | 2 | Graphics + I/O functional; OS boots | ✅ |
+| M4 | 2 | GUI complete; usable emulator | ✅ |
+| M5 | 3 | JIT + optimizations; cross-platform release | |
