@@ -7,14 +7,11 @@
 
 #include <memory>
 #include <o2emu/devices/device.h>
+#include <o2emu/memory/memory.h>
 #include <o2emu/o2emu.h>
 #include <vector>
 
 namespace o2emu::system {
-
-namespace memory {
-class Memory;
-}
 
 class Bus {
 public:
@@ -25,7 +22,7 @@ public:
   void attach_device(std::unique_ptr<devices::Device> device);
 
   // Attach memory to the bus
-  void attach_memory(memory::Memory *memory);
+  void attach_memory(o2emu::memory::Memory *memory);
 
   // Find device at physical address
   devices::Device *find_device(u32 phys_addr) const;
@@ -53,7 +50,7 @@ private:
   };
   std::vector<DeviceEntry> devices_;
   std::vector<std::unique_ptr<devices::Device>> owned_devices_;
-  memory::Memory *memory_ = nullptr;
+  o2emu::memory::Memory *memory_ = nullptr;
 };
 
 } // namespace o2emu::system

@@ -38,7 +38,7 @@ void Bus::attach_device(std::unique_ptr<devices::Device> device) {
                     device_ptr->name().c_str(), base, size);
 }
 
-void Bus::attach_memory(memory::Memory *memory) {
+void Bus::attach_memory(o2emu::memory::Memory *memory) {
   if (!memory) {
     return;
   }

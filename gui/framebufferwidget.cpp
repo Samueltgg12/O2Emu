@@ -171,15 +171,15 @@ void FramebufferWidget::initializeGL() {
 void FramebufferWidget::resizeGL(int w, int h) { this->glViewport(0, 0, w, h); }
 
 void FramebufferWidget::paintGL() {
-  glClear(GL_COLOR_BUFFER_BIT);
+  this->glClear(GL_COLOR_BUFFER_BIT);
 
   if (shader_program_ && texture_id_) {
-    glUseProgram(shader_program_);
-    glBindVertexArray(vao_);
-    glBindTexture(GL_TEXTURE_2D, texture_id_);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
-    glUseProgram(0);
+    this->glUseProgram(shader_program_);
+    this->glBindVertexArray(vao_);
+    this->glBindTexture(GL_TEXTURE_2D, texture_id_);
+    this->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->glBindVertexArray(0);
+    this->glUseProgram(0);
   }
 }
 
@@ -247,8 +247,8 @@ void FramebufferWidget::updateTexture() {
     }
   }
 
-  glBindTexture(GL_TEXTURE_2D, texture_id_);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
-                  GL_UNSIGNED_BYTE, pixels.data());
-  glBindTexture(GL_TEXTURE_2D, 0);
+  this->glBindTexture(GL_TEXTURE_2D, texture_id_);
+  this->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
+                        GL_UNSIGNED_BYTE, pixels.data());
+  this->glBindTexture(GL_TEXTURE_2D, 0);
 }
