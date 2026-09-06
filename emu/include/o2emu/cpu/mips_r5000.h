@@ -31,12 +31,14 @@ public:
   // State access
   u32 gpr(int reg) const;
   void set_gpr(int reg, u32 value);
+  u64 gpr64(int reg) const;
+  void set_gpr64(int reg, u64 value);
 
   u32 pc() const { return pc_; }
   void set_pc(u32 pc) { pc_ = pc; }
 
-  u32 hi() const { return hi_; }
-  u32 lo() const { return lo_; }
+  u64 hi() const { return hi_; }
+  u64 lo() const { return lo_; }
   u32 fpr(int reg) const { return fpr_[reg]; }
   u32 fcr0() const { return fcr0_; }
   u32 fcr31() const { return fcr31_; }
@@ -62,11 +64,11 @@ public:
 
 private:
   system::Bus *bus_;
-  u32 gpr_[32];
+  u64 gpr_[32];
   u32 fpr_[32];
   u32 cp0_[32];
-  u32 hi_;
-  u32 lo_;
+  u64 hi_;
+  u64 lo_;
   u32 pc_;
   u32 next_pc_;
   bool branch_delay_;

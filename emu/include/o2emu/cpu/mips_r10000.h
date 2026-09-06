@@ -275,6 +275,7 @@ public:
   uint64_t fpr(int reg) const { return fpr_[reg]; }
   uint32_t next_pc() const { return next_pc_; }
   bool branch_delay() const { return branch_delay_; }
+  Variant variant() const { return variant_; }
 
 private:
   system::Bus *bus_;
