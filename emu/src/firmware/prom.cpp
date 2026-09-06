@@ -153,38 +153,47 @@ bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
 }
 
 bool PROMImage::parse_shdr_sections() {
-  // The first SHDR header is at offset 8 (after initial branch + nop)
-  constexpr size_t kFirstShdrOffset = 8;
-  constexpr size_t kShdrHeaderSize = 64; // SHDR_SIZE from definitions.h
+  constexpr size_t kShdrHeaderSize =
+      68; // Actual SHDR header size (matches decompiled PROM structure)
+  constexpr u32 kShdrMagic = 0x52444853; // "SHDR" little-endian
 
-  if (image_.size() < kFirstShdrOffset + kShdrHeaderSize) {
+  if (image_.size() < kShdrHeaderSize + 8) {
     O2EMU_LOG_ERROR("PROM image too small for SHDR header");
     return false;
   }
 
-  size_t offset = kFirstShdrOffset;
   sections_.clear();
 
-  while (offset + kShdrHeaderSize <= image_.size()) {
-    const SHDRSectionHeader *shdr =
-        reinterpret_cast<const SHDRSectionHeader *>(image_.data() + offset);
-
-    // Check magic: "SHDR" = 0x53484452 (big-endian), reads as 0x52444853 on LE
-    if (shdr->magic != 0x52444853) {
-      // Not a valid SHDR header, stop parsing
-      break;
+  // Scan the entire file for SHDR magic at offset+8 from section starts
+  // Each section has: 8-byte prefix, then 64-byte SHDR header at
+  // section_offset+8
+  for (size_t file_offset = 8; file_offset + kShdrHeaderSize <= image_.size();
+       ++file_offset) {
+    // Check for SHDR magic at this offset
+    const u32 *magic_ptr =
+        reinterpret_cast<const u32 *>(image_.data() + file_offset);
+    if (*magic_ptr != kShdrMagic) {
+      continue;
     }
+
+    // Found SHDR header at file_offset
+    // Section starts at file_offset - 8
+    size_t section_start = file_offset - 8;
+
+    const SHDRSectionHeader *shdr = reinterpret_cast<const SHDRSectionHeader *>(
+        image_.data() + file_offset);
 
     // Extract section info
     SectionInfo info;
     info.type = shdr->section_type;
-    info.offset = offset + kShdrHeaderSize;
+    info.offset = section_start;
     info.size = shdr->section_len;
 
     // Validate section bounds
     if (info.offset + info.size > image_.size()) {
-      O2EMU_LOG_WARN_F("Section at offset %zu exceeds file size", offset);
-      break;
+      O2EMU_LOG_WARN_F("Section at offset %zu exceeds file size (size=%u)",
+                       info.offset, info.size);
+      continue;
     }
 
     // Extract name and version (null-terminated)
@@ -199,16 +208,20 @@ bool PROMImage::parse_shdr_sections() {
 
     sections_.push_back(info);
 
-    // Move to next SHDR header (aligned to 64 bytes)
-    offset += kShdrHeaderSize + info.size;
-    // Align to 64-byte boundary
-    offset = (offset + kShdrHeaderSize - 1) & ~(kShdrHeaderSize - 1);
+    // Skip ahead to after this section to avoid re-detecting the same SHDR
+    file_offset = info.offset + info.size;
   }
 
   if (sections_.empty()) {
     O2EMU_LOG_ERROR("No valid SHDR sections found");
     return false;
   }
+
+  // Sort sections by offset (should already be in order, but just in case)
+  std::sort(sections_.begin(), sections_.end(),
+            [](const SectionInfo &a, const SectionInfo &b) {
+              return a.offset < b.offset;
+            });
 
   O2EMU_LOG_INFO_F("Parsed %zu SHDR sections", sections_.size());
   return true;
