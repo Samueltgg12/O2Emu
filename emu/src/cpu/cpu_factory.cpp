@@ -80,6 +80,12 @@ public:
     cpu_->disassemble(addr, buffer, size);
   }
 
+  uint64_t cycles_executed() const override { return cpu_->cycles_executed(); }
+
+  CPUState state() override { return cpu_->state(); }
+
+  const CPUState &state() const override { return cpu_->state(); }
+
   CPUType type() const override { return CPUType::R5000; }
 
   const char *type_name() const override { return "MIPS R5000 (base)"; }
@@ -148,6 +154,33 @@ public:
   uint64_t cycles() const override { return cpu_->cycles(); }
 
   uint64_t instructions() const override { return cpu_->instructions(); }
+
+  uint64_t cycles_executed() const override { return cpu_->cycles(); }
+
+  CPUState state() override {
+    CPUState s;
+    for (int i = 0; i < 32; ++i) {
+      s.gpr[i] = cpu_->gpr(i);
+      s.fpr[i] = cpu_->fpr(i);
+      s.cp0[i] = cpu_->cp0_reg(static_cast<CP0::Register>(i));
+    }
+    s.pc = cpu_->pc();
+    s.hi = cpu_->hi();
+    s.lo = cpu_->lo();
+    s.fcr0 = cpu_->fcr0();
+    s.fcr31 = cpu_->fcr31();
+    s.llbit = cpu_->llbit();
+    return s;
+  }
+
+  const CPUState &state() const override {
+    // Note: This creates a temporary; in practice, callers should use the
+    // non-const version or we could cache it. For now, return a reference to a
+    // static (thread-unsafe but works for single-threaded emulation).
+    static thread_local CPUState cached;
+    cached = const_cast<MIPSR5000Adapter *>(this)->state();
+    return cached;
+  }
 
   void dump_registers() const override { cpu_->dump_registers(); }
 
@@ -221,6 +254,26 @@ public:
   uint64_t cycles() const override { return cpu_->cycles(); }
 
   uint64_t instructions() const override { return cpu_->instructions(); }
+
+  uint64_t cycles_executed() const override { return cpu_->cycles(); }
+
+  CPUState state() override {
+    CPUState s;
+    for (int i = 0; i < 32; ++i) {
+      s.gpr[i] = cpu_->gpr(i);
+      s.cp0[i] = cpu_->cp0_reg(static_cast<CP0::Register>(i));
+    }
+    s.pc = cpu_->pc();
+    // MIPSR10000 doesn't expose hi, lo, fpr, fcr0, fcr31, llbit via public API
+    // Leave them as defaults (0/false)
+    return s;
+  }
+
+  const CPUState &state() const override {
+    static thread_local CPUState cached;
+    cached = const_cast<MIPSR10000Adapter *>(this)->state();
+    return cached;
+  }
 
   void dump_registers() const override { cpu_->dump_registers(); }
 
