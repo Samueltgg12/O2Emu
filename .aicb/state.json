@@ -205,9 +205,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/mainwindow.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788720116760,
+      "pinnedAt": 1788720595398,
       "auto": "recent-edit",
-      "expiresAt": 1788723716760
+      "expiresAt": 1788724195398
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/cpu/cpu_interface.h",
@@ -219,18 +219,18 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/system/bus.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788720253720,
+      "pinnedAt": 1788720744726,
       "auto": "recent-edit",
-      "expiresAt": 1788723853720
+      "expiresAt": 1788724344726
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/system/bus.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788720417663,
+      "pinnedAt": 1788720532115,
       "auto": "recent-edit",
-      "expiresAt": 1788724017663
+      "expiresAt": 1788724132115
     }
   ],
   "skills": [],
-  "updatedAt": 1788720417663
+  "updatedAt": 1788720744726
 }

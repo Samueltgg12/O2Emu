@@ -12,6 +12,10 @@
 
 namespace o2emu::system {
 
+namespace memory {
+class Memory;
+}
+
 class Bus {
 public:
   Bus();
