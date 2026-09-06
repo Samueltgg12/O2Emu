@@ -18,7 +18,6 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QToolBar>
-#include <o2emu/cpu/cpu_factory.h>
 #include <o2emu/cpu/cpu_interface.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/system/bus.h>
