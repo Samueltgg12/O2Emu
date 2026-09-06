@@ -153,19 +153,25 @@ bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
 }
 
 bool PROMImage::parse_shdr() {
-  if (image_.size() < sizeof(SHDRHeader)) {
+  // The SHDR header is at offset 8 in the PROM image (after initial branch +
+  // nop)
+  constexpr size_t kShdrOffset = 8;
+
+  if (image_.size() < kShdrOffset + sizeof(SHDRHeader)) {
     return false;
   }
 
-  const SHDRHeader *shdr = reinterpret_cast<const SHDRHeader *>(image_.data());
+  const SHDRHeader *shdr =
+      reinterpret_cast<const SHDRHeader *>(image_.data() + kShdrOffset);
 
-  // Check magic "SHDR" (0x48445253)
-  if (shdr->magic != 0x48445253) {
+  // Check magic: "SHDR" = 0x53484452 (big-endian ASCII), reads as 0x52444853
+  // on little-endian
+  if (shdr->magic != 0x52444853) {
     O2EMU_LOG_ERROR_F("Invalid SHDR magic: 0x%08X", shdr->magic);
     return false;
   }
 
-  // Verify checksum
+  // Verify checksum (compute over entire image including the 8-byte prefix)
   u32 computed = compute_checksum(image_.data(), image_.size());
   if (computed != 0) {
     O2EMU_LOG_WARN_F("SHDR checksum mismatch: computed 0x%08X", computed);
@@ -175,11 +181,16 @@ bool PROMImage::parse_shdr() {
 }
 
 bool PROMImage::parse_elf() {
-  if (image_.size() < sizeof(SHDRHeader)) {
+  // The SHDR header is at offset 8 in the PROM image (after initial branch +
+  // nop)
+  constexpr size_t kShdrOffset = 8;
+
+  if (image_.size() < kShdrOffset + sizeof(SHDRHeader)) {
     return false;
   }
 
-  const SHDRHeader *shdr = reinterpret_cast<const SHDRHeader *>(image_.data());
+  const SHDRHeader *shdr =
+      reinterpret_cast<const SHDRHeader *>(image_.data() + kShdrOffset);
 
   // Check if we have enough sections
   if (shdr->num_sections < 5) {
@@ -188,7 +199,7 @@ bool PROMImage::parse_elf() {
 
   // Section table follows header
   const SHDRSection *sections = reinterpret_cast<const SHDRSection *>(
-      image_.data() + shdr->section_offset);
+      image_.data() + kShdrOffset + shdr->section_offset);
 
   // Section 4 should be the embedded ELF
   if (shdr->num_sections > 4) {
