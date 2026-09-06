@@ -159,8 +159,9 @@ bool PROMImage::parse_shdr_sections() {
       0x53484452; // "SHDR" in big-endian (bytes: 53 48 44 52 = 'S' 'H' 'D'
                   // 'R')
 
-  // Known SHDR header offsets in the PROM file (from decompiled PROM)
-  static constexpr std::array<u32, 5> kShdrOffsets = {0x8, 0x4000, 0x4400,
+  // Known SHDR header START offsets in the PROM file (from decompiled PROM)
+  // Magic is at offset 8 within each header (SHDR_OFFSET_MAGIC = 8)
+  static constexpr std::array<u32, 5> kShdrOffsets = {0x0, 0x4000, 0x4400,
                                                       0x9200, 0x69200};
 
   // Helper to read big-endian u32 from memory
@@ -190,23 +191,28 @@ bool PROMImage::parse_shdr_sections() {
 
     const u8 *shdr_ptr = image_.data() + shdr_offset;
 
-    // Check SHDR magic (stored as little-endian in the file)
-    u32 magic = read_be32(shdr_ptr);
+    // Check SHDR magic at offset 8 within header (SHDR_OFFSET_MAGIC = 8)
+    u32 magic = read_be32(shdr_ptr + 8);
     if (magic != kShdrMagic) {
       O2EMU_LOG_WARN_F("Invalid SHDR magic at offset 0x%08X: 0x%08X",
-                       shdr_offset, magic);
+                       shdr_offset + 8, magic);
       continue;
     }
 
     // Parse SHDR header fields (all big-endian in the file)
-    u32 section_len = read_be32(shdr_ptr + 4);
-    u16 name_len = read_be16(shdr_ptr + 8);
-    u16 version_len = read_be16(shdr_ptr + 10);
-    u8 section_type = shdr_ptr[12];
-    // padding[3] at 13-15
-    const char *name = reinterpret_cast<const char *>(shdr_ptr + 16);
-    const char *version = reinterpret_cast<const char *>(shdr_ptr + 48);
-    // checksum at 56-59, reserved[4] at 60-63
+    // Offsets per decompiled PROM definitions.h:
+    // SHDR_OFFSET_SECTION_LEN = 12, SHDR_OFFSET_NAME_LEN = 16,
+    // SHDR_OFFSET_VERSION_LEN = 18, SHDR_OFFSET_SECTION_TYPE = 20,
+    // SHDR_OFFSET_NAME = 24, SHDR_OFFSET_VERSION = 56, SHDR_OFFSET_CHECKSUM =
+    // 60
+    u32 section_len = read_be32(shdr_ptr + 12);
+    u16 name_len = read_be16(shdr_ptr + 16);
+    u16 version_len = read_be16(shdr_ptr + 18);
+    u8 section_type = shdr_ptr[20];
+    // padding[3] at 21-23
+    const char *name = reinterpret_cast<const char *>(shdr_ptr + 24);
+    const char *version = reinterpret_cast<const char *>(shdr_ptr + 56);
+    // checksum at 60-63, reserved[4] at 64-71 (but header is only 64 bytes)
 
     // Section data starts right after the SHDR header (at shdr_offset + 64)
     size_t section_data_offset = shdr_offset + kShdrHeaderSize;

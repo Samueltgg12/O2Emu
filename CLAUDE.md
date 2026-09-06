@@ -84,7 +84,7 @@ Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
 specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
 before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-06T15:15:32.979Z","hash":"sha256:0158fbcf0ec4d3de92638c2a97ed37e61a6eb4ced636a9808973b693533e52c7"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-06T15:58:36.427Z","hash":"sha256:0b3b64b42261f80871d6c4275231db99bf9afc87ea9cf98f71658ddb347c7816"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,7 +117,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 
 ## Working files (current focus)
-- `.vscode/settings.json` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
 - `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
 
