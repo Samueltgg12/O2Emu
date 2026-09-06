@@ -10,6 +10,7 @@
 
 #include <array>
 #include <o2emu/o2emu.h>
+#include <vector>
 
 namespace o2emu::graphics {
 
