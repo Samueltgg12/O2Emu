@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-06T22:09:48.424Z","hash":"sha256:0fe66bb556f1c9130b5b33adc26e5bec01b2e5fb2754b6de02ce00cb6141e0d3"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-06T22:41:47.161Z","hash":"sha256:fb091eaaedfd9f64168c71174c7d874d6f17ae54d5b593251ee2b9b644a82b7e"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,9 +32,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/src/cpu/cpu_factory.cpp` _(auto:recent-edit)_
-- `gui/framebufferwidget.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/system/bus.h` _(auto:recent-edit)_
-- `emu/src/system/bus.cpp` _(auto:recent-edit)_
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `gui/mainwindow.h` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
