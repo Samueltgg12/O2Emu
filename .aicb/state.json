@@ -247,9 +247,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788663496680,
+      "pinnedAt": 1788663877068,
       "auto": "recent-edit",
-      "expiresAt": 1788667096680
+      "expiresAt": 1788667477068
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/mainwindow.h",
@@ -261,9 +261,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/CMakeLists.txt",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788663682580,
+      "pinnedAt": 1788663893422,
       "auto": "recent-edit",
-      "expiresAt": 1788667282580
+      "expiresAt": 1788667493422
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/framebufferwidget.h",
@@ -274,5 +274,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788663682580
+  "updatedAt": 1788663893422
 }

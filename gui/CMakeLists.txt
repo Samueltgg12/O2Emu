@@ -21,6 +21,10 @@ target_link_libraries(o2emu-gui PRIVATE
     Qt6::OpenGLWidgets
 )
 
+target_include_directories(o2emu-gui PRIVATE
+    ${CMAKE_SOURCE_DIR}/emu/include
+)
+
 set_target_properties(o2emu-gui PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
