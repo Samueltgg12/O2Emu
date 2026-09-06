@@ -35,6 +35,15 @@ public:
   u32 pc() const { return pc_; }
   void set_pc(u32 pc) { pc_ = pc; }
 
+  u32 hi() const { return hi_; }
+  u32 lo() const { return lo_; }
+  u32 fpr(int reg) const { return fpr_[reg]; }
+  u32 fcr0() const { return fcr0_; }
+  u32 fcr31() const { return fcr31_; }
+  bool llbit() const { return llbit_; }
+  u32 next_pc() const { return next_pc_; }
+  bool branch_delay() const { return branch_delay_; }
+
   u64 cycles() const;
   u64 instructions() const;
 

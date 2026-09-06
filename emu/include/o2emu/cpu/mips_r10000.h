@@ -266,6 +266,16 @@ public:
     return (cp0_[static_cast<int>(R10K_CP0_Register::STATUS)] & STATUS_FR) != 0;
   }
 
+  // Accessor methods for MIPSR10000Adapter
+  uint64_t hi() const { return hi_; }
+  uint64_t lo() const { return lo_; }
+  uint32_t fcr0() const { return fcr0_; }
+  uint32_t fcr31() const { return fcr31_; }
+  bool llbit() const { return llbit_; }
+  uint64_t fpr(int reg) const { return fpr_[reg]; }
+  uint32_t next_pc() const { return next_pc_; }
+  bool branch_delay() const { return branch_delay_; }
+
 private:
   system::Bus *bus_;
   Variant variant_;

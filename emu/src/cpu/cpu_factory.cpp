@@ -82,9 +82,19 @@ public:
 
   uint64_t cycles_executed() const override { return cpu_->cycles_executed(); }
 
-  CPUState state() override { return cpu_->state(); }
+  CPUState &state() override {
+    cached_state_ = cpu_->state();
+    cached_state_.cp0 = &cpu_->cp0();
+    return cached_state_;
+  }
 
-  const CPUState &state() const override { return cpu_->state(); }
+  const CPUState &state() const override {
+    // For const version, we can't modify cached_state_, so return a reference
+    // to a static (thread-unsafe but works for single-threaded emulation).
+    static thread_local CPUState cached;
+    cached = const_cast<CpuAdapter *>(this)->state();
+    return cached;
+  }
 
   CPUType type() const override { return CPUType::R5000; }
 
@@ -92,6 +102,7 @@ public:
 
 private:
   std::unique_ptr<CPU> cpu_;
+  CPUState cached_state_;
 };
 
 // Adapter for MIPSR5000
@@ -157,26 +168,23 @@ public:
 
   uint64_t cycles_executed() const override { return cpu_->cycles(); }
 
-  CPUState state() override {
-    CPUState s;
+  CPUState &state() override {
+    cached_state_.pc = cpu_->pc();
+    cached_state_.hi = cpu_->hi();
+    cached_state_.lo = cpu_->lo();
+    cached_state_.fcr0 = cpu_->fcr0();
+    cached_state_.fcr31 = cpu_->fcr31();
+    cached_state_.llbit = cpu_->llbit();
     for (int i = 0; i < 32; ++i) {
-      s.gpr[i] = cpu_->gpr(i);
-      s.fpr[i] = cpu_->fpr(i);
-      s.cp0[i] = cpu_->cp0_reg(static_cast<CP0::Register>(i));
+      cached_state_.gpr[i] = cpu_->gpr(i);
+      cached_state_.fpr[i] = cpu_->fpr(i);
     }
-    s.pc = cpu_->pc();
-    s.hi = cpu_->hi();
-    s.lo = cpu_->lo();
-    s.fcr0 = cpu_->fcr0();
-    s.fcr31 = cpu_->fcr31();
-    s.llbit = cpu_->llbit();
-    return s;
+    cached_state_.cp0 =
+        nullptr; // MIPSR5000 doesn't have a CP0 object, just register access
+    return cached_state_;
   }
 
   const CPUState &state() const override {
-    // Note: This creates a temporary; in practice, callers should use the
-    // non-const version or we could cache it. For now, return a reference to a
-    // static (thread-unsafe but works for single-threaded emulation).
     static thread_local CPUState cached;
     cached = const_cast<MIPSR5000Adapter *>(this)->state();
     return cached;
@@ -197,6 +205,7 @@ public:
 
 private:
   std::unique_ptr<MIPSR5000> cpu_;
+  CPUState cached_state_;
 };
 
 // Adapter for MIPSR10000
@@ -257,16 +266,20 @@ public:
 
   uint64_t cycles_executed() const override { return cpu_->cycles(); }
 
-  CPUState state() override {
-    CPUState s;
+  CPUState &state() override {
+    cached_state_.pc = cpu_->pc();
+    cached_state_.hi = cpu_->hi();
+    cached_state_.lo = cpu_->lo();
+    cached_state_.fcr0 = cpu_->fcr0();
+    cached_state_.fcr31 = cpu_->fcr31();
+    cached_state_.llbit = cpu_->llbit();
     for (int i = 0; i < 32; ++i) {
-      s.gpr[i] = cpu_->gpr(i);
-      s.cp0[i] = cpu_->cp0_reg(static_cast<CP0::Register>(i));
+      cached_state_.gpr[i] = cpu_->gpr(i);
+      cached_state_.fpr[i] = cpu_->fpr(i);
     }
-    s.pc = cpu_->pc();
-    // MIPSR10000 doesn't expose hi, lo, fpr, fcr0, fcr31, llbit via public API
-    // Leave them as defaults (0/false)
-    return s;
+    cached_state_.cp0 =
+        nullptr; // MIPSR10000 doesn't have a CP0 object, just register access
+    return cached_state_;
   }
 
   const CPUState &state() const override {
@@ -285,10 +298,11 @@ public:
 
   CPUType type() const override { return CPUType::R10000; }
 
-  const char *type_name() const override { return "MIPS R10000"; }
+  const char *type_name() const override { return "MIPS R10000/R12000"; }
 
 private:
   std::unique_ptr<MIPSR10000> cpu_;
+  CPUState cached_state_;
 };
 
 std::unique_ptr<ICpu> create_cpu(CPUType type, system::Bus *bus) {
