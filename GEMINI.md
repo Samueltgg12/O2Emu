@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-05T23:52:45.382Z","hash":"sha256:657eecb23245bdd517cc782fdcf27bccb5c44795bba5b705523d4de97ba2096a"} -->
+<!-- AICB:BEGIN {"version":1,"target":"GEMINI.md","generatedAt":"2026-09-06T00:54:25.051Z","hash":"sha256:587ba205f2edf7607cd8299ef52211cf6d34e8dd2bc12b46f13eb8bf011eacaa"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,12 +32,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `emu/CMakeLists.txt` _(auto:dwell)_
-- `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
-- `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
-- `emu/src/firmware/prom_loader.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/firmware/prom_loader.h` _(auto:recent-edit)_
-- `emu/src/system/bus.cpp` _(auto:recent-edit)_
-- `.vscode/settings.json` _(auto:recent-edit)_
+- `emu/src/system/interrupts.cpp` _(auto:recent-edit)_
+- `emu/src/logging/logger.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
