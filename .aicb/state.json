@@ -203,27 +203,28 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788707763891,
+      "pinnedAt": 1788708024761,
       "auto": "spec",
+      "expiresAt": 1788711624761,
       "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/firmware/prom.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788706951606,
+      "pinnedAt": 1788708453371,
       "auto": "recent-edit",
-      "expiresAt": 1788710551606
+      "expiresAt": 1788712053371
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/firmware/prom.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788707738918,
+      "pinnedAt": 1788708974611,
       "auto": "recent-edit",
-      "expiresAt": 1788711338918
+      "expiresAt": 1788712574611
     }
   ],
   "skills": [],
-  "updatedAt": 1788707763891
+  "updatedAt": 1788708974611
 }

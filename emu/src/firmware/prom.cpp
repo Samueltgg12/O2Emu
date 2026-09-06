@@ -156,8 +156,8 @@ bool PROMImage::parse_shdr_sections() {
   static constexpr size_t kShdrHeaderSize =
       64; // SHDR_SIZE from decompiled PROM definitions.h
   static constexpr u32 kShdrMagic =
-      0x52444853; // "SHDR" in little-endian (bytes: 52 44 48 53 = 'R' 'D' 'H'
-                  // 'S')
+      0x53484452; // "SHDR" in big-endian (bytes: 53 48 44 52 = 'S' 'H' 'D'
+                  // 'R')
 
   // Known SHDR header offsets in the PROM file (from decompiled PROM)
   static constexpr std::array<u32, 5> kShdrOffsets = {0x8, 0x4000, 0x4400,
