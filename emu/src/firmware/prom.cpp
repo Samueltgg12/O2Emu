@@ -87,7 +87,10 @@ void PROM::reset() {
 }
 
 // is_loaded() and image() are defined inline in header
-// u32 PROM::entry_point() const is defined inline in header
+
+u32 PROM::entry_point() const {
+  return image_ ? image_->entry_point() : 0xBFC00000;
+}
 
 // PROMImage implementation
 bool PROMImage::load(const std::string &path) {

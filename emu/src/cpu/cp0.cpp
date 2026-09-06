@@ -9,6 +9,8 @@
 
 namespace o2emu::cpu {
 
+CP0::CP0(class CPU &cpu) : cpu_(cpu) { reset(); }
+
 void CP0::reset() {
   regs_.fill(0);
 

@@ -84,7 +84,7 @@ behavior is unclear, consult the ASIC specs in `docs/manuals-specs/` first,
 then the driver sources. Ask the user before deviating from documented
 behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-06T03:42:01.360Z","hash":"sha256:3483eadccb80140ed582850a4e9fdd6485166f8476daddb415d262ae525cadf6"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-06T03:55:43.686Z","hash":"sha256:9c442a70557d5a42279664547e2ab2016a0f425a03906805647d93df719c2ff5"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -123,6 +123,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `CMakeLists.txt` _(auto:recent-edit)_
 - `gui/framebufferwidget.h` _(auto:recent-edit)_
 - `cli/main.cpp` _(auto:recent-edit)_
+- `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
+- `emu/src/cpu/cp0.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
