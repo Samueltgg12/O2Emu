@@ -151,24 +151,24 @@ void FramebufferWidget::initializeGL() {
   this->glBindVertexArray(0);
 
   // Create texture
-  glGenTextures(1, &texture_id_);
-  glBindTexture(GL_TEXTURE_2D, texture_id_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  this->glGenTextures(1, &texture_id_);
+  this->glBindTexture(GL_TEXTURE_2D, texture_id_);
+  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  this->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
   // Initialize with black
   static std::vector<u8> black(1280 * 1024 * 4, 0);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 1024, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, black.data());
+  this->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 1024, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, black.data());
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  this->glBindTexture(GL_TEXTURE_2D, 0);
 
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  this->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
-void FramebufferWidget::resizeGL(int w, int h) { glViewport(0, 0, w, h); }
+void FramebufferWidget::resizeGL(int w, int h) { this->glViewport(0, 0, w, h); }
 
 void FramebufferWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT);
