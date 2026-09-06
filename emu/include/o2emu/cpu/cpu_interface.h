@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 #include <o2emu/cpu/cp0.h>
+#include <o2emu/cpu/cpu.h>
 #include <o2emu/o2emu.h>
 
 namespace o2emu::system {
