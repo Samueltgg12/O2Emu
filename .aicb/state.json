@@ -28,11 +28,12 @@
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:spec",
+      "pinnedBy": "auto:editor",
       "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788661845088,
+      "pinnedAt": 1788662287965,
       "auto": "spec",
-      "role": "spec"
+      "role": "spec",
+      "expiresAt": 1788665887965
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
@@ -233,9 +234,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/graphics/framebuffer.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788661807465,
+      "pinnedAt": 1788662410667,
       "auto": "recent-edit",
-      "expiresAt": 1788665407465
+      "expiresAt": 1788666010667
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/graphics/framebuffer.cpp",
@@ -246,5 +247,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788662155226
+  "updatedAt": 1788662410667
 }

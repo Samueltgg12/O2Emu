@@ -192,6 +192,7 @@ private:
 private:
   void update_stride();
   void update_tile_dimensions();
+  u32 bytes_per_pixel() const;
 };
 
 } // namespace o2emu::graphics
