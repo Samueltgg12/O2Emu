@@ -9,8 +9,8 @@
 #include <QOpenGLTexture>
 #include <QOpenGLWidget>
 #include <QTimer>
+#include <cstdint>
 #include <memory>
-#include <o2emu/o2emu.h>
 
 namespace o2emu::memory {
 class Memory;
@@ -48,11 +48,11 @@ private:
   GLuint shader_program_ = 0;
 
   // Framebuffer state
-  u32 fb_base_ = 0;
-  u32 fb_stride_ = 0;
-  u32 fb_width_ = 1280;
-  u32 fb_height_ = 1024;
-  u32 fb_depth_ = 32;
+  uint32_t fb_base_ = 0;
+  uint32_t fb_stride_ = 0;
+  uint32_t fb_width_ = 1280;
+  uint32_t fb_height_ = 1024;
+  uint32_t fb_depth_ = 32;
 
   // FPS tracking
   int fps_ = 0;

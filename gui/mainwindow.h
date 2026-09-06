@@ -7,8 +7,8 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <cstdint>
 #include <memory>
-#include <o2emu/o2emu.h>
 
 class FramebufferWidget;
 class DebuggerWidget;
@@ -79,7 +79,7 @@ private:
   // Emulation timer
   QTimer emulation_timer_;
   bool running_ = false;
-  u64 cycles_per_frame_ = 1000000; // Cycles per UI update
+  uint64_t cycles_per_frame_ = 1000000; // Cycles per UI update
 
   // Settings
   QString prom_path_;
