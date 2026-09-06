@@ -19,8 +19,11 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <o2emu/cpu/cpu_interface.h>
+#include <o2emu/firmware/prom_loader.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/system/bus.h>
+
+using o2emu::u64;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowTitle("O2Emu - SGI O2 (IP32) Emulator");
@@ -61,47 +64,51 @@ MainWindow::~MainWindow() {
 void MainWindow::createMenus() {
   // File menu
   QMenu *fileMenu = menuBar()->addMenu("&File");
-  fileMenu->addAction("&Open PROM...", this, &MainWindow::onOpenProm,
-                      QKeySequence::Open);
-  fileMenu->addAction("Open &Disk Image...", this, &MainWindow::onOpenDisk);
+  fileMenu->addAction("&Open PROM...", QKeySequence::Open, this,
+                      &MainWindow::onOpenProm);
+  fileMenu->addAction("Open &Disk Image...", QKeySequence(), this,
+                      &MainWindow::onOpenDisk);
   fileMenu->addSeparator();
-  fileMenu->addAction("&Save State...", this, &MainWindow::onSaveState,
-                      QKeySequence::Save);
-  fileMenu->addAction("&Load State...", this, &MainWindow::onLoadState,
-                      QKeySequence::Open);
+  fileMenu->addAction("&Save State...", QKeySequence::Save, this,
+                      &MainWindow::onSaveState);
+  fileMenu->addAction("&Load State...", QKeySequence::Open, this,
+                      &MainWindow::onLoadState);
   fileMenu->addSeparator();
-  fileMenu->addAction("E&xit", this, &QWidget::close, QKeySequence::Quit);
+  fileMenu->addAction("E&xit", QKeySequence::Quit, this, &QWidget::close);
 
   // Emulation menu
   QMenu *emuMenu = menuBar()->addMenu("&Emulation");
-  emuMenu->addAction("&Start", this, &MainWindow::onStart,
-                     QKeySequence(Qt::Key_F5));
-  emuMenu->addAction("&Pause", this, &MainWindow::onPause,
-                     QKeySequence(Qt::Key_F6));
-  emuMenu->addAction("&Stop", this, &MainWindow::onStop,
-                     QKeySequence(Qt::Key_F7));
-  emuMenu->addAction("&Reset", this, &MainWindow::onReset,
-                     QKeySequence(Qt::Key_F8));
+  emuMenu->addAction("&Start", QKeySequence(Qt::Key_F5), this,
+                     &MainWindow::onStart);
+  emuMenu->addAction("&Pause", QKeySequence(Qt::Key_F6), this,
+                     &MainWindow::onPause);
+  emuMenu->addAction("&Stop", QKeySequence(Qt::Key_F7), this,
+                     &MainWindow::onStop);
+  emuMenu->addAction("&Reset", QKeySequence(Qt::Key_F8), this,
+                     &MainWindow::onReset);
   emuMenu->addSeparator();
-  emuMenu->addAction("&Step Instruction", this, &MainWindow::onStep,
-                     QKeySequence(Qt::Key_F10));
-  emuMenu->addAction("Run &Cycles...", this, &MainWindow::onRunCycles);
+  emuMenu->addAction("&Step Instruction", QKeySequence(Qt::Key_F10), this,
+                     &MainWindow::onStep);
+  emuMenu->addAction("Run &Cycles...", QKeySequence(), this,
+                     &MainWindow::onRunCycles);
 
   // Debug menu
   QMenu *debugMenu = menuBar()->addMenu("&Debug");
-  debugMenu->addAction("Show &Debugger", this,
+  debugMenu->addAction("Show &Debugger", QKeySequence(), this,
                        [this]() { debugger_dock_->show(); });
-  debugMenu->addAction("Show &Framebuffer", this,
+  debugMenu->addAction("Show &Framebuffer", QKeySequence(), this,
                        [this]() { framebuffer_widget_->show(); });
 
   // Settings menu
   QMenu *settingsMenu = menuBar()->addMenu("&Settings");
-  settingsMenu->addAction("&Preferences...", this, &MainWindow::onSettings);
+  settingsMenu->addAction("&Preferences...", QKeySequence(), this,
+                          &MainWindow::onSettings);
 
   // Help menu
   QMenu *helpMenu = menuBar()->addMenu("&Help");
-  helpMenu->addAction("&About", this, &MainWindow::onAbout);
-  helpMenu->addAction("About &Qt", qApp, &QApplication::aboutQt);
+  helpMenu->addAction("&About", QKeySequence(), this, &MainWindow::onAbout);
+  helpMenu->addAction("About &Qt", QKeySequence(), qApp,
+                      &QApplication::aboutQt);
 }
 
 void MainWindow::createToolbars() {
@@ -109,16 +116,16 @@ void MainWindow::createToolbars() {
   toolbar->setMovable(false);
   toolbar->setIconSize(QSize(24, 24));
 
-  toolbar->addAction(QIcon::fromTheme("media-playback-start"), "Start", this,
-                     &MainWindow::onStart);
-  toolbar->addAction(QIcon::fromTheme("media-playback-pause"), "Pause", this,
-                     &MainWindow::onPause);
-  toolbar->addAction(QIcon::fromTheme("media-playback-stop"), "Stop", this,
-                     &MainWindow::onStop);
-  toolbar->addAction(QIcon::fromTheme("view-refresh"), "Reset", this,
-                     &MainWindow::onReset);
+  toolbar->addAction(QIcon::fromTheme("media-playback-start"), "Start",
+                     QKeySequence(), this, &MainWindow::onStart);
+  toolbar->addAction(QIcon::fromTheme("media-playback-pause"), "Pause",
+                     QKeySequence(), this, &MainWindow::onPause);
+  toolbar->addAction(QIcon::fromTheme("media-playback-stop"), "Stop",
+                     QKeySequence(), this, &MainWindow::onStop);
+  toolbar->addAction(QIcon::fromTheme("view-refresh"), "Reset", QKeySequence(),
+                     this, &MainWindow::onReset);
   toolbar->addSeparator();
-  toolbar->addAction(QIcon::fromTheme("go-next"), "Step", this,
+  toolbar->addAction(QIcon::fromTheme("go-next"), "Step", QKeySequence(), this,
                      &MainWindow::onStep);
   toolbar->addSeparator();
   toolbar->addAction(QIcon::fromTheme("document-open"), "Open PROM", this,

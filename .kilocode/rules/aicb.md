@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-06T18:37:47.981Z","hash":"sha256:de93616bfd2275efa64424540a5288616600d1fcaa293cc9a2f7e636cbdbb6b4"} -->
+<!-- AICB:BEGIN {"version":1,"target":".kilocode/rules/aicb.md","generatedAt":"2026-09-06T19:49:44.595Z","hash":"sha256:1e5b383e746ce77dee5f9ad31d93b33347a70010da0f6e8d8bd2dfda8d3dd07f"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -34,7 +34,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
 - `emu/include/o2emu/system/bus.h` _(auto:recent-edit)_
-- `emu/src/system/bus.cpp` _(auto:recent-edit)_
+- `gui/mainwindow.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

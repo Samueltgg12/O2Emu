@@ -58,7 +58,12 @@ public:
   virtual void set_cp0_reg(CP0::Register reg, uint32_t value) = 0;
 
   virtual uint64_t cycles() const = 0;
+  virtual uint64_t cycles_executed() const = 0;
   virtual uint64_t instructions() const = 0;
+
+  // State access
+  virtual CPUState &state() = 0;
+  virtual const CPUState &state() const = 0;
 
   // Debugging
   virtual void dump_registers() const = 0;

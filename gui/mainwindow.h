@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <QCloseEvent>
+#include <QLabel>
 #include <QMainWindow>
 #include <QTimer>
 #include <cstdint>
@@ -57,6 +59,9 @@ private slots:
   void updateUI();
   void emulationLoop();
 
+protected:
+  void closeEvent(QCloseEvent *event) override;
+
 private:
   void createMenus();
   void createToolbars();
@@ -75,6 +80,12 @@ private:
   FramebufferWidget *framebuffer_widget_ = nullptr;
   DebuggerWidget *debugger_widget_ = nullptr;
   QDockWidget *debugger_dock_ = nullptr;
+
+  // Status bar labels
+  QLabel *cpu_status_label_ = nullptr;
+  QLabel *cycle_label_ = nullptr;
+  QLabel *pc_label_ = nullptr;
+  QLabel *fps_label_ = nullptr;
 
   // Emulation timer
   QTimer emulation_timer_;
