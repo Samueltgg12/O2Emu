@@ -6,7 +6,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/docs/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (docs)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -14,7 +14,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -22,24 +22,15 @@
       "path": "/home/samuel/SGI Projects/O2Emu/AGENTS.md",
       "pinnedBy": "auto:spec",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
-    },
-    {
-      "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
-      "pinnedBy": "auto:editor",
-      "note": "Spec: ROADMAP.md",
-      "pinnedAt": 1788677565874,
-      "auto": "spec",
-      "role": "spec",
-      "expiresAt": 1788681165874
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/.agent/AGENTS.md",
       "pinnedBy": "auto:spec",
       "note": "Multi-agent instructions (.agent)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -47,7 +38,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/.cursorrules",
       "pinnedBy": "auto:spec",
       "note": "Cursor rules",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -55,7 +46,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/.windsurfrules",
       "pinnedBy": "auto:spec",
       "note": "Windsurf rules",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -63,7 +54,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/.github/copilot-instructions.md",
       "pinnedBy": "auto:spec",
       "note": "GitHub Copilot instructions (.github)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -71,7 +62,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/irixsrc/irix-657m-src/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/irixsrc/irix-657m-src)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -79,7 +70,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -87,7 +78,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/netbsd/usr (2)/usr/src/external/public-domain/sqlite/sqlite2mdoc)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -95,7 +86,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/netbsd/usr (2)/usr/src/usr.bin/indent/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/netbsd/usr (2)/usr/src/usr.bin/indent)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -103,7 +94,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/netbsd/usr (2)/usr/src/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/netbsd/usr (2)/usr/src)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -111,7 +102,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/tools/sched_ext/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/tools/sched_ext)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -119,7 +110,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/zerocopy/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/zerocopy)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -127,7 +118,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/zerocopy-derive/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/zerocopy-derive)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -135,7 +126,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/syn/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/syn)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -143,7 +134,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/quote/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/quote)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -151,7 +142,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/proc-macro2/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/proc-macro2)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -159,7 +150,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/rust/pin-init/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/rust/pin-init)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -167,7 +158,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/irixsrc/IRIX-6.5.17-Src/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/irixsrc/IRIX-6.5.17-Src)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -175,7 +166,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0/README.md",
       "pinnedBy": "auto:spec",
       "note": "Project README (samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0)",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744535,
       "auto": "spec",
       "role": "spec"
     },
@@ -183,7 +174,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/CLAUDE.md",
       "pinnedBy": "auto:spec",
       "note": "Claude Code instructions",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -191,7 +182,7 @@
       "path": "/home/samuel/SGI Projects/O2Emu/GEMINI.md",
       "pinnedBy": "auto:spec",
       "note": "Gemini instructions",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
@@ -199,32 +190,33 @@
       "path": "/home/samuel/SGI Projects/O2Emu/AGENT.md",
       "pinnedBy": "auto:spec",
       "note": "Multi-agent instructions",
-      "pinnedAt": 1788675964181,
+      "pinnedAt": 1788706744534,
       "auto": "spec",
       "role": "spec"
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/cli/main.cpp",
+      "path": "/home/samuel/SGI Projects/O2Emu/.vscode/settings.json",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788677378843,
+      "pinnedAt": 1788706676615,
       "auto": "recent-edit",
-      "expiresAt": 1788680978843
+      "expiresAt": 1788710276615
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/emu/src/firmware/prom.cpp",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788678285399,
-      "auto": "recent-edit",
-      "expiresAt": 1788681885399
+      "path": "/home/samuel/SGI Projects/O2Emu/ROADMAP.md",
+      "pinnedBy": "auto:spec",
+      "note": "Spec: ROADMAP.md",
+      "pinnedAt": 1788706744535,
+      "auto": "spec",
+      "role": "spec"
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/firmware/prom.h",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788678305836,
+      "pinnedAt": 1788706951606,
       "auto": "recent-edit",
-      "expiresAt": 1788681905836
+      "expiresAt": 1788710551606
     }
   ],
   "skills": [],
-  "updatedAt": 1788678305836
+  "updatedAt": 1788706951606
 }

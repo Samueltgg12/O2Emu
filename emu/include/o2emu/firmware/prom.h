@@ -22,21 +22,18 @@ namespace o2emu::firmware {
 // The PROM file contains multiple SHDR headers (64 bytes each), one per section
 #pragma pack(push, 1)
 struct SHDRSectionHeader {
-  u32 magic;       // "SHDR" = 0x52444853 (little-endian)
-  u32 section_len; // Length of section data following this header
-  u16 name_len;    // Length of name string
-  u16 version_len; // Length of version string
+  u32 magic;       // "SHDR" = 0x53484452 (big-endian ASCII) or 0x52444853 (LE)
+  u32 section_len; // Length of section data following this header (big-endian)
+  u16 name_len;    // Length of name string (big-endian)
+  u16 version_len; // Length of version string (big-endian)
   u8 section_type; // Section type (bitmask: 1=CODE, 2=DATA, 4=LOADABLE,
                    // 8=CHECKSUM)
   u8 padding[3];   // Padding to 32-bit boundary
   char name[32];   // Section name (null-padded)
   char version[8]; // Section version (null-padded)
-  u32 checksum;    // Section checksum
-  u8 reserved[8];  // Reserved
-  // Total: 4 + 4 + 2 + 2 + 1 + 3 + 32 + 8 + 4 + 8 = 68 bytes
-  // But SHDR_SIZE in definitions.h is 64, so reserved might be 4 bytes
-  // Actually let's check: the decompiled PROM says SHDR_SIZE=64
-  // 4+4+2+2+1+3+32+8+4+4 = 64. So reserved[4] not [8].
+  u32 checksum;    // Section checksum (big-endian)
+  u8 reserved[4];  // Reserved (to make 64 bytes total per SHDR_SIZE)
+  // Total: 4 + 4 + 2 + 2 + 1 + 3 + 32 + 8 + 4 + 4 = 64 bytes
 };
 
 struct ELFHeader {

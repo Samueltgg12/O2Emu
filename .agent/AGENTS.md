@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-06T06:25:36.041Z","hash":"sha256:c508790f84699514a2c097383fa5d6ebd71c8c801204d356ce8443edbcbba509"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/AGENTS.md","generatedAt":"2026-09-06T15:02:33.593Z","hash":"sha256:a6a5890d3d1a532e07b72e5a85a477cbe2a487d1c900cee6a47fc5dd160fe9d3"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -7,7 +7,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `docs/README.md` _(spec)_ — Project README (docs)
 - `README.md` _(spec)_ — Project README
 - `AGENTS.md` _(spec)_ — Multi-agent instructions
-- `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 - `.agent/AGENTS.md` _(spec)_ — Multi-agent instructions (.agent)
 - `.cursorrules` _(spec)_ — Cursor rules
 - `.windsurfrules` _(spec)_ — Windsurf rules
@@ -29,15 +28,18 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `CLAUDE.md` _(spec)_ — Claude Code instructions
 - `GEMINI.md` _(spec)_ — Gemini instructions
 - `AGENT.md` _(spec)_ — Multi-agent instructions
+- `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 
 ## Working files (current focus)
-- `cli/main.cpp` _(auto:recent-edit)_
-- `emu/src/firmware/prom.cpp` _(auto:recent-edit)_
+- `.vscode/settings.json` _(auto:recent-edit)_
 - `emu/include/o2emu/firmware/prom.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
 2. Continue the work described in the most recent thought.
 3. Honor skill statuses: `ENABLED` use freely, `ASK` require explicit user confirmation each time, `DISABLED` must not be used.
+4. When you reach a non-trivial decision, append a thought to `.aicb/state.json` (modelId + text + sourceReference if relevant).
+<!-- AICB:END -->
+
 4. When you reach a non-trivial decision, append a thought to `.aicb/state.json` (modelId + text + sourceReference if relevant).
 <!-- AICB:END -->
