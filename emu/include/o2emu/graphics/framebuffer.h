@@ -188,6 +188,10 @@ private:
 
   // Current buffer
   u32 current_base_ = 0;
+
+private:
+  void update_stride();
+  void update_tile_dimensions();
 };
 
 } // namespace o2emu::graphics

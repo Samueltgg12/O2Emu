@@ -386,7 +386,7 @@ DisplayEngine::get_video_mode(const char *name) {
 
 const DisplayEngine::VideoMode *
 DisplayEngine::get_video_mode_by_resolution(u32 width, u32 height,
-                                            u32 refresh_rate) {
+                                            [[maybe_unused]] u32 refresh_rate) {
   static const VideoMode modes[] = {
       {"640x480@60", 640, 480, 800, 640, 656, 752, 525, 480, 490, 492, false,
        25175},

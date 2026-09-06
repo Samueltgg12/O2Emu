@@ -13,8 +13,6 @@ namespace o2emu::graphics {
 
 Framebuffer::Framebuffer() { reset(); }
 
-Framebuffer::~Framebuffer() = default;
-
 u32 Framebuffer::read(Register reg) {
   switch (reg) {
   case FB_CONTROL:
@@ -60,8 +58,7 @@ u32 Framebuffer::read(Register reg) {
         return tile_directory_[offset];
       }
     }
-    O2EMU_LOG_DEBUG("Framebuffer read from unknown register: 0x"
-                    << std::hex << reg << std::dec);
+    O2EMU_LOG_DEBUG_F("Framebuffer read from unknown register: 0x%X", reg);
     return 0;
   }
 }
@@ -152,8 +149,8 @@ void Framebuffer::write(Register reg, u32 value) {
         tile_directory_[offset] = value;
       }
     } else {
-      O2EMU_LOG_DEBUG("Framebuffer write to unknown register: 0x"
-                      << std::hex << reg << std::dec << " = 0x" << value);
+      O2EMU_LOG_DEBUG_F("Framebuffer write to unknown register: 0x%X = 0x%X",
+                        reg, value);
     }
     break;
   }
