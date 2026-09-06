@@ -11,8 +11,6 @@ namespace o2emu::graphics {
 
 ICE::ICE() { reset(); }
 
-ICE::~ICE() = default;
-
 u32 ICE::read(Register reg) {
   switch (reg) {
   case ICE_CONTROL:
@@ -71,8 +69,7 @@ u32 ICE::read(Register reg) {
     return regs_[ICE_SCALE_FILTER];
 
   default:
-    O2EMU_LOG_DEBUG("ICE read from unknown register: 0x" << std::hex << reg
-                                                         << std::dec);
+    O2EMU_LOG_DEBUG_F("ICE read from unknown register: 0x%08X", reg);
     return regs_[reg];
   }
 }

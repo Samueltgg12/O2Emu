@@ -11,8 +11,6 @@ namespace o2emu::graphics {
 
 DisplayEngine::DisplayEngine() { reset(); }
 
-DisplayEngine::~DisplayEngine() = default;
-
 u32 DisplayEngine::read(Register reg) {
   switch (reg) {
   case DE_CONTROL:
@@ -94,8 +92,7 @@ u32 DisplayEngine::read(Register reg) {
     return 0x00010000; // Version 1.0
 
   default:
-    O2EMU_LOG_DEBUG("DisplayEngine read from unknown register: 0x"
-                    << std::hex << reg << std::dec);
+    O2EMU_LOG_DEBUG_F("DisplayEngine read from unknown register: 0x%08X", reg);
     return regs_[reg];
   }
 }

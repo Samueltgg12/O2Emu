@@ -12,8 +12,6 @@ namespace o2emu::graphics {
 
 Microprocessor::Microprocessor() { reset(); }
 
-Microprocessor::~Microprocessor() = default;
-
 u32 Microprocessor::read(Register reg) {
   switch (reg) {
   case MICRO_CMD_FIFO_STATUS:
@@ -29,8 +27,7 @@ u32 Microprocessor::read(Register reg) {
     return 0x00010000; // Version 1.0
 
   default:
-    O2EMU_LOG_DEBUG("Microprocessor read from unknown register: 0x"
-                    << std::hex << reg << std::dec);
+    O2EMU_LOG_DEBUG_F("Microprocessor read from unknown register: 0x%08X", reg);
     return 0;
   }
 }
@@ -56,34 +53,34 @@ void Microprocessor::write(Register reg, u32 value) {
     break;
 
   case MICRO_VERTEX_X:
-    vertex_[0] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[0], &value, sizeof(float));
     break;
   case MICRO_VERTEX_Y:
-    vertex_[1] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[1], &value, sizeof(float));
     break;
   case MICRO_VERTEX_Z:
-    vertex_[2] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[2], &value, sizeof(float));
     break;
   case MICRO_VERTEX_W:
-    vertex_[3] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[3], &value, sizeof(float));
     break;
   case MICRO_VERTEX_R:
-    vertex_[4] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[4], &value, sizeof(float));
     break;
   case MICRO_VERTEX_G:
-    vertex_[5] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[5], &value, sizeof(float));
     break;
   case MICRO_VERTEX_B:
-    vertex_[6] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[6], &value, sizeof(float));
     break;
   case MICRO_VERTEX_A:
-    vertex_[7] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[7], &value, sizeof(float));
     break;
   case MICRO_VERTEX_S:
-    vertex_[8] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[8], &value, sizeof(float));
     break;
   case MICRO_VERTEX_T:
-    vertex_[9] = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&vertex_[9], &value, sizeof(float));
     break;
 
   case MICRO_MATRIX_MODE:
@@ -142,10 +139,10 @@ void Microprocessor::write(Register reg, u32 value) {
     viewport_height_ = static_cast<int>(value);
     break;
   case MICRO_VIEWPORT_MINZ:
-    viewport_minz_ = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&viewport_minz_, &value, sizeof(float));
     break;
   case MICRO_VIEWPORT_MAXZ:
-    viewport_maxz_ = *reinterpret_cast<const float *>(&value);
+    std::memcpy(&viewport_maxz_, &value, sizeof(float));
     break;
 
   case MICRO_CLIP_PLANE:
@@ -153,8 +150,9 @@ void Microprocessor::write(Register reg, u32 value) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("Microprocessor write to unknown register: 0x"
-                    << std::hex << reg << std::dec << " = 0x" << value);
+    O2EMU_LOG_DEBUG_F(
+        "Microprocessor write to unknown register: 0x%08X = 0x%08X", reg,
+        value);
     break;
   }
 }
@@ -235,8 +233,9 @@ void Microprocessor::pop_matrix() {
 
 void Microprocessor::set_light(int index, bool enable, const float *ambient,
                                const float *diffuse, const float *specular,
-                               const float *position, const float *direction,
-                               const float *attenuation) {
+                               const float *position,
+                               [[maybe_unused]] const float *direction,
+                               [[maybe_unused]] const float *attenuation) {
   if (index >= 0 && index < 8) {
     lights_[index].enabled = enable;
     if (ambient)
@@ -254,9 +253,11 @@ void Microprocessor::set_light(int index, bool enable, const float *ambient,
   }
 }
 
-void Microprocessor::set_material(const float *ambient, const float *diffuse,
-                                  const float *specular, const float *emission,
-                                  float shininess) {
+void Microprocessor::set_material([[maybe_unused]] const float *ambient,
+                                  [[maybe_unused]] const float *diffuse,
+                                  [[maybe_unused]] const float *specular,
+                                  [[maybe_unused]] const float *emission,
+                                  [[maybe_unused]] float shininess) {
   if (ambient)
     std::memcpy(material_ambient_, ambient, 4 * sizeof(float));
   if (diffuse)
@@ -268,8 +269,12 @@ void Microprocessor::set_material(const float *ambient, const float *diffuse,
   material_shininess_ = shininess;
 }
 
-void Microprocessor::set_viewport(int x, int y, int width, int height,
-                                  float minz, float maxz) {
+void Microprocessor::set_viewport([[maybe_unused]] int x,
+                                  [[maybe_unused]] int y,
+                                  [[maybe_unused]] int width,
+                                  [[maybe_unused]] int height,
+                                  [[maybe_unused]] float minz,
+                                  [[maybe_unused]] float maxz) {
   viewport_x_ = x;
   viewport_y_ = y;
   viewport_width_ = width;
@@ -278,13 +283,14 @@ void Microprocessor::set_viewport(int x, int y, int width, int height,
   viewport_maxz_ = maxz;
 }
 
-void Microprocessor::set_clip_plane(int index, const float *plane) {
+void Microprocessor::set_clip_plane([[maybe_unused]] int index,
+                                    [[maybe_unused]] const float *plane) {
   if (index >= 0 && index < 6 && plane) {
     std::memcpy(clip_planes_[index], plane, 4 * sizeof(float));
   }
 }
 
-void Microprocessor::draw_primitive(Command cmd) {
+void Microprocessor::draw_primitive([[maybe_unused]] Command cmd) {
   // Process command FIFO
   while (!fifo_empty()) {
     u32 cmd = cmd_fifo_[fifo_tail_];
@@ -308,8 +314,7 @@ void Microprocessor::draw_primitive(Command cmd) {
       flush();
       break;
     default:
-      O2EMU_LOG_DEBUG("Microprocessor unknown command: 0x" << std::hex << cmd
-                                                           << std::dec);
+      O2EMU_LOG_DEBUG_F("Microprocessor unknown command: 0x%08X", cmd);
       break;
     }
   }
@@ -322,8 +327,8 @@ void Microprocessor::draw_primitive(Command cmd) {
 
 void Microprocessor::clear_buffers(u32 color, float depth) {
   // Clear color and depth buffers - would call MRE
-  O2EMU_LOG_DEBUG("Microprocessor clear buffers: color=0x"
-                  << std::hex << color << " depth=" << depth);
+  O2EMU_LOG_DEBUG_F("Microprocessor clear buffers: color=0x%08X depth=%f",
+                    color, depth);
 }
 
 void Microprocessor::flush() {
@@ -351,14 +356,14 @@ void Microprocessor::reset() {
   for (auto &light : lights_) {
     light = Light{};
   }
-  std::memcpy(material_ambient_, (float[4]){0.2f, 0.2f, 0.2f, 1.0f},
-              4 * sizeof(float));
-  std::memcpy(material_diffuse_, (float[4]){0.8f, 0.8f, 0.8f, 1.0f},
-              4 * sizeof(float));
-  std::memcpy(material_specular_, (float[4]){0.0f, 0.0f, 0.0f, 1.0f},
-              4 * sizeof(float));
-  std::memcpy(material_emission_, (float[4]){0.0f, 0.0f, 0.0f, 1.0f},
-              4 * sizeof(float));
+  const float mat_ambient[4] = {0.2f, 0.2f, 0.2f, 1.0f};
+  const float mat_diffuse[4] = {0.8f, 0.8f, 0.8f, 1.0f};
+  const float mat_specular[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+  const float mat_emission[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+  std::memcpy(material_ambient_, mat_ambient, 4 * sizeof(float));
+  std::memcpy(material_diffuse_, mat_diffuse, 4 * sizeof(float));
+  std::memcpy(material_specular_, mat_specular, 4 * sizeof(float));
+  std::memcpy(material_emission_, mat_emission, 4 * sizeof(float));
   material_shininess_ = 0.0f;
   viewport_x_ = 0;
   viewport_y_ = 0;

@@ -8,70 +8,113 @@
 
 namespace o2emu::system {
 
-Timer::Timer()
-    : frequency_(133000000) // 133 MHz system clock
-      ,
-      counter_(0), compare_(0), enabled_(false), periodic_(false),
-      interrupt_enabled_(false), interrupt_pending_(false) {}
-
-Timer::~Timer() = default;
-
-void Timer::reset() {
-  counter_ = 0;
-  compare_ = 0;
-  enabled_ = false;
-  periodic_ = false;
-  interrupt_enabled_ = false;
-  interrupt_pending_ = false;
-}
-
-void Timer::set_frequency(u64 hz) { frequency_ = hz; }
-
-u64 Timer::frequency() const { return frequency_; }
-
-void Timer::set_compare(u64 value) { compare_ = value; }
-
-u64 Timer::compare() const { return compare_; }
-
-void Timer::set_enabled(bool enabled) {
-  enabled_ = enabled;
-  if (enabled) {
-    counter_ = 0;
+Timer::Timer() {
+  // Initialize all timers to default state
+  for (auto &timer : timers_) {
+    timer.frequency = 0;
+    timer.counter = 0;
+    timer.compare = 0;
+    timer.running = false;
+    timer.interrupt_pending = false;
+    timer.callback = nullptr;
   }
 }
 
-bool Timer::enabled() const { return enabled_; }
-
-void Timer::set_periodic(bool periodic) { periodic_ = periodic; }
-
-bool Timer::periodic() const { return periodic_; }
-
-void Timer::set_interrupt_enabled(bool enabled) {
-  interrupt_enabled_ = enabled;
+void Timer::init(ID id, u32 frequency_hz) {
+  if (id < timers_.size()) {
+    timers_[id].frequency = frequency_hz;
+    timers_[id].counter = 0;
+    timers_[id].compare = 0;
+    timers_[id].running = false;
+    timers_[id].interrupt_pending = false;
+  }
 }
 
-bool Timer::interrupt_enabled() const { return interrupt_enabled_; }
+void Timer::start(ID id) {
+  if (id < timers_.size()) {
+    timers_[id].running = true;
+    timers_[id].counter = 0;
+  }
+}
 
-bool Timer::interrupt_pending() const { return interrupt_pending_; }
+void Timer::stop(ID id) {
+  if (id < timers_.size()) {
+    timers_[id].running = false;
+  }
+}
 
-void Timer::clear_interrupt() { interrupt_pending_ = false; }
+bool Timer::running(ID id) const {
+  if (id < timers_.size()) {
+    return timers_[id].running;
+  }
+  return false;
+}
 
-u64 Timer::counter() const { return counter_; }
+void Timer::set_compare(ID id, u32 compare) {
+  if (id < timers_.size()) {
+    timers_[id].compare = compare;
+  }
+}
 
-void Timer::tick(u64 cycles) {
-  if (!enabled_)
+u32 Timer::compare(ID id) const {
+  if (id < timers_.size()) {
+    return timers_[id].compare;
+  }
+  return 0;
+}
+
+u32 Timer::count(ID id) const {
+  if (id < timers_.size()) {
+    return static_cast<u32>(timers_[id].counter);
+  }
+  return 0;
+}
+
+void Timer::tick(ID id, u64 cycles) {
+  if (id >= timers_.size())
     return;
 
-  counter_ += cycles;
+  auto &timer = timers_[id];
+  if (!timer.running || timer.frequency == 0)
+    return;
 
-  if (counter_ >= compare_) {
-    interrupt_pending_ = true;
+  timer.counter += cycles;
 
-    if (periodic_) {
-      counter_ = 0;
-    } else {
-      enabled_ = false;
+  if (timer.counter >= timer.compare) {
+    timer.interrupt_pending = true;
+    if (timer.callback) {
+      timer.callback(id);
     }
+  }
+}
+
+bool Timer::interrupt_pending(ID id) const {
+  if (id < timers_.size()) {
+    return timers_[id].interrupt_pending;
+  }
+  return false;
+}
+
+void Timer::clear_interrupt(ID id) {
+  if (id < timers_.size()) {
+    timers_[id].interrupt_pending = false;
+  }
+}
+
+void Timer::set_callback(ID id, Callback cb) {
+  if (id < timers_.size()) {
+    timers_[id].callback = std::move(cb);
+  }
+}
+
+void Timer::reset() {
+  for (auto &timer : timers_) {
+    timer.frequency = 0;
+    timer.counter = 0;
+    timer.compare = 0;
+    timer.running = false;
+    timer.interrupt_pending = false;
+    timer.callback = nullptr;
   }
 }
 
