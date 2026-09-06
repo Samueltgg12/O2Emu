@@ -330,7 +330,7 @@ void Framebuffer::clear_rect(u32 x, u32 y, u32 width, u32 height, u32 color) {
 }
 
 void Framebuffer::blit(u32 src_x, u32 src_y, u32 dst_x, u32 dst_y, u32 width,
-                       u32 height, u32 rop) {
+                       u32 height, [[maybe_unused]] u32 rop) {
   // Simple blit - copy pixels
   u32 bpp = bytes_per_pixel();
 
@@ -431,7 +431,7 @@ void Framebuffer::set_video_mode(const VideoMode *mode) {
   update_stride();
   update_tile_dimensions();
 
-  O2EMU_LOG_DEBUG("Framebuffer video mode: " << mode->name);
+  O2EMU_LOG_DEBUG_F("Framebuffer video mode: %s", mode->name);
 }
 
 void Framebuffer::reset() {
