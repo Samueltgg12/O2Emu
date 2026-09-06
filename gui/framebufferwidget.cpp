@@ -9,6 +9,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <cstring>
+#include <o2emu/o2emu.h>
 
 const char *FramebufferWidget::vertex_shader_source = R"(
 #version 330 core
@@ -46,13 +47,13 @@ FramebufferWidget::FramebufferWidget(QWidget *parent) : QOpenGLWidget(parent) {
 FramebufferWidget::~FramebufferWidget() {
   makeCurrent();
   if (texture_id_)
-    glDeleteTextures(1, &texture_id_);
+    this->glDeleteTextures(1, &texture_id_);
   if (vao_)
-    glDeleteVertexArrays(1, &vao_);
+    this->glDeleteVertexArrays(1, &vao_);
   if (vbo_)
-    glDeleteBuffers(1, &vbo_);
+    this->glDeleteBuffers(1, &vbo_);
   if (shader_program_)
-    glDeleteProgram(shader_program_);
+    this->glDeleteProgram(shader_program_);
   doneCurrent();
 }
 
@@ -65,11 +66,11 @@ void FramebufferWidget::setCPU(o2emu::cpu::ICpu *cpu) { cpu_ = cpu; }
 void FramebufferWidget::clear() {
   makeCurrent();
   if (texture_id_) {
-    glBindTexture(GL_TEXTURE_2D, texture_id_);
+    this->glBindTexture(GL_TEXTURE_2D, texture_id_);
     // Clear to black
-    static std::vector<u8> black(1280 * 1024 * 4, 0);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
-                    GL_UNSIGNED_BYTE, black.data());
+    static std::vector<o2emu::u8> black(1280 * 1024 * 4, 0);
+    this->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
+                          GL_UNSIGNED_BYTE, black.data());
   }
   doneCurrent();
   update();
@@ -95,38 +96,38 @@ void FramebufferWidget::initializeGL() {
   initializeOpenGLFunctions();
 
   // Create shader program
-  shader_program_ = glCreateProgram();
+  shader_program_ = this->glCreateProgram();
 
-  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vs, 1, &vertex_shader_source, nullptr);
-  glCompileShader(vs);
+  GLuint vs = this->glCreateShader(GL_VERTEX_SHADER);
+  this->glShaderSource(vs, 1, &vertex_shader_source, nullptr);
+  this->glCompileShader(vs);
 
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fs, 1, &fragment_shader_source, nullptr);
-  glCompileShader(fs);
+  GLuint fs = this->glCreateShader(GL_FRAGMENT_SHADER);
+  this->glShaderSource(fs, 1, &fragment_shader_source, nullptr);
+  this->glCompileShader(fs);
 
-  glAttachShader(shader_program_, vs);
-  glAttachShader(shader_program_, fs);
-  glLinkProgram(shader_program_);
+  this->glAttachShader(shader_program_, vs);
+  this->glAttachShader(shader_program_, fs);
+  this->glLinkProgram(shader_program_);
 
-  glDeleteShader(vs);
-  glDeleteShader(fs);
+  this->glDeleteShader(vs);
+  this->glDeleteShader(fs);
 
   // Check for errors
   GLint success;
-  glGetProgramiv(shader_program_, GL_LINK_STATUS, &success);
+  this->glGetProgramiv(shader_program_, GL_LINK_STATUS, &success);
   if (!success) {
     char log[512];
-    glGetProgramInfoLog(shader_program_, 512, nullptr, log);
+    this->glGetProgramInfoLog(shader_program_, 512, nullptr, log);
     qDebug() << "Shader link error:" << log;
   }
 
   // Create VAO and VBO for full-screen quad
-  glGenVertexArrays(1, &vao_);
-  glGenBuffers(1, &vbo_);
+  this->glGenVertexArrays(1, &vao_);
+  this->glGenBuffers(1, &vbo_);
 
-  glBindVertexArray(vao_);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+  this->glBindVertexArray(vao_);
+  this->glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
   // Full-screen quad vertices (position, texCoord)
   float vertices[] = {
@@ -137,15 +138,17 @@ void FramebufferWidget::initializeGL() {
       1.0f,  -1.0f, 1.0f, 1.0f, // Bottom-right
   };
 
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  this->glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
+                     GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
-                        (void *)(2 * sizeof(float)));
-  glEnableVertexAttribArray(1);
+  this->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
+                              (void *)0);
+  this->glEnableVertexAttribArray(0);
+  this->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
+                              (void *)(2 * sizeof(float)));
+  this->glEnableVertexAttribArray(1);
 
-  glBindVertexArray(0);
+  this->glBindVertexArray(0);
 
   // Create texture
   glGenTextures(1, &texture_id_);
