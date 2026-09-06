@@ -101,11 +101,11 @@ int main(int argc, char *argv[]) {
     logger.set_output_file(log_file);
   }
 
-  O2EMU_LOG_INFO("Starting O2Emu v" << VERSION);
-  O2EMU_LOG_INFO("PROM: " << prom_path);
-  O2EMU_LOG_INFO("RAM: " << ram_mb << " MB");
+  O2EMU_LOG_INFO_F("Starting O2Emu v%s", VERSION);
+  O2EMU_LOG_INFO_F("PROM: %s", prom_path.c_str());
+  O2EMU_LOG_INFO_F("RAM: %u MB", ram_mb);
   if (max_cycles > 0) {
-    O2EMU_LOG_INFO("Max cycles: " << max_cycles);
+    O2EMU_LOG_INFO_F("Max cycles: %llu", max_cycles);
   }
 
   try {
@@ -113,54 +113,57 @@ int main(int argc, char *argv[]) {
     memory::Memory memory;
     memory.init(ram_mb);
 
+    // Initialize system bus
+    system::Bus bus;
+
     // Initialize CPU
     cpu::CPU cpu;
     cpu.reset(ip32::PROM_RESET_VECTOR);
 
-    // Connect CPU to memory
-    cpu.set_memory_read_callback([&memory](u32 addr, u32 size) -> u32 {
+    // Connect CPU to memory via bus
+    cpu.set_memory_read_callback([&bus](u32 addr, u32 size) -> u32 {
       switch (size) {
       case 1:
-        return memory.read8(addr);
+        return bus.read8(addr);
       case 2:
-        return memory.read16(addr);
+        return bus.read16(addr);
       case 4:
-        return memory.read32(addr);
+        return bus.read32(addr);
       default:
         return 0;
       }
     });
 
-    cpu.set_memory_write_callback([&memory](u32 addr, u32 size, u32 value) {
+    cpu.set_memory_write_callback([&bus](u32 addr, u32 size, u32 value) {
       switch (size) {
       case 1:
-        memory.write8(addr, value);
+        bus.write8(addr, value);
         break;
       case 2:
-        memory.write16(addr, value);
+        bus.write16(addr, value);
         break;
       case 4:
-        memory.write32(addr, value);
+        bus.write32(addr, value);
         break;
       }
     });
 
+    // Attach memory to bus
+    // Note: Memory needs to be wrapped as a Device for the bus
+    // For now, we'll use the PROMLoader which handles PROM loading
+
     // Load PROM
-    firmware::PROMLoader prom_loader(cpu, memory);
+    firmware::PROMLoader prom_loader(&bus, &cpu);
     if (!prom_loader.load_prom(prom_path)) {
-      O2EMU_LOG_ERROR("Failed to load PROM from " << prom_path);
+      O2EMU_LOG_ERROR_F("Failed to load PROM from %s", prom_path.c_str());
       return 1;
     }
 
     O2EMU_LOG_INFO("PROM loaded successfully");
-    O2EMU_LOG_INFO("Entry point: 0x"
-                   << std::hex << prom_loader.prom().entry_point() << std::dec);
+    O2EMU_LOG_INFO_F("Entry point: 0x%08X", prom_loader.prom().entry_point());
 
-    // Map PROM sections
-    prom_loader.map_prom_sections();
-
-    // Initialize CPU for PROM execution
-    prom_loader.init_cpu_for_prom();
+    // Execute PROM bootstrap (maps sections and initializes CPU)
+    prom_loader.execute_bootstrap();
 
     // Run emulation
     O2EMU_LOG_INFO("Starting emulation...");

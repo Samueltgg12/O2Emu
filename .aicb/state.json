@@ -210,13 +210,6 @@
       "expiresAt": 1788668642578
     },
     {
-      "path": "/home/samuel/SGI Projects/O2Emu/emu/include/o2emu/graphics/framebuffer.h",
-      "pinnedBy": "auto:editor",
-      "pinnedAt": 1788662410667,
-      "auto": "recent-edit",
-      "expiresAt": 1788666010667
-    },
-    {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/graphics/framebuffer.cpp",
       "pinnedBy": "auto:editor",
       "pinnedAt": 1788662494716,
@@ -254,11 +247,11 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/cli/main.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788665500943,
+      "pinnedAt": 1788665989968,
       "auto": "recent-edit",
-      "expiresAt": 1788669100943
+      "expiresAt": 1788669589968
     }
   ],
   "skills": [],
-  "updatedAt": 1788665710316
+  "updatedAt": 1788666059857
 }
