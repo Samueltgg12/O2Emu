@@ -10,6 +10,7 @@
 #include <o2emu/logging/logger.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/o2emu.h>
+#include <o2emu/system/bus.h>
 #include <string>
 
 using namespace o2emu;
