@@ -38,6 +38,15 @@ void Bus::attach_device(std::unique_ptr<devices::Device> device) {
                     device_ptr->name().c_str(), base, size);
 }
 
+void Bus::attach_memory(memory::Memory *memory) {
+  if (!memory) {
+    return;
+  }
+
+  memory_ = memory;
+  O2EMU_LOG_DEBUG("Attached memory to bus");
+}
+
 devices::Device *Bus::find_device(u32 phys_addr) const {
   for (const auto &entry : devices_) {
     if (phys_addr >= entry.base && phys_addr < entry.base + entry.size) {

@@ -20,6 +20,9 @@ public:
   // Attach a device to the bus
   void attach_device(std::unique_ptr<devices::Device> device);
 
+  // Attach memory to the bus
+  void attach_memory(memory::Memory *memory);
+
   // Find device at physical address
   devices::Device *find_device(u32 phys_addr) const;
 
@@ -46,6 +49,7 @@ private:
   };
   std::vector<DeviceEntry> devices_;
   std::vector<std::unique_ptr<devices::Device>> owned_devices_;
+  memory::Memory *memory_ = nullptr;
 };
 
 } // namespace o2emu::system
