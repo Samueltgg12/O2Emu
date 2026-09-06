@@ -13,103 +13,53 @@
 
 namespace o2emu::cpu {
 
-// Adapter for the base CPU class
-class CpuAdapter : public ICpu {
+// Adapter for the base CPU class - inherits from CPU and implements ICpu
+// interface
+class CpuAdapter : public CPU {
 public:
-  explicit CpuAdapter() : cpu_(std::make_unique<CPU>()) {}
+  CpuAdapter() = default;
 
-  void reset(uint32_t reset_vector = 0xBFC00000) override {
-    cpu_->reset(reset_vector);
-  }
+  // ICpu interface methods not in CPU
+  uint32_t gpr(int reg) const override { return state().gpr[reg]; }
 
-  void step() override { cpu_->step(); }
+  void set_gpr(int reg, uint32_t value) override { state().gpr[reg] = value; }
 
-  void run(uint64_t cycles) override { cpu_->run(cycles); }
-
-  void run_until(uint32_t target_pc) override { cpu_->run_until(target_pc); }
-
-  void set_memory_read_callback(ReadCallback cb) override {
-    cpu_->set_memory_read_callback(std::move(cb));
-  }
-
-  void set_memory_write_callback(WriteCallback cb) override {
-    cpu_->set_memory_write_callback(std::move(cb));
-  }
-
-  void raise_interrupt(InterruptLine line) override {
-    cpu_->raise_interrupt(line);
-  }
-
-  void clear_interrupt(InterruptLine line) override {
-    cpu_->clear_interrupt(line);
-  }
-
-  uint32_t gpr(int reg) const override { return cpu_->state().gpr[reg]; }
-
-  void set_gpr(int reg, uint32_t value) override {
-    cpu_->state().gpr[reg] = value;
-  }
-
-  uint64_t gpr64(int reg) const override { return cpu_->state().gpr[reg]; }
+  uint64_t gpr64(int reg) const override { return state().gpr[reg]; }
 
   void set_gpr64(int reg, uint64_t value) override {
-    cpu_->state().gpr[reg] = static_cast<uint32_t>(value);
+    state().gpr[reg] = static_cast<uint32_t>(value);
   }
 
-  uint32_t pc() const override { return cpu_->state().pc; }
+  uint32_t pc() const override { return state().pc; }
 
-  void set_pc(uint32_t pc) override { cpu_->state().pc = pc; }
+  void set_pc(uint32_t pc) override { state().pc = pc; }
 
-  uint32_t cp0_reg(CP0::Register reg) const override {
-    return cpu_->cp0().read(reg);
-  }
+  uint32_t cp0_reg(CP0::Register reg) const override { return cp0().read(reg); }
 
   void set_cp0_reg(CP0::Register reg, uint32_t value) override {
-    cpu_->cp0().write(reg, value);
+    cp0().write(reg, value);
   }
 
-  uint64_t cycles() const override { return cpu_->cycles_executed(); }
+  uint64_t cycles() const override { return cycles_executed(); }
 
-  uint64_t instructions() const override {
-    return cpu_->cycles_executed(); // Approximation
-  }
-
-  void dump_registers() const override { cpu_->dump_registers(); }
-
-  void disassemble(uint32_t addr, char *buffer, size_t size) const override {
-    cpu_->disassemble(addr, buffer, size);
-  }
-
-  uint64_t cycles_executed() const override { return cpu_->cycles_executed(); }
-
-  CPUState &state() override {
-    cached_state_ = cpu_->state();
-    cached_state_.cp0 = &cpu_->cp0();
-    return cached_state_;
-  }
-
-  const CPUState &state() const override {
-    // For const version, we can't modify cached_state_, so return a reference
-    // to a static (thread-unsafe but works for single-threaded emulation).
-    static thread_local CPUState cached;
-    cached = const_cast<CpuAdapter *>(this)->state();
-    return cached;
-  }
+  uint64_t instructions() const override { return cycles_executed(); }
 
   CPUType type() const override { return CPUType::R5000; }
 
   const char *type_name() const override { return "MIPS R5000 (base)"; }
 
-private:
-  std::unique_ptr<CPU> cpu_;
-  CPUState cached_state_;
+  // ICpu const state() override
+  const CPUState &state() const override {
+    static thread_local CPUState cached;
+    cached = const_cast<CpuAdapter *>(this)->state();
+    return cached;
+  }
 };
 
 // Adapter for MIPSR5000
-class MIPSR5000Adapter : public ICpu {
+class MIPSR5000Adapter : public MIPSR5000 {
 public:
-  explicit MIPSR5000Adapter(system::Bus *bus)
-      : cpu_(std::make_unique<MIPSR5000>(bus)) {}
+  explicit MIPSR5000Adapter(system::Bus *bus) : MIPSR5000(bus) {}
 
   void reset(uint32_t reset_vector = 0xBFC00000) override {
     cpu_->reset();

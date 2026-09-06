@@ -205,9 +205,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/emu/src/cpu/cpu_factory.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788732369988,
+      "pinnedAt": 1788733054931,
       "auto": "recent-edit",
-      "expiresAt": 1788735969988
+      "expiresAt": 1788736654931
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/framebufferwidget.cpp",
@@ -233,9 +233,9 @@
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/mainwindow.cpp",
       "pinnedBy": "auto:editor",
-      "pinnedAt": 1788732002888,
+      "pinnedAt": 1788733078719,
       "auto": "recent-edit",
-      "expiresAt": 1788735602888
+      "expiresAt": 1788736678719
     },
     {
       "path": "/home/samuel/SGI Projects/O2Emu/gui/mainwindow.h",
@@ -253,5 +253,5 @@
     }
   ],
   "skills": [],
-  "updatedAt": 1788732599795
+  "updatedAt": 1788733078719
 }
