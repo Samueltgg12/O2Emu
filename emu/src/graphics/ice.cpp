@@ -177,8 +177,8 @@ void ICE::write(Register reg, u32 value) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("ICE write to unknown register: 0x"
-                    << std::hex << reg << std::dec << " = 0x" << value);
+    O2EMU_LOG_DEBUG_F("ICE write to unknown register: 0x%08X = 0x%08X", reg,
+                      value);
     regs_[reg] = value;
     break;
   }
@@ -217,8 +217,8 @@ void ICE::jpeg_compress(u32 src_addr, u32 dst_addr, u32 width, u32 height,
   regs_[ICE_DST_HEIGHT] = height;
 
   // Simulate compression
-  O2EMU_LOG_DEBUG("ICE JPEG compress: " << width << "x" << height
-                                        << " quality=" << quality);
+  O2EMU_LOG_DEBUG_F("ICE JPEG compress: %ux%u quality=%u", width, height,
+                    quality);
 
   // In a real implementation, this would do actual JPEG compression
   // For now, just mark as done
@@ -240,7 +240,7 @@ void ICE::jpeg_decompress(u32 src_addr, u32 dst_addr, u32 *width, u32 *height) {
   regs_[ICE_DST_ADDR] = dst_addr;
 
   // Simulate decompression
-  O2EMU_LOG_DEBUG("ICE JPEG decompress");
+  O2EMU_LOG_DEBUG_F("ICE JPEG decompress");
 
   if (width)
     *width = 640;
@@ -267,8 +267,8 @@ void ICE::mpeg_compress(u32 src_addr, u32 dst_addr, u32 width, u32 height,
   regs_[ICE_SRC_WIDTH] = width;
   regs_[ICE_SRC_HEIGHT] = height;
 
-  O2EMU_LOG_DEBUG("ICE MPEG compress: " << width << "x" << height
-                                        << " bitrate=" << bitrate);
+  O2EMU_LOG_DEBUG_F("ICE MPEG compress: %ux%u bitrate=%u", width, height,
+                    bitrate);
 
   status_ &= ~STATUS_BUSY;
   status_ |= STATUS_MPEG_DONE;
@@ -287,7 +287,7 @@ void ICE::mpeg_decompress(u32 src_addr, u32 dst_addr, u32 *width, u32 *height) {
   regs_[ICE_SRC_ADDR] = src_addr;
   regs_[ICE_DST_ADDR] = dst_addr;
 
-  O2EMU_LOG_DEBUG("ICE MPEG decompress");
+  O2EMU_LOG_DEBUG_F("ICE MPEG decompress");
 
   if (width)
     *width = 640;
@@ -316,8 +316,8 @@ void ICE::csc_convert(u32 src_addr, u32 dst_addr, u32 width, u32 height,
   regs_[ICE_SRC_FORMAT] = src_fmt;
   regs_[ICE_DST_FORMAT] = dst_fmt;
 
-  O2EMU_LOG_DEBUG("ICE CSC convert: " << width << "x" << height
-                                      << " fmt=" << src_fmt << "->" << dst_fmt);
+  O2EMU_LOG_DEBUG_F("ICE CSC convert: %ux%u fmt=%u->%u", width, height,
+                    static_cast<u32>(src_fmt), static_cast<u32>(dst_fmt));
 
   status_ &= ~STATUS_BUSY;
   status_ |= STATUS_CSC_DONE;
@@ -345,11 +345,14 @@ void ICE::scale_image(u32 src_addr, u32 dst_addr, u32 src_w, u32 src_h,
 
   float h_factor = static_cast<float>(src_w) / dst_w;
   float v_factor = static_cast<float>(src_h) / dst_h;
-  regs_[ICE_SCALE_H_FACTOR] = *reinterpret_cast<u32 *>(&h_factor);
-  regs_[ICE_SCALE_V_FACTOR] = *reinterpret_cast<u32 *>(&v_factor);
+  u32 h_factor_bits;
+  u32 v_factor_bits;
+  std::memcpy(&h_factor_bits, &h_factor, sizeof(float));
+  std::memcpy(&v_factor_bits, &v_factor, sizeof(float));
+  regs_[ICE_SCALE_H_FACTOR] = h_factor_bits;
+  regs_[ICE_SCALE_V_FACTOR] = v_factor_bits;
 
-  O2EMU_LOG_DEBUG("ICE scale: " << src_w << "x" << src_h << " -> " << dst_w
-                                << "x" << dst_h);
+  O2EMU_LOG_DEBUG_F("ICE scale: %ux%u -> %ux%u", src_w, src_h, dst_w, dst_h);
 
   status_ &= ~STATUS_BUSY;
   status_ |= STATUS_SCALE_DONE;
@@ -405,8 +408,8 @@ void ICE::reset() {
   jpeg_qtable_.fill(0);
   jpeg_htable_dc_.fill(0);
   jpeg_htable_ac_.fill(0);
-  std::memcpy(csc_matrix_, (float[9]){1, 0, 0, 0, 1, 0, 0, 0, 1},
-              9 * sizeof(float));
+  const float identity_matrix[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+  std::memcpy(csc_matrix_, identity_matrix, 9 * sizeof(float));
   std::memset(csc_offset_, 0, 3 * sizeof(float));
   current_op_ = OP_NONE;
 }

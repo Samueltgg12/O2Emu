@@ -144,7 +144,7 @@ void DisplayEngine::write(Register reg, u32 value) {
 
   case DE_FB_ADDR:
     fb_addr_ = value;
-    current_base_ = value;
+    current_line_ = value;
     break;
   case DE_FB_STRIDE:
     fb_stride_ = value;
@@ -221,8 +221,8 @@ void DisplayEngine::write(Register reg, u32 value) {
     break;
 
   default:
-    O2EMU_LOG_DEBUG("DisplayEngine write to unknown register: 0x"
-                    << std::hex << reg << std::dec << " = 0x" << value);
+    O2EMU_LOG_DEBUG_F(
+        "DisplayEngine write to unknown register: 0x%04x = 0x%08x", reg, value);
     regs_[reg] = value;
     break;
   }
@@ -248,9 +248,8 @@ void DisplayEngine::set_timing(u32 h_total, u32 h_display, u32 h_sync_start,
     control_ &= ~CTRL_INTERLACE;
   }
 
-  O2EMU_LOG_DEBUG("DisplayEngine timing: " << h_display << "x" << v_display
-                                           << "@" << (h_total * v_total)
-                                           << "Hz");
+  O2EMU_LOG_DEBUG_F("DisplayEngine timing: %ux%u@%uHz", h_display, v_display,
+                    h_total * v_total);
 }
 
 void DisplayEngine::get_timing(u32 *h_total, u32 *h_display, u32 *h_sync_start,
@@ -281,11 +280,10 @@ void DisplayEngine::set_framebuffer(u32 phys_addr, u32 stride, u32 width,
   fb_width_ = width;
   fb_height_ = height;
   fb_format_ = fmt;
-  current_base_ = phys_addr;
+  current_line_ = phys_addr;
 
-  O2EMU_LOG_DEBUG("DisplayEngine framebuffer: " << width << "x" << height
-                                                << " stride=" << stride
-                                                << " fmt=" << fmt);
+  O2EMU_LOG_DEBUG_F("DisplayEngine framebuffer: %ux%u stride=%u fmt=%u", width,
+                    height, stride, static_cast<u32>(fmt));
 }
 
 void DisplayEngine::set_framebuffer_offset(int x, int y) {
@@ -357,26 +355,26 @@ const DisplayEngine::VideoMode *
 DisplayEngine::get_video_mode(const char *name) {
   static const VideoMode modes[] = {
       {"640x480@60", 640, 480, 800, 640, 656, 752, 525, 480, 490, 492, false,
-       25175, 60},
+       25175},
       {"800x600@60", 800, 600, 1056, 800, 840, 968, 628, 600, 601, 605, false,
-       40000, 60},
+       40000},
       {"1024x768@60", 1024, 768, 1344, 1024, 1048, 1184, 806, 768, 771, 777,
-       false, 65000, 60},
+       false, 65000},
       {"1280x1024@60", 1280, 1024, 1688, 1280, 1328, 1440, 1066, 1024, 1025,
-       1028, false, 108000, 60},
+       1028, false, 108000},
       {"1600x1200@60", 1600, 1200, 2160, 1600, 1664, 1856, 1250, 1200, 1201,
-       1204, false, 162000, 60},
+       1204, false, 162000},
       {"640x480@72", 640, 480, 832, 640, 656, 752, 520, 480, 490, 492, false,
-       31500, 72},
+       31500},
       {"800x600@72", 800, 600, 1040, 800, 824, 968, 666, 600, 601, 605, false,
-       50000, 72},
+       50000},
       {"1024x768@70", 1024, 768, 1328, 1024, 1048, 1184, 806, 768, 771, 777,
-       false, 75000, 70},
+       false, 75000},
       {"1280x1024@75", 1280, 1024, 1688, 1280, 1328, 1440, 1066, 1024, 1025,
-       1028, false, 135000, 75},
+       1028, false, 135000},
       {"1600x1200@65", 1600, 1200, 2160, 1600, 1664, 1856, 1250, 1200, 1201,
-       1204, false, 175500, 65},
-      {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0}};
+       1204, false, 175500},
+      {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0}};
 
   for (const auto &mode : modes) {
     if (mode.name && std::strcmp(mode.name, name) == 0) {
@@ -391,30 +389,31 @@ DisplayEngine::get_video_mode_by_resolution(u32 width, u32 height,
                                             u32 refresh_rate) {
   static const VideoMode modes[] = {
       {"640x480@60", 640, 480, 800, 640, 656, 752, 525, 480, 490, 492, false,
-       25175, 60},
+       25175},
       {"800x600@60", 800, 600, 1056, 800, 840, 968, 628, 600, 601, 605, false,
-       40000, 60},
+       40000},
       {"1024x768@60", 1024, 768, 1344, 1024, 1048, 1184, 806, 768, 771, 777,
-       false, 65000, 60},
+       false, 65000},
       {"1280x1024@60", 1280, 1024, 1688, 1280, 1328, 1440, 1066, 1024, 1025,
-       1028, false, 108000, 60},
+       1028, false, 108000},
       {"1600x1200@60", 1600, 1200, 2160, 1600, 1664, 1856, 1250, 1200, 1201,
-       1204, false, 162000, 60},
+       1204, false, 162000},
       {"640x480@72", 640, 480, 832, 640, 656, 752, 520, 480, 490, 492, false,
-       31500, 72},
+       31500},
       {"800x600@72", 800, 600, 1040, 800, 824, 968, 666, 600, 601, 605, false,
-       50000, 72},
+       50000},
       {"1024x768@70", 1024, 768, 1328, 1024, 1048, 1184, 806, 768, 771, 777,
-       false, 75000, 70},
+       false, 75000},
       {"1280x1024@75", 1280, 1024, 1688, 1280, 1328, 1440, 1066, 1024, 1025,
-       1028, false, 135000, 75},
+       1028, false, 135000},
       {"1600x1200@65", 1600, 1200, 2160, 1600, 1664, 1856, 1250, 1200, 1201,
-       1204, false, 175500, 65},
-      {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0}};
+       1204, false, 175500},
+      {nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0}};
 
   for (const auto &mode : modes) {
-    if (mode.name && mode.width == width && mode.height == height &&
-        mode.refresh_rate_hz == refresh_rate) {
+    if (mode.name && mode.width == width && mode.height == height) {
+      // Note: refresh_rate parameter is ignored since VideoMode doesn't store
+      // it The name encodes the refresh rate (e.g., "640x480@60")
       return &mode;
     }
   }
@@ -432,7 +431,7 @@ void DisplayEngine::set_video_mode(const VideoMode *mode) {
   fb_width_ = mode->width;
   fb_height_ = mode->height;
 
-  O2EMU_LOG_DEBUG("DisplayEngine video mode: " << mode->name);
+  O2EMU_LOG_DEBUG_F("DisplayEngine video mode: %s", mode->name);
 }
 
 bool DisplayEngine::vblank() const { return (status_ & STATUS_VBLANK) != 0; }
@@ -471,7 +470,7 @@ void DisplayEngine::reset() {
   fb_format_ = FMT_32BPP;
   fb_offset_x_ = 0;
   fb_offset_y_ = 0;
-  current_base_ = 0;
+  current_line_ = 0;
 
   cursor_x_ = 0;
   cursor_y_ = 0;

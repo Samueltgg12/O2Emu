@@ -177,6 +177,8 @@ public:
   };
 
   static const VideoMode *get_video_mode(const char *name);
+  static const VideoMode *get_video_mode_by_resolution(u32 width, u32 height,
+                                                       u32 refresh_rate);
   void set_video_mode(const VideoMode *mode);
 
   // Status
