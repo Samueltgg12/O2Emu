@@ -17,6 +17,7 @@ target_link_libraries(o2emu-gui PRIVATE
     Qt6::Core
     Qt6::Widgets
     Qt6::Gui
+    Qt6::OpenGL
 )
 
 set_target_properties(o2emu-gui PROPERTIES

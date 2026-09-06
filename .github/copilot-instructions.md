@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-06T02:30:28.158Z","hash":"sha256:000f14691b5411c394a39f294bad1dbba609190bac5b76c5ceea1dd38facc7df"} -->
+<!-- AICB:BEGIN {"version":1,"target":".github/copilot-instructions.md","generatedAt":"2026-09-06T02:52:10.275Z","hash":"sha256:6bda017b92a5a6f306500ba79f7ba734ba0b284c60014fd69d68f942f8f5d8dc"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -37,6 +37,8 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `emu/include/o2emu/graphics/display_engine.h` _(auto:recent-edit)_
 - `emu/include/o2emu/graphics/framebuffer.h` _(auto:recent-edit)_
 - `emu/src/graphics/framebuffer.cpp` _(auto:recent-edit)_
+- `gui/CMakeLists.txt` _(auto:recent-edit)_
+- `gui/mainwindow.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <memory>
+#include <o2emu/o2emu.h>
 
 class FramebufferWidget;
 class DebuggerWidget;
