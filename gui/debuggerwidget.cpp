@@ -7,11 +7,13 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QInputDialog>
+#include <QLabel>
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <iomanip>
 #include <sstream>
 
+#include <o2emu/cpu/cp0.h>
 #include <o2emu/o2emu.h>
 
 DebuggerWidget::DebuggerWidget(QWidget *parent) : QWidget(parent) {
