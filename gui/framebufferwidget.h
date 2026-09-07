@@ -69,6 +69,8 @@ private:
   GLuint vao_ = 0;
   GLuint vbo_ = 0;
   GLuint shader_program_ = 0;
+  GLuint pbo_ = 0; // Pixel buffer object for async framebuffer upload
+  GLsizei pbo_size_ = 0;
 
   // Framebuffer state
   uint32_t fb_base_ = 0;

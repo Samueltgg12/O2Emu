@@ -63,6 +63,8 @@ FramebufferWidget::~FramebufferWidget() {
     this->glDeleteBuffers(1, &vbo_);
   if (shader_program_)
     this->glDeleteProgram(shader_program_);
+  if (pbo_)
+    this->glDeleteBuffers(1, &pbo_);
   doneCurrent();
 }
 

@@ -37,7 +37,11 @@ class Bus;
 }
 namespace o2emu::graphics {
 class GBEFramebuffer;
-}
+class Microprocessor;
+class ICE;
+class DisplayEngine;
+class Framebuffer;
+} // namespace o2emu::graphics
 namespace o2emu::devices {
 class MACE;
 class PS2;
@@ -93,6 +97,10 @@ private:
   std::unique_ptr<o2emu::firmware::PROMLoader> prom_loader_;
   std::unique_ptr<o2emu::system::Bus> bus_;
   o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
+  std::unique_ptr<o2emu::graphics::Microprocessor> microprocessor_;
+  std::unique_ptr<o2emu::graphics::ICE> ice_;
+  std::unique_ptr<o2emu::graphics::DisplayEngine> display_engine_;
+  std::unique_ptr<o2emu::graphics::Framebuffer> framebuffer_;
   o2emu::memory::MRE *mre_ = nullptr;
   o2emu::devices::MACE *mace_ = nullptr;
   o2emu::devices::PS2 *ps2_ = nullptr;

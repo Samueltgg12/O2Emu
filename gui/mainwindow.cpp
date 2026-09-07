@@ -40,7 +40,11 @@
 #include <o2emu/devices/scsicontroller.h>
 #include <o2emu/devices/uart.h>
 #include <o2emu/firmware/prom_loader.h>
+#include <o2emu/graphics/display_engine.h>
+#include <o2emu/graphics/framebuffer.h>
 #include <o2emu/graphics/gbe_framebuffer.h>
+#include <o2emu/graphics/ice.h>
+#include <o2emu/graphics/microprocessor.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/memory/mre_device.h>
 #include <o2emu/system/bus.h>
@@ -301,6 +305,15 @@ void MainWindow::initializeEmulator() {
   // Attach the CRM display plane and MACE I/O devices before starting PROM.
   mre_ = &memory_->mre();
   bus_->attach_device(std::make_unique<o2emu::memory::MREDevice>(*mre_));
+
+  // Own the full CRM chipset. The Microprocessor, ICE, and Display Engine
+  // register blocks are not independently bus-mapped in the collected docs;
+  // they are retained here as emulator state so the graphics subsystem is
+  // fully wired into the emulator lifecycle.
+  microprocessor_ = std::make_unique<o2emu::graphics::Microprocessor>();
+  ice_ = std::make_unique<o2emu::graphics::ICE>();
+  display_engine_ = std::make_unique<o2emu::graphics::DisplayEngine>();
+  framebuffer_ = std::make_unique<o2emu::graphics::Framebuffer>();
 
   auto gbe_framebuffer = std::make_unique<o2emu::graphics::GBEFramebuffer>();
   gbe_framebuffer_ = gbe_framebuffer.get();
