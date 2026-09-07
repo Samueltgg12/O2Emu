@@ -20,95 +20,71 @@ public:
   explicit MRE(Memory &memory);
   ~MRE();
 
-  // MRE register offsets (from PHYS_BASE_RENDER = 0x15000000)
-  // Based on PROM definitions.h and register-maps.md
+  // CRIME Render Engine (RE) register offsets, relative to the RE base
+  // 0x15000000 (CRM_RE_BASE_ADDRESS). The RE is organized in 4KB pages as
+  // documented in docs/register-maps.md (IRIX crimereg.h/crimedef.h).
   enum Register : uint32_t {
-    // Core registers
-    REG_ID = 0x0000,
-    REG_CONFIG = 0x0008,
-    REG_STATUS = 0x0010,
-    REG_CONTROL = 0x0018,
+    // ---- Page 0: Interface Buffer (CRM_INTFBUF_BASE = 0x0000) ----
+    INTFBUF_DATA = 0x0000,  // data[64], 2 words each (0x000..0x1ff)
+    INTFBUF_ADDR = 0x0200,  // addr[64] (0x200..0x3ff)
+    INTFBUF_CTL = 0x0400,   // control (full/empty/stall levels)
+    INTFBUF_RESET = 0x0408, // reset
 
-    // Framebuffer configuration
-    REG_FB_BASE = 0x0100,
-    REG_FB_STRIDE = 0x0108,
-    REG_FB_WIDTH = 0x0110,
-    REG_FB_HEIGHT = 0x0118,
-    REG_FB_DEPTH = 0x0120,
-    REG_FB_FORMAT = 0x0128,
+    // ---- Page 1: TLB (CRM_TLB_BASE = 0x1000) ----
+    TLB_FB_A = 0x1000,     // 64 entries (0x1000..0x11ff)
+    TLB_FB_B = 0x1200,     // 64 entries (0x1200..0x13ff)
+    TLB_FB_C = 0x1400,     // 64 entries (0x1400..0x15ff)
+    TLB_TEXTURE = 0x1600,  // 28 entries (0x1600..0x16df)
+    TLB_CID = 0x16e0,      // 4 entries (0x16e0..0x16ff)
+    TLB_LINEAR_A = 0x1700, // 16 entries (0x1700..0x177f)
+    TLB_LINEAR_B = 0x1780, // 16 entries (0x1780..0x17ff)
 
-    // Tile configuration (GBE - Graphics Back End)
-    REG_TILE_CONFIG = 0x0200,
-    REG_TILE_BASE = 0x0208,
-    REG_TILE_SIZE = 0x0210,
+    // ---- Page 2: Pixel Pipe / Draw (CRM_PIXPIPE_BASE = 0x2000) ----
+    PIXPIPE_BUFMODE_SRC = 0x2000,   // source buffer mode
+    PIXPIPE_BUFMODE_DST = 0x2008,   // destination buffer mode
+    PIXPIPE_CLIPMODE = 0x2010,      // clip mode
+    PIXPIPE_DRAWMODE = 0x2018,      // draw mode
+    PIXPIPE_SCRMASK = 0x2020,       // screen masks [5] (0x2020..0x2040)
+    PIXPIPE_SCISSOR = 0x2048,       // scissor rectangle
+    PIXPIPE_WINOFFSET_SRC = 0x2050, // window offset source
+    PIXPIPE_WINOFFSET_DST = 0x2058, // window offset dest
+    PIXPIPE_PRIMITIVE = 0x2060,     // primitive type/width
+    PIXPIPE_VERTEX_X = 0x2070,      // vertex X[3] (0x2070..0x2078)
+    PIXPIPE_VERTEX_GL = 0x2080,     // vertex GL[3] (0x2080..0x2094)
+    PIXPIPE_STARTSETUP = 0x2098,    // start setup
+    PIXPIPE_PIXELXFER_SRC = 0x20a0, // pixel transfer source
+    PIXPIPE_PIXELXFER_DST = 0x20b0, // pixel transfer dest
+    PIXPIPE_STIPPLE = 0x20c0,       // stipple mode/pattern
+    PIXPIPE_SHADE = 0x20d0,         // shade registers (12)
+    PIXPIPE_TEXTURE = 0x2110,       // texture registers (23)
+    PIXPIPE_FOG = 0x2170,           // fog registers
+    PIXPIPE_ANTIALIAS = 0x2190,     // antialias line/coverage
+    PIXPIPE_ALPHATEST = 0x2198,     // alpha test
+    PIXPIPE_BLEND = 0x21a0,         // blend constant/function
+    PIXPIPE_LOGICOP = 0x21b0,       // logic operation
+    PIXPIPE_COLORMASK = 0x21b8,     // color mask
+    PIXPIPE_DEPTH = 0x21c0,         // depth func/z0/dzdx/dzdy
+    PIXPIPE_STENCIL = 0x21e0,       // stencil mode/mask
+    PIXPIPE_NULL = 0x21f0,          // null register
+    PIXPIPE_FLUSH = 0x21f8,         // flush pipeline
 
-    // Display list / vertex processing
-    REG_DL_BASE = 0x0300,
-    REG_DL_PTR = 0x0308,
-    REG_DL_END = 0x0310,
-    REG_DL_CTRL = 0x0318,
+    // ---- Page 3: MTE (CRM_MTE_BASE = 0x3000) ----
+    MTE_MODE = 0x3000,        // mode (clear/copy, stipple, depth)
+    MTE_BYTEMASK = 0x3008,    // byte mask
+    MTE_STIPPLEMASK = 0x3010, // stipple mask
+    MTE_FGVALUE = 0x3018,     // foreground value
+    MTE_SRC0 = 0x3020,        // source 0
+    MTE_SRC1 = 0x3028,        // source 1
+    MTE_DST0 = 0x3030,        // destination 0
+    MTE_DST1 = 0x3038,        // destination 1
+    MTE_SRCYSTEP = 0x3040,    // source Y step
+    MTE_DSTYSTEP = 0x3048,    // destination Y step
+    MTE_NULL = 0x3070,        // null
+    MTE_FLUSH = 0x3078,       // flush
 
-    // Vertex processing
-    REG_VTX_BASE = 0x0400,
-    REG_VTX_STRIDE = 0x0408,
-    REG_VTX_COUNT = 0x0410,
-    REG_VTX_FORMAT = 0x0418,
-
-    // Texture configuration
-    REG_TEX_BASE = 0x0500,
-    REG_TEX_STRIDE = 0x0508,
-    REG_TEX_SIZE = 0x0510,
-    REG_TEX_FORMAT = 0x0518,
-
-    // Rasterization
-    REG_RASTER_CTRL = 0x0600,
-    REG_SCISSOR = 0x0608,
-    REG_ZBUF_BASE = 0x0610,
-    REG_ZBUF_STRIDE = 0x0618,
-
-    // Interrupt registers
-    REG_INT_STATUS = 0x0700,
-    REG_INT_MASK = 0x0708,
-    REG_INT_CLEAR = 0x0710,
-
-    // Performance counters
-    REG_PERF_CTRL = 0x0800,
-    REG_PERF_COUNT0 = 0x0808,
-    REG_PERF_COUNT1 = 0x0810,
-    REG_PERF_COUNT2 = 0x0818,
-    REG_PERF_COUNT3 = 0x0820,
-
-    // Legacy render interface (for compatibility)
-    RENDER_INTF_BASE = 0x000000,
-    RENDER_INTF_STATUS = 0x000000,
-    RENDER_INTF_CONTROL = 0x000004,
-    RENDER_INTF_START = 0x000008,
-    RENDER_INTF_FLUSH = 0x00000C,
-
-    // Render TLB
-    RENDER_TLB_BASE = 0x001000,
-    RENDER_TLB_ENTRY = 0x001000, // 64 entries
-
-    // Display Engine (DE)
-    DE_BASE = 0x002000,
-    DE_CONTROL = 0x002000,
-    DE_STATUS = 0x002004,
-    DE_FB_BASE = 0x002008,
-    DE_FB_STRIDE = 0x00200C,
-    DE_TILE_CONFIG = 0x002010,
-
-    // Memory Transfer Engine (MTE)
-    MTE_BASE = 0x003000,
-    MTE_CONTROL = 0x003000,
-    MTE_SRC_ADDR = 0x003004,
-    MTE_DST_ADDR = 0x003008,
-    MTE_SIZE = 0x00300C,
-    MTE_STATUS = 0x003010,
-
-    // Status/Control
-    RENDER_STATUS = 0x00FF00,
-    RENDER_RESET = 0x00FF04,
-    RENDER_REVISION = 0x00FFFC,
+    // ---- Page 4: Status (CRM_STATUS_BASE = 0x4000) ----
+    STATUS = 0x4000,        // status register
+    SET_START_PTR = 0x4008, // set start pointer
   };
 
   // Read/write registers (by byte offset)
@@ -120,20 +96,12 @@ public:
   void flush_render();
   bool render_busy() const;
 
-  // Display Engine
-  void set_framebuffer(u32 phys_addr, u32 stride, u32 width, u32 height,
-                       u32 depth);
-  void set_tile_config(u32 config);
-
   // MTE (Memory Transfer Engine)
   void start_dma(u32 src, u32 dst, u32 size);
   bool dma_busy() const;
 
   // Reset
   void reset();
-
-  // Display list processing
-  void process_display_list();
 
   // Tick for performance counters
   void tick(u64 cycles);
@@ -142,7 +110,10 @@ public:
   u32 interrupt_status() const;
   void clear_interrupt(u32 bit);
 
-  // Framebuffer accessors
+  // Framebuffer accessors. NOTE: the O2 framebuffer plane is configured by
+  // the GBE (0x16030000), not the RE. These accessors are retained for the
+  // framebuffer widget and reflect the last values programmed via
+  // set_framebuffer(); they are not RE registers.
   u32 fb_base() const;
   u32 fb_stride() const;
   u32 fb_width() const;
@@ -151,11 +122,15 @@ public:
   u32 fb_format() const;
   bool framebuffer_configured() const { return framebuffer_configured_; }
 
+  // Program the framebuffer parameters (used by the GBE plane / widget).
+  void set_framebuffer(u32 phys_addr, u32 stride, u32 width, u32 height,
+                       u32 depth);
+
 private:
   Memory &memory_;
   std::array<u32, 0x10000 / 4> regs_{}; // 64KB register space
 
-  // Framebuffer state (cached for quick access)
+  // Framebuffer state (cached for quick access; mirrors the GBE plane)
   u32 fb_base_ = 0;
   u32 fb_stride_ = 0;
   u32 fb_width_ = 0;
@@ -167,10 +142,6 @@ private:
   // State
   bool render_active_ = false;
   bool dma_active_ = false;
-
-  // Internal helpers
-  void handle_control_write(u32 value);
-  void update_framebuffer_config();
 };
 
 } // namespace o2emu::memory
