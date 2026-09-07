@@ -121,8 +121,7 @@ prompt with accurate hardware behavior.
 - [ ] Performance optimizations (caching, threading, SIMD)
 - [ ] GUI improvements (scaling, filters, save states, config UI)
 - [ ] Cross-platform support (Windows, macOS, Linux)
-- [ ] Full-featured emulator features (save/load state, cheats, netplay,
-      controller mapping, audio output)
+- [ ] Full-featured emulator features (save/load state, networking, audio output)
 - [ ] Packaging and distribution
 
 **Exit criteria:** a fast, polished, cross-platform emulator with a complete
