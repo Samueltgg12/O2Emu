@@ -46,8 +46,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   QSettings settings;
   restoreGeometry(settings.value("geometry").toByteArray());
   restoreState(settings.value("windowState").toByteArray());
-  prom_path_ =
-      settings.value("promPath", "samples/ip32prom.rev4.18.bin").toString();
+
+  // Default PROM path: find samples directory relative to executable
+  QString default_prom_path = QCoreApplication::applicationDirPath() +
+                              "/../../samples/ip32prom.rev4.18.bin";
+  prom_path_ = settings.value("promPath", default_prom_path).toString();
   ram_mb_ = settings.value("ramMB", 256).toInt();
   debug_logging_ = settings.value("debugLogging", false).toBool();
 }
