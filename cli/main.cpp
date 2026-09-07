@@ -6,9 +6,18 @@
 #include <cstdlib>
 #include <iostream>
 #include <o2emu/cpu/cpu.h>
+#include <o2emu/devices/mace/mace.h>
+#include <o2emu/devices/ps2.h>
+#include <o2emu/devices/rtc.h>
+#include <o2emu/devices/scsicontroller.h>
+#include <o2emu/devices/uart.h>
 #include <o2emu/firmware/prom_loader.h>
+#include <o2emu/graphics/gbe_framebuffer.h>
+#include <o2emu/graphics/ice.h>
 #include <o2emu/logging/logger.h>
+#include <o2emu/memory/crime_device.h>
 #include <o2emu/memory/memory.h>
+#include <o2emu/memory/mre_device.h>
 #include <o2emu/o2emu.h>
 #include <o2emu/system/bus.h>
 #include <string>
@@ -149,8 +158,25 @@ int main(int argc, char *argv[]) {
     });
 
     // Attach memory to bus
-    // Note: Memory needs to be wrapped as a Device for the bus
-    // For now, we'll use the PROMLoader which handles PROM loading
+    bus.attach_memory(&memory);
+
+    // Attach system devices
+    bus.attach_device(std::make_unique<memory::CRIMEDevice>(memory.crime()));
+    bus.attach_device(std::make_unique<memory::MREDevice>(memory.mre()));
+    bus.attach_device(std::make_unique<graphics::ICE>());
+    bus.attach_device(std::make_unique<graphics::GBEFramebuffer>());
+    bus.attach_device(std::make_unique<devices::MACE>(memory));
+    bus.attach_device(std::make_unique<devices::PS2>(0x1F320000, 5, 6));
+
+    auto uart1 = std::make_unique<devices::UART>(0x1F390000, 7);
+    uart1->set_tx_callback([](u8 ch) {
+      std::cout.put(static_cast<char>(ch));
+      std::cout.flush();
+    });
+    bus.attach_device(std::move(uart1));
+    bus.attach_device(std::make_unique<devices::UART>(0x1F398000, 8));
+    bus.attach_device(std::make_unique<devices::RTC>(0x1F3A0000));
+    bus.attach_device(std::make_unique<devices::SCSIController>());
 
     // Load PROM
     firmware::PROMLoader prom_loader(&bus, &cpu);

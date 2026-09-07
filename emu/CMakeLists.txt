@@ -13,6 +13,7 @@ add_library(o2emu_core STATIC
     src/memory/memory.cpp
     src/memory/address_space.cpp
     src/memory/crime.cpp
+    src/memory/crime_device.cpp
     src/memory/mre.cpp
     src/memory/mre_device.cpp
     src/devices/device.cpp
@@ -26,6 +27,7 @@ add_library(o2emu_core STATIC
     src/devices/uart.cpp
     src/devices/ps2.cpp
     src/firmware/prom.cpp
+    src/firmware/prom_device.cpp
     src/firmware/prom_loader.cpp
     src/system/bus.cpp
     src/system/network_config.cpp

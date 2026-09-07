@@ -136,7 +136,11 @@ void UART::write_reg(u32 offset, u32 value) {
       update_baud_rate();
     } else {
       // THR - Transmitter Holding Register
-      tx_buffer_.push_back(static_cast<u8>(value));
+      u8 ch = static_cast<u8>(value);
+      tx_buffer_.push_back(ch);
+      if (tx_cb_) {
+        tx_cb_(ch);
+      }
       regs_[REG_LSR] &= ~0x20; // Clear THRE
       regs_[REG_LSR] |= 0x40;  // Set TEMT
 

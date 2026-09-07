@@ -24,6 +24,15 @@ public:
   // Attach memory to the bus
   void attach_memory(o2emu::memory::Memory *memory);
 
+  // Translate virtual address to physical address for direct-mapped MIPS
+  // segments (KSEG0 0x80000000..0x9FFFFFFF and KSEG1 0xA0000000..0xBFFFFFFF)
+  static constexpr u32 to_physical(u32 addr) {
+    if (addr >= 0x80000000 && addr < 0xC0000000) {
+      return addr & 0x1FFFFFFF;
+    }
+    return addr;
+  }
+
   // Find device at physical address
   devices::Device *find_device(u32 phys_addr) const;
 

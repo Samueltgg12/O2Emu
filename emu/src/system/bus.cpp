@@ -48,6 +48,7 @@ void Bus::attach_memory(o2emu::memory::Memory *memory) {
 }
 
 devices::Device *Bus::find_device(u32 phys_addr) const {
+  phys_addr = to_physical(phys_addr);
   devices::Device *best_match = nullptr;
   u32 best_base = 0;
   for (const auto &entry : devices_) {
@@ -62,13 +63,14 @@ devices::Device *Bus::find_device(u32 phys_addr) const {
 }
 
 u32 Bus::read32(u32 phys_addr) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     return device->read32(offset);
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     return memory_->read32(phys_addr);
   }
 
@@ -77,13 +79,14 @@ u32 Bus::read32(u32 phys_addr) {
 }
 
 u16 Bus::read16(u32 phys_addr) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     return device->read16(offset);
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     return memory_->read16(phys_addr);
   }
 
@@ -92,13 +95,14 @@ u16 Bus::read16(u32 phys_addr) {
 }
 
 u8 Bus::read8(u32 phys_addr) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     return device->read8(offset);
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     return memory_->read8(phys_addr);
   }
 
@@ -107,6 +111,7 @@ u8 Bus::read8(u32 phys_addr) {
 }
 
 void Bus::write32(u32 phys_addr, u32 value) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
@@ -114,7 +119,7 @@ void Bus::write32(u32 phys_addr, u32 value) {
     return;
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     memory_->write32(phys_addr, value);
     return;
   }
@@ -124,6 +129,7 @@ void Bus::write32(u32 phys_addr, u32 value) {
 }
 
 void Bus::write16(u32 phys_addr, u16 value) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
@@ -131,7 +137,7 @@ void Bus::write16(u32 phys_addr, u16 value) {
     return;
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     memory_->write16(phys_addr, value);
     return;
   }
@@ -141,6 +147,7 @@ void Bus::write16(u32 phys_addr, u16 value) {
 }
 
 void Bus::write8(u32 phys_addr, u8 value) {
+  phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
   if (device) {
     u32 offset = phys_addr - device->base_addr();
@@ -148,7 +155,7 @@ void Bus::write8(u32 phys_addr, u8 value) {
     return;
   }
 
-  if (memory_) {
+  if (memory_ && phys_addr < memory_->ram_size()) {
     memory_->write8(phys_addr, value);
     return;
   }

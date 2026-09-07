@@ -17,6 +17,8 @@
 
 namespace o2emu::firmware {
 
+class PROMDevice;
+
 // PROM image format (SHDR - SGI Header)
 // Based on decompiled PROM (samples/decompiled-prom/rev4.18/definitions.h)
 // The PROM file contains multiple SHDR headers (64 bytes each), one per section
@@ -135,10 +137,14 @@ public:
   // Get PROM image
   const PROMImage *image() const { return image_.get(); }
 
+  // Get PROM device
+  PROMDevice *device() const { return device_; }
+
 private:
   o2emu::system::Bus *bus_ = nullptr;
   o2emu::cpu::CPU *cpu_ = nullptr;
   std::unique_ptr<PROMImage> image_;
+  PROMDevice *device_ = nullptr;
   bool loaded_ = false;
 };
 

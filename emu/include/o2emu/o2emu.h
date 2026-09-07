@@ -40,6 +40,9 @@ constexpr uint32_t MACE_ISA_RTC_OFFSET = 0x20000;
 constexpr uint32_t KSEG1_BASE = 0xA0000000;
 
 // PROM
+constexpr uint32_t PHYS_SYSTEM_ROM = 0x1FC00000;
+constexpr uint32_t SYSTEM_ROM_SIZE = 0x00080000;        // 512 KB
+constexpr uint32_t SYSTEM_ROM_WINDOW_SIZE = 0x00400000; // 4 MB aperture
 constexpr uint32_t PROM_RESET_VECTOR = 0xBFC00000;
 constexpr uint32_t PROM_VMA_BASE = 0x81000000;
 

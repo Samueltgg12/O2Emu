@@ -10,6 +10,7 @@
 
 #include <array>
 #include <deque>
+#include <functional>
 #include <o2emu/devices/device.h>
 #include <o2emu/o2emu.h>
 
@@ -110,6 +111,8 @@ public:
   void tick(u64 cycles) override;
 
   // UART-specific
+  using TxCallback = std::function<void(u8 ch)>;
+  void set_tx_callback(TxCallback cb) { tx_cb_ = std::move(cb); }
   void push_rx_char(u8 ch);
   u32 interrupt_status() const;
 
@@ -123,6 +126,7 @@ private:
   std::array<u8, 8> regs_ = {};
   std::deque<u8> rx_buffer_;
   std::deque<u8> tx_buffer_;
+  TxCallback tx_cb_;
 
   u32 read_reg(u32 offset);
   void write_reg(u32 offset, u32 value);

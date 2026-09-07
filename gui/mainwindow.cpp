@@ -46,6 +46,7 @@
 #include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/graphics/ice.h>
 #include <o2emu/graphics/microprocessor.h>
+#include <o2emu/memory/crime_device.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/memory/mre_device.h>
 #include <o2emu/system/bus.h>
@@ -303,7 +304,10 @@ void MainWindow::initializeEmulator() {
   // Connect CPU to memory via bus
   bus_->attach_memory(memory_.get());
 
-  // Attach the CRM display plane and MACE I/O devices before starting PROM.
+  // Attach the CRM display plane, CRIME memory controller, and MACE I/O devices
+  // before starting PROM.
+  bus_->attach_device(
+      std::make_unique<o2emu::memory::CRIMEDevice>(memory_->crime()));
   mre_ = &memory_->mre();
   bus_->attach_device(std::make_unique<o2emu::memory::MREDevice>(*mre_));
 

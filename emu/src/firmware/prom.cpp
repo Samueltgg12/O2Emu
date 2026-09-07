@@ -8,6 +8,7 @@
 #include <o2emu/cpu/cp0.h>
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/firmware/prom.h>
+#include <o2emu/firmware/prom_device.h>
 #include <o2emu/logging/logger.h>
 #include <o2emu/system/bus.h>
 
@@ -45,16 +46,45 @@ void PROM::map_to_memory() {
   const u8 *data = image_->data();
   u32 size = image_->size();
 
-  // Map PROM at physical address 0x1FC00000 (KSEG1)
-  // Also accessible at 0xBFC00000 (reset vector)
-  for (u32 i = 0; i < size; ++i) {
-    bus_->write8(0x1FC00000 + i, data[i]);
-    bus_->write8(0xBFC00000 + i, data[i]);
+  // Create and attach the PROM hardware device if not already attached
+  if (!device_) {
+    auto prom_dev = std::make_unique<PROMDevice>(data, size);
+    device_ = prom_dev.get();
+    bus_->attach_device(std::move(prom_dev));
+    O2EMU_LOG_INFO_F(
+        "Attached PROM device at 0x%08X (window 0x%08X, image %u bytes)",
+        ip32::PHYS_SYSTEM_ROM, ip32::SYSTEM_ROM_WINDOW_SIZE, size);
+  } else {
+    device_->update_data(data, size);
   }
 
-  // Also map at VMA 0x81000000 (firmware VMA)
-  for (u32 i = 0; i < size; ++i) {
-    bus_->write8(0x81000000 + i, data[i]);
+  // Pre-load the loadable firmware section into RAM if present.
+  // In the real O2, POST/sloader copies the firmware section to 0x81000000 (RAM
+  // 0x01000000).
+  for (const auto &sect : image_->sections()) {
+    if ((sect.type & SECTION_TYPE_LOADABLE) && sect.name == "firmware") {
+      u32 load_addr = ip32::PROM_VMA_BASE; // 0x81000000
+      if (sect.offset + 4 <= image_->size()) {
+        const u8 *p = image_->data() + sect.offset;
+        u32 explicit_addr =
+            (static_cast<u32>(p[0]) << 24) | (static_cast<u32>(p[1]) << 16) |
+            (static_cast<u32>(p[2]) << 8) | static_cast<u32>(p[3]);
+        if (explicit_addr != 0) {
+          load_addr = explicit_addr;
+        }
+      }
+      u32 data_start = sect.offset + 8; // skip 8-byte subsect header
+      u32 data_size = (sect.size > 8) ? (sect.size - 8) : 0;
+      if (data_start + data_size <= image_->size()) {
+        for (u32 i = 0; i < data_size; ++i) {
+          bus_->write8(load_addr + i, data[data_start + i]);
+        }
+        O2EMU_LOG_INFO_F(
+            "Pre-loaded firmware section '%s' (%u bytes) to 0x%08X",
+            sect.name.c_str(), data_size, load_addr);
+      }
+      break;
+    }
   }
 }
 
@@ -64,20 +94,19 @@ void PROM::execute() {
     return;
   }
 
-  u32 entry = image_->entry_point();
-  if (entry == 0) {
-    entry = 0xBFC00000; // Default reset vector
-  }
+  // CPU starts executing at the MIPS reset vector (0xBFC00000)
+  u32 entry = ip32::PROM_RESET_VECTOR;
 
   O2EMU_LOG_INFO_F("Starting PROM execution at 0x%08X", entry);
 
-  // Set CPU PC to entry point
+  // Set CPU PC and state for execution
+  cpu_->reset(entry);
+  cpu_->state().pc = entry;
+  cpu_->state().next_pc = entry + 4;
   cpu_->state().gpr[31] = 0; // RA = 0
   cpu_->cp0().set_epc(entry);
   cpu_->cp0().set_status(0x00400004); // BEV=1, KSU=kernel
-
-  // Start execution
-  cpu_->state().gpr[0] = 0; // Zero register
+  cpu_->state().gpr[0] = 0;           // Zero register
 }
 
 void PROM::reset() {
