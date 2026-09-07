@@ -7,6 +7,7 @@
 #include "debuggerwidget.h"
 #include "framebufferwidget.h"
 #include <QApplication>
+#include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -28,7 +29,9 @@
 #include <QSettings>
 #include <QSpinBox>
 #include <QStatusBar>
+#include <QTabWidget>
 #include <QToolBar>
+#include <QVBoxLayout>
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/cpu/cpu_interface.h>
 #include <o2emu/devices/mace/mace.h>
@@ -40,6 +43,7 @@
 #include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/system/bus.h>
+#include <string>
 
 using o2emu::u64;
 
@@ -74,6 +78,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     scsi_images_[target] =
         settings.value(QString("scsi%1").arg(target), QString()).toString();
   }
+  network_config_.set_enabled(
+      settings.value("network/enabled", false).toBool());
+  network_config_.set_network(settings.value("network/address", "192.168.127.0")
+                                  .toString()
+                                  .toStdString());
+  network_config_.set_netmask(settings.value("network/netmask", "255.255.255.0")
+                                  .toString()
+                                  .toStdString());
+  network_config_.set_share_folder(
+      settings.value("network/share", "").toString().toStdString());
+  for (int index = 0;
+       index < 5 &&
+       index < static_cast<int>(network_config_.port_forwards().size());
+       ++index) {
+    auto &forward = network_config_.port_forwards()[index];
+    forward.enabled =
+        settings
+            .value(QString("network/forward%1/enabled").arg(index),
+                   forward.enabled)
+            .toBool();
+    forward.host_port = static_cast<uint16_t>(
+        settings
+            .value(QString("network/forward%1/host").arg(index),
+                   forward.host_port)
+            .toUInt());
+  }
 }
 
 MainWindow::~MainWindow() {
@@ -89,6 +119,23 @@ MainWindow::~MainWindow() {
   settings.setValue("debugLogging", debug_logging_);
   for (int target = 0; target < 7; ++target) {
     settings.setValue(QString("scsi%1").arg(target), scsi_images_[target]);
+  }
+  settings.setValue("network/enabled", network_config_.enabled());
+  settings.setValue("network/address",
+                    QString::fromStdString(network_config_.network()));
+  settings.setValue("network/netmask",
+                    QString::fromStdString(network_config_.netmask()));
+  settings.setValue("network/share",
+                    QString::fromStdString(network_config_.share_folder()));
+  for (int index = 0;
+       index < 5 &&
+       index < static_cast<int>(network_config_.port_forwards().size());
+       ++index) {
+    const auto &forward = network_config_.port_forwards()[index];
+    settings.setValue(QString("network/forward%1/enabled").arg(index),
+                      forward.enabled);
+    settings.setValue(QString("network/forward%1/host").arg(index),
+                      forward.host_port);
   }
 }
 
@@ -269,6 +316,7 @@ void MainWindow::initializeEmulator() {
   scsi_ = scsi.get();
   bus_->attach_device(std::move(scsi));
   updateSlotConfiguration();
+  applyNetworkConfiguration();
 
   // Load PROM
   prom_loader_ =
@@ -404,6 +452,14 @@ void MainWindow::updateSlotConfiguration() {
   }
 }
 
+void MainWindow::applyNetworkConfiguration() {
+  if (!mace_)
+    return;
+  const bool active =
+      network_config_.enabled() && !network_config_.conflicts_with_host();
+  mace_->ethernet().set_network_enabled(active);
+}
+
 void MainWindow::onOpenDisk() {
   QString file = QFileDialog::getOpenFileName(
       this, "Open Disk Image", "",
@@ -499,7 +555,9 @@ void MainWindow::onLoadState() {
 void MainWindow::onSettings() {
   QDialog dialog(this);
   dialog.setWindowTitle("O2Emu Configuration");
-  auto *layout = new QFormLayout(&dialog);
+  auto *tabs = new QTabWidget(&dialog);
+  auto *general = new QWidget(tabs);
+  auto *layout = new QFormLayout(general);
 
   auto *cpu_combo = new QComboBox(&dialog);
   cpu_combo->addItem("R5000", static_cast<int>(o2emu::cpu::CPUType::R5000));
@@ -537,9 +595,94 @@ void MainWindow::onSettings() {
             [&, target]() { edits[target]->clear(); });
   }
 
+  tabs->addTab(general, "General");
+
+  auto *network = new QWidget(tabs);
+  auto *network_layout = new QFormLayout(network);
+  auto *network_enabled =
+      new QCheckBox("Enable private NAT networking", network);
+  network_enabled->setChecked(network_config_.enabled());
+  network_layout->addRow(network_enabled);
+
+  auto *network_address = new QComboBox(network);
+  network_address->setEditable(true);
+  network_address->addItems(
+      {"10.0.0.0", "172.16.0.0", "192.168.127.0", "192.168.1.0"});
+  network_address->setCurrentText(
+      QString::fromStdString(network_config_.network()));
+  network_layout->addRow("Network address", network_address);
+
+  auto *network_mask = new QComboBox(network);
+  network_mask->setEditable(true);
+  network_mask->addItems({"255.255.255.0", "255.255.0.0", "255.0.0.0"});
+  network_mask->setCurrentText(
+      QString::fromStdString(network_config_.netmask()));
+  network_layout->addRow("Subnet mask", network_mask);
+
+  auto *network_status = new QLabel(network);
+  network_layout->addRow("Host conflict", network_status);
+  auto refresh_network_status = [network_status, network_address,
+                                 network_mask]() {
+    o2emu::system::NetworkConfig probe;
+    probe.set_network(network_address->currentText().toStdString());
+    probe.set_netmask(network_mask->currentText().toStdString());
+    network_status->setText(
+        QString::fromStdString(probe.conflict_description()));
+  };
+  connect(network_address, &QComboBox::currentTextChanged, &dialog,
+          refresh_network_status);
+  connect(network_mask, &QComboBox::currentTextChanged, &dialog,
+          refresh_network_status);
+  refresh_network_status();
+
+  const auto &forwards = network_config_.port_forwards();
+  std::array<QCheckBox *, 5> forward_enabled{};
+  std::array<QSpinBox *, 5> forward_ports{};
+  for (int index = 0; index < 5 && index < static_cast<int>(forwards.size());
+       ++index) {
+    auto *row = new QWidget(network);
+    auto *row_layout = new QHBoxLayout(row);
+    forward_enabled[index] = new QCheckBox(
+        QString::fromStdString(forwards[index].protocol + " " +
+                               std::to_string(forwards[index].guest_port)),
+        row);
+    forward_enabled[index]->setChecked(forwards[index].enabled);
+    forward_ports[index] = new QSpinBox(row);
+    forward_ports[index]->setRange(1, 65535);
+    forward_ports[index]->setValue(forwards[index].host_port);
+    row_layout->addWidget(forward_enabled[index]);
+    row_layout->addWidget(new QLabel("host port", row));
+    row_layout->addWidget(forward_ports[index]);
+    network_layout->addRow(index == 0   ? "Telnet"
+                           : index == 1 ? "SSH"
+                           : index == 2 ? "FTP"
+                           : index == 3 ? "VNC"
+                                        : "XDMCP",
+                           row);
+  }
+
+  auto *share_row = new QWidget(network);
+  auto *share_layout = new QHBoxLayout(share_row);
+  auto *share_edit = new QLineEdit(
+      QString::fromStdString(network_config_.share_folder()), share_row);
+  auto *share_browse = new QPushButton("Browse", share_row);
+  share_layout->addWidget(share_edit);
+  share_layout->addWidget(share_browse);
+  network_layout->addRow("NFS share folder", share_row);
+  connect(share_browse, &QPushButton::clicked, &dialog,
+          [share_edit, &dialog]() {
+            const QString folder = QFileDialog::getExistingDirectory(
+                &dialog, "Select NFS share folder");
+            if (!folder.isEmpty())
+              share_edit->setText(folder);
+          });
+  tabs->addTab(network, "Networking");
+
   auto *buttons = new QDialogButtonBox(
       QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-  layout->addRow(buttons);
+  auto *dialog_layout = new QVBoxLayout(&dialog);
+  dialog_layout->addWidget(tabs);
+  dialog_layout->addWidget(buttons);
   connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
   connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
   if (dialog.exec() != QDialog::Accepted)
@@ -562,11 +705,30 @@ void MainWindow::onSettings() {
       scsi_images_[target].clear();
     }
   }
+  network_config_.set_enabled(network_enabled->isChecked());
+  if (!network_config_.set_network(
+          network_address->currentText().toStdString()) ||
+      !network_config_.set_netmask(network_mask->currentText().toStdString())) {
+    QMessageBox::warning(this, "Networking",
+                         "Invalid network address or subnet mask.");
+    return;
+  }
+  network_config_.set_share_folder(share_edit->text().toStdString());
+  for (int index = 0;
+       index < 5 &&
+       index < static_cast<int>(network_config_.port_forwards().size());
+       ++index) {
+    network_config_.port_forwards()[index].enabled =
+        forward_enabled[index]->isChecked();
+    network_config_.port_forwards()[index].host_port =
+        static_cast<uint16_t>(forward_ports[index]->value());
+  }
   if (restart) {
     onStop();
     onStart();
   } else if (cpu_) {
     updateSlotConfiguration();
+    applyNetworkConfiguration();
   }
 }
 

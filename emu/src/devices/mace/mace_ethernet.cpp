@@ -13,8 +13,19 @@ MACEEthernet::MACEEthernet(MACE &mace) : mace_(mace) { reset(); }
 
 MACEEthernet::~MACEEthernet() = default;
 
+void MACEEthernet::set_network_enabled(bool enabled) {
+  network_enabled_ = enabled;
+  link_up_ = enabled;
+  if (enabled) {
+    regs_[REG_STATUS] |= STATUS_LINK_UP;
+  } else {
+    regs_[REG_STATUS] &= ~STATUS_LINK_UP;
+  }
+}
+
 void MACEEthernet::reset() {
   regs_.fill(0);
+  network_enabled_ = false;
   std::fill(std::begin(mac_addr_), std::end(mac_addr_), 0);
 
   // Default MAC address (SGI OUI: 00:00:5E)

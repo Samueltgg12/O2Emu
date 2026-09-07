@@ -27,6 +27,7 @@ add_library(o2emu_core STATIC
     src/firmware/prom.cpp
     src/firmware/prom_loader.cpp
     src/system/bus.cpp
+    src/system/network_config.cpp
     src/system/interrupts.cpp
     src/system/timer.cpp
     src/logging/logger.cpp

@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <memory>
 #include <o2emu/cpu/cpu_interface.h>
+#include <o2emu/system/network_config.h>
 
 class FramebufferWidget;
 class DebuggerWidget;
@@ -82,6 +83,7 @@ private:
   void shutdownEmulator();
   void attachMedia(int target, const QString &path);
   void updateSlotConfiguration();
+  void applyNetworkConfiguration();
   static bool isCdImage(const QString &path);
 
   // Emulator components
@@ -116,4 +118,5 @@ private:
   o2emu::cpu::CPUType cpu_type_ = o2emu::cpu::CPUType::R10000;
   bool debug_logging_ = false;
   std::array<QString, 7> scsi_images_;
+  o2emu::system::NetworkConfig network_config_;
 };

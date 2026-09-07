@@ -109,6 +109,8 @@ public:
   u32 interrupt_status() const;
 
   void reset();
+  void set_network_enabled(bool enabled);
+  bool network_enabled() const { return network_enabled_; }
 
   // MAC address
   void set_mac_address(const u8 addr[6]);
@@ -123,6 +125,7 @@ private:
 
   // Link status
   bool link_up_ = false;
+  bool network_enabled_ = false;
   bool full_duplex_ = true;
   bool speed_100mbps_ = true;
 };
