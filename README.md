@@ -1,4 +1,5 @@
 # O2Emu: An SGI O2 (IP32/Moosehead) Emulator
+![Small Upper Logo](assets/O2Emu-Upper-Logo.jpg)
 ![O2Emu Logo](assets/o2emu-logo.jpg)
 
 
