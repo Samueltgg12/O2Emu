@@ -128,6 +128,12 @@ public:
   void dump_registers() const;
   void disassemble(u32 addr, char *buffer, size_t size) const;
 
+  // State access (for debugger)
+  u32 pc() const { return state_.pc; }
+  u32 cp0_reg(int index) const {
+    return cp0_.read(static_cast<CP0::Register>(index));
+  }
+
   // Cycle counting
   u64 cycles_executed() const { return cycles_; }
   void stop() { stop_requested_ = true; }

@@ -16,6 +16,9 @@
 #include <o2emu/cpu/cp0.h>
 #include <o2emu/o2emu.h>
 
+using o2emu::u32;
+using o2emu::u8;
+
 DebuggerWidget::DebuggerWidget(QWidget *parent) : QWidget(parent) {
   createUI();
 }
