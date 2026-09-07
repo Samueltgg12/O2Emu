@@ -48,13 +48,13 @@ FramebufferWidget::~FramebufferWidget() {
   makeCurrent();
   initializeOpenGLFunctions();
   if (texture_id_)
-    glDeleteTextures(1, &texture_id_);
+    this->glDeleteTextures(1, &texture_id_);
   if (vao_)
-    glDeleteVertexArrays(1, &vao_);
+    this->glDeleteVertexArrays(1, &vao_);
   if (vbo_)
-    glDeleteBuffers(1, &vbo_);
+    this->glDeleteBuffers(1, &vbo_);
   if (shader_program_)
-    glDeleteProgram(shader_program_);
+    this->glDeleteProgram(shader_program_);
   doneCurrent();
 }
 
@@ -67,11 +67,11 @@ void FramebufferWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
 void FramebufferWidget::clear() {
   makeCurrent();
   if (texture_id_) {
-    glBindTexture(GL_TEXTURE_2D, texture_id_);
+    this->glBindTexture(GL_TEXTURE_2D, texture_id_);
     // Clear to black
     static std::vector<o2emu::u8> black(1280 * 1024 * 4, 0);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
-                    GL_UNSIGNED_BYTE, black.data());
+    this->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
+                          GL_UNSIGNED_BYTE, black.data());
   }
   doneCurrent();
   update();

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLTexture>
 #include <QOpenGLWidget>
 #include <QTimer>
@@ -19,7 +19,8 @@ namespace o2emu::cpu {
 class CPU;
 }
 
-class FramebufferWidget : public QOpenGLWidget, protected QOpenGLFunctions {
+class FramebufferWidget : public QOpenGLWidget,
+                          protected QOpenGLFunctions_3_3_Core {
   Q_OBJECT
 
 public:

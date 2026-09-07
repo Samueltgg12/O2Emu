@@ -84,7 +84,7 @@ Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
 specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
 before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-07T00:12:00.527Z","hash":"sha256:10d3c1ceea6e5f0276be6e86efb33e6fbd541d89e9fbc0f17867dff8b2dcc9a1"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-07T00:40:50.921Z","hash":"sha256:f2573213ea29f33d8f993676ddae6f98d527e02a906d870d11a65e489a228d10"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -117,10 +117,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 
 ## Working files (current focus)
-- `emu/src/cpu/cpu_factory.cpp` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cpu_interface.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/mips_r10000.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/mips_r5000.h` _(auto:recent-edit)_
 - `gui/framebufferwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
