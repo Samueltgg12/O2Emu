@@ -84,7 +84,7 @@ Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
 specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
 before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-07T05:58:05.571Z","hash":"sha256:ce9b61a65454f180068928b7b71ce550d8bdb3ef693106b1641e719dd4c75f53"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-07T07:35:17.135Z","hash":"sha256:2f155fb4f6a09dfb0b244c4ae6bc3fd532dc7a3a0f724c33bce1f925da5793b2"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -94,8 +94,6 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `README.md` _(spec)_ — Project README
 - `AGENTS.md` _(spec)_ — Multi-agent instructions
 - `.agent/AGENTS.md` _(spec)_ — Multi-agent instructions (.agent)
-- `.cursorrules` _(spec)_ — Cursor rules
-- `.windsurfrules` _(spec)_ — Windsurf rules
 - `.github/copilot-instructions.md` _(spec)_ — GitHub Copilot instructions (.github)
 - `samples/irixsrc/irix-657m-src/README.md` _(spec)_ — Project README (samples/irixsrc/irix-657m-src)
 - `samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1/README.md` _(spec)_ — Project README (samples/netbsd/usr (2)/usr/src/usr.bin/xlint/lint1)
@@ -113,13 +111,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0/README.md` _(spec)_ — Project README (samples/linux/drivers/gpu/drm/amd/display/dc/dml2_0)
 - `CLAUDE.md` _(spec)_ — Claude Code instructions
 - `GEMINI.md` _(spec)_ — Gemini instructions
-- `AGENT.md` _(spec)_ — Multi-agent instructions
 - `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 
 ## Working files (current focus)
-- `emu/include/o2emu/graphics/gbe_framebuffer.h` _(auto:recent-edit)_
 - `emu/src/graphics/gbe_framebuffer.cpp` _(auto:recent-edit)_
-- `emu/CMakeLists.txt` _(auto:recent-edit)_
 - `gui/mainwindow.h` _(auto:recent-edit)_
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 
