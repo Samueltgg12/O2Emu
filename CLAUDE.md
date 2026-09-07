@@ -84,7 +84,7 @@ Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
 specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
 before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-06T23:42:37.325Z","hash":"sha256:1deda85115c26bd862e29ee4b3e2ed43734eb4cb61f86fe5a81713a14ea595f2"} -->
+<!-- AICB:BEGIN {"version":1,"target":"CLAUDE.md","generatedAt":"2026-09-07T00:12:00.508Z","hash":"sha256:10d3c1ceea6e5f0276be6e86efb33e6fbd541d89e9fbc0f17867dff8b2dcc9a1"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -125,6 +125,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `gui/debuggerwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
 - `gui/framebufferwidget.cpp` _(auto:recent-edit)_
+- `CMakeLists.txt` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

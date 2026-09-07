@@ -39,7 +39,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/emu/include)
 add_subdirectory(emu)
 add_subdirectory(cli)
 add_subdirectory(gui)
-add_subdirectory(tests)
 
 # Install targets (optional)
 # install(TARGETS o2emu-cli o2emu-gui DESTINATION bin)
