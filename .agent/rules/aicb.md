@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-07T00:40:50.927Z","hash":"sha256:f2573213ea29f33d8f993676ddae6f98d527e02a906d870d11a65e489a228d10"} -->
+<!-- AICB:BEGIN {"version":1,"target":".agent/rules/aicb.md","generatedAt":"2026-09-07T01:11:14.189Z","hash":"sha256:a5fbb9e7bd69ec0f892db3ed7ddc42f616abccbd899a3358f236940b331cdc09"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -32,10 +32,10 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 
 ## Working files (current focus)
 - `gui/framebufferwidget.h` _(auto:recent-edit)_
-- `gui/debuggerwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
 - `gui/framebufferwidget.cpp` _(auto:recent-edit)_
 - `CMakeLists.txt` _(auto:recent-edit)_
+- `gui/debuggerwidget.h` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.

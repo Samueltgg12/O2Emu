@@ -11,14 +11,9 @@
 #include <QTableWidget>
 #include <QTreeWidget>
 #include <QWidget>
-#include <memory>
-
-namespace o2emu::cpu {
-class CPU;
-}
-namespace o2emu::memory {
-class Memory;
-}
+#include <o2emu/cpu/cpu.h>
+#include <o2emu/memory/memory.h>
+#include <o2emu/o2emu.h>
 
 class DebuggerWidget : public QWidget {
   Q_OBJECT
