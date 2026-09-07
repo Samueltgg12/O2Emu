@@ -134,44 +134,49 @@ TEST(CRIME, Timers) {
 }
 
 TEST(MRE, RegisterAccess) {
-  MRE mre;
+  Memory mem(0x10000);
+  MRE mre(mem);
 
-  u32 rev = mre.read(MRE::MRE_REVISION);
-  EXPECT_EQ(rev, 0x00010000);
+  // Interface-buffer control resets to empty (not full).
+  EXPECT_EQ(mre.read(MRE::INTFBUF_CTL), 0x00000000);
 
-  // Test control register
-  mre.write(MRE::MRE_CONTROL, MRE::CTRL_ENABLE);
-  EXPECT_EQ(mre.read(MRE::MRE_CONTROL), MRE::CTRL_ENABLE);
+  // A generic register write/read round-trips.
+  mre.write(MRE::PIXPIPE_DRAWMODE, 0xDEADBEEF);
+  EXPECT_EQ(mre.read(MRE::PIXPIPE_DRAWMODE), 0xDEADBEEF);
 }
 
-TEST(MRE, TileOperations) {
-  MRE mre;
+TEST(MRE, InterfaceBufferReset) {
+  Memory mem(0x10000);
+  MRE mre(mem);
 
-  mre.write(MRE::MRE_CONTROL, MRE::CTRL_ENABLE | MRE::CTRL_TILE_MODE);
-
-  // Write tile
-  u32 tile_data[16] = {0};
-  for (int i = 0; i < 16; i++)
-    tile_data[i] = 0xFF0000FF; // Blue
-  mre.write_tile(0, 0, tile_data, 64);
-
-  // Read tile back
-  u32 read_data[16] = {0};
-  mre.read_tile(0, 0, read_data, 64);
-
-  for (int i = 0; i < 16; i++) {
-    EXPECT_EQ(read_data[i], 0xFF0000FF);
-  }
+  // Program the interface-buffer control, then reset it.
+  mre.write(MRE::INTFBUF_CTL, 0xFFFFFFFF);
+  mre.write(MRE::INTFBUF_RESET, 0x1);
+  EXPECT_EQ(mre.read(MRE::INTFBUF_CTL), 0x00000000);
 }
 
-TEST(MRE, Rasterization) {
-  MRE mre;
+TEST(MRE, RenderLifecycle) {
+  Memory mem(0x10000);
+  MRE mre(mem);
 
-  mre.write(MRE::MRE_CONTROL, MRE::CTRL_ENABLE);
+  // Setting the start pointer begins rendering.
+  mre.write(MRE::SET_START_PTR, 0x81000000);
+  EXPECT_TRUE(mre.render_busy());
 
-  // Draw triangle
-  mre.draw_triangle(100, 100, 200, 100, 150, 200, 0xFF0000FF);
+  // Flushing the pixel pipe completes the render.
+  mre.write(MRE::PIXPIPE_FLUSH, 0x1);
+  EXPECT_FALSE(mre.render_busy());
+}
 
-  // Check status
-  EXPECT_TRUE(mre.busy() || !mre.busy()); // Just verify it runs
+TEST(MRE, MTETransfer) {
+  Memory mem(0x10000);
+  MRE mre(mem);
+
+  // Start a memory-transfer-engine operation.
+  mre.start_dma(0x100000, 0x200000, 0x1000);
+  EXPECT_TRUE(mre.dma_busy());
+
+  // Flushing the MTE completes the transfer.
+  mre.write(MRE::MTE_FLUSH, 0x1);
+  EXPECT_FALSE(mre.dma_busy());
 }

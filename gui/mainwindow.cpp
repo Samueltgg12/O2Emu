@@ -306,12 +306,14 @@ void MainWindow::initializeEmulator() {
   mre_ = &memory_->mre();
   bus_->attach_device(std::make_unique<o2emu::memory::MREDevice>(*mre_));
 
-  // Own the full CRM chipset. The Microprocessor, ICE, and Display Engine
-  // register blocks are not independently bus-mapped in the collected docs;
-  // they are retained here as emulator state so the graphics subsystem is
-  // fully wired into the emulator lifecycle.
+  // Attach the VICE (ICE) ASIC at its documented base 0x17000000.
+  bus_->attach_device(std::make_unique<o2emu::graphics::ICE>());
+
+  // The Microprocessor (display-list/vertex processing) is part of the CRIME
+  // Render Engine, and the Display Engine is the GBE (already mapped above).
+  // These standalone models are retained as emulator state so the graphics
+  // subsystem is fully wired into the emulator lifecycle.
   microprocessor_ = std::make_unique<o2emu::graphics::Microprocessor>();
-  ice_ = std::make_unique<o2emu::graphics::ICE>();
   display_engine_ = std::make_unique<o2emu::graphics::DisplayEngine>();
   framebuffer_ = std::make_unique<o2emu::graphics::Framebuffer>();
 

@@ -1,211 +1,117 @@
 /**
  * @file ice.h
- * @brief ICE (Imaging & Compression Engine) - part of CRM chipset
+ * @brief ICE (Imaging & Compression Engine) = VICE ASIC
  *
- * Based on VICE Design Spec (docs/manuals-specs/o2-VICE-spec.md)
- * and IRIX crm_ice.h
- * ICE handles image compression/decompression (JPEG, MPEG, etc.)
+ * The ICE is the VICE (Video Image Compression Engine). Register map sourced
+ * from the VICE Design Specification 099-0123-003 v1.0
+ * (docs/manuals-specs/o2-VICE-spec.md), transcribed in docs/register-maps.md
+ * under "VICE / ICE". With VICE_ID pins = 00 the chip decodes SysAD bits
+ * (21:20) and occupies 0x17000000-0x170FFFFC.
  */
 
 #pragma once
 
 #include <array>
+#include <o2emu/devices/device.h>
 #include <o2emu/o2emu.h>
 
 namespace o2emu::graphics {
 
-class ICE {
+class ICE : public devices::Device {
 public:
   ICE();
-  ~ICE() = default;
+  ~ICE() override = default;
 
-  // ICE register offsets (from PHYS_BASE_RENDER + offset)
-  // Based on VICE Design Spec and PROM definitions
+  // VICE system base address (VICE_ID pins = 00).
+  static constexpr u32 VICE_BASE = 0x17000000;
+
+  // VICE register offsets, relative to 0x17000000. All registers sit on
+  // double-word (8-byte) boundaries regardless of width.
   enum Register : uint32_t {
-    // Control/Status
-    ICE_CONTROL = 0x000000,
-    ICE_STATUS = 0x000004,
-    ICE_INTERRUPT = 0x000008,
-    ICE_INTERRUPT_MASK = 0x00000C,
+    // Chip registers (0x0008..0x01F8)
+    VICE_ID = 0x0008,           // chip rev/ID (r, reset 0xE1, 8 bits)
+    VICE_CFG = 0x0020,          // general config (r/w, 16 bits)
+    HST_BSP_IN_BOX = 0x0028,    // host copy of BSP/MSP in mailbox (r, 16)
+    HST_BSP_OUT_BOX = 0x0030,   // host copy of BSP/MSP out mailbox (r, 16)
+    MSP_CTL_STAT = 0x0040,      // MSP control/status (r/w, 32)
+    MSP_ExcpFlag = 0x0048,      // MSP exception flag (r/w, 32)
+    MSP_PC = 0x0050,            // MSP program counter (r/w, 32)
+    MSP_BadAddr = 0x0058,       // MSP bad address (r, 32)
+    MSP_WatchPoint = 0x0060,    // MSP watchpoint (r/w, 32)
+    MSP_EPC = 0x0068,           // MSP exception PC (r, 32)
+    MSP_CAUSE = 0x0070,         // MSP exception cause (r, 32)
+    BSP_RPAGE = 0x0078,         // BSP R page (r/w, 16)
+    BSP_SW_INT = 0x0080,        // BSP software interrupt (w)
+    MSP_D_RAM = 0x0100,         // MSP data RAM arbitration (r/w, 32)
+    VICEMSP_COUNT = 0x0108,     // MSP free-running counter (r, 32)
+    BSP_CTL_STAT = 0x0110,      // BSP control/status (r/w, 16)
+    BSP_WatchPoint = 0x0118,    // BSP watchpoint (r/w, 16)
+    BSP_IN_COUNT = 0x0120,      // BSP decoded bits counter (r, 24)
+    BSP_OUT_COUNT = 0x0128,     // BSP encoded bits counter (r, 24)
+    BSP_PC = 0x0140,            // BSP program counter (r/w, 16)
+    BSP_EPC = 0x0148,           // BSP exception PC (r, 16)
+    BSP_HALT_RESET = 0x0150,    // BSP halt/reset control (r, 2)
+    BSP_CAUSE = 0x0158,         // BSP exception cause (r, 16)
+    VICE_INT = 0x0160,          // interrupt status (r, 9)
+    BSP_FIFO_CTL_STAT = 0x0168, // BSP FIFO control/status (r/w, 6)
+    BSP_AVALID_BITS = 0x0170,   // BSP A FIFO valid bits (r/w)
+    BSP_FVALID_BITS = 0x0178,   // BSP F FIFO valid bits (r/w)
+    DMA_CTL_CH1 = 0x0180,       // DMA ch1 control (r/w, 16)
+    DMA_STAT_CH1 = 0x0188,      // DMA ch1 status (r, 16)
+    DMA_DATA_CH1 = 0x0190,      // DMA ch1 data fill (r/w, 16)
+    DMA_MEM_PT_CH1 = 0x0198,    // DMA ch1 system pointer (r, 32)
+    DMA_VICE_PT_CH1 = 0x01A0,   // DMA ch1 VICE pointer (r, 16)
+    DMA_COUNT_CH1 = 0x01A8,     // DMA ch1 remaining count (r, 16)
+    MSP_SW_INT = 0x01B8,        // MSP software interrupt (w)
+    DMA_CTL_CH2 = 0x01C0,       // DMA ch2 control (r/w, 16)
+    DMA_STAT_CH2 = 0x01C8,      // DMA ch2 status (r, 16)
+    DMA_DATA_CH2 = 0x01D0,      // DMA ch2 data fill (r/w, 16)
+    DMA_MEM_PT_CH2 = 0x01D8,    // DMA ch2 system pointer (r, 32)
+    DMA_VICE_PT_CH2 = 0x01E0,   // DMA ch2 VICE pointer (r, 16)
+    DMA_COUNT_CH2 = 0x01E8,     // DMA ch2 remaining count (r, 16)
+    BSP_IN_BOX = 0x01F0,        // BSP/MSP in mailbox (r, 16)
+    BSP_OUT_BOX = 0x01F8,       // BSP/MSP out mailbox (r/w, 16)
 
-    // Command FIFO
-    ICE_CMD_FIFO = 0x001000,
-    ICE_CMD_FIFO_STATUS = 0x001004,
+    // Kernel-restricted registers (0xE000..0xE008)
+    VICE_CFG_KERN = 0xE000,  // VICE_CFG (kernel alias)
+    VICE_INT_RESET = 0xE008, // interrupt reset (w1c, 9)
+    VICE_INT_EN = 0xE010,    // interrupt enable (r/w, 9)
 
-    // Source/Destination buffers
-    ICE_SRC_BASE = 0x002000,
-    ICE_SRC_ADDR = 0x002000,
-    ICE_SRC_STRIDE = 0x002004,
-    ICE_SRC_FORMAT = 0x002008,
-    ICE_SRC_WIDTH = 0x00200C,
-    ICE_SRC_HEIGHT = 0x002010,
+    // DMA descriptor sets (0x1000..0x11FF)
+    DMA_CH1_D1 = 0x1000, // ch1 descriptor set 1
+    DMA_CH1_D2 = 0x1040, // ch1 descriptor set 2
+    DMA_CH1_D3 = 0x1080, // ch1 descriptor set 3
+    DMA_CH1_D4 = 0x10C0, // ch1 descriptor set 4
+    DMA_CH2_D1 = 0x1100, // ch2 descriptor set 1
+    DMA_CH2_D2 = 0x1140, // ch2 descriptor set 2
+    DMA_CH2_D3 = 0x1180, // ch2 descriptor set 3
+    DMA_CH2_D4 = 0x11C0, // ch2 descriptor set 4
 
-    ICE_DST_BASE = 0x003000,
-    ICE_DST_ADDR = 0x003000,
-    ICE_DST_STRIDE = 0x003004,
-    ICE_DST_FORMAT = 0x003008,
-    ICE_DST_WIDTH = 0x00300C,
-    ICE_DST_HEIGHT = 0x003010,
-
-    // JPEG compression/decompression
-    ICE_JPEG_BASE = 0x004000,
-    ICE_JPEG_CONTROL = 0x004000,
-    ICE_JPEG_QTABLE = 0x004100,    // 64 entries
-    ICE_JPEG_HTABLE_DC = 0x004200, // Huffman tables
-    ICE_JPEG_HTABLE_AC = 0x004300,
-    ICE_JPEG_RESTART = 0x004400,
-
-    // MPEG
-    ICE_MPEG_BASE = 0x005000,
-    ICE_MPEG_CONTROL = 0x005000,
-    ICE_MPEG_QUANT = 0x005100,
-
-    // Color space conversion
-    ICE_CSC_BASE = 0x006000,
-    ICE_CSC_MATRIX = 0x006000, // 3x3 matrix + offset
-    ICE_CSC_OFFSET = 0x006024,
-
-    // Scaling/Filtering
-    ICE_SCALE_BASE = 0x007000,
-    ICE_SCALE_H_FACTOR = 0x007000,
-    ICE_SCALE_V_FACTOR = 0x007004,
-    ICE_SCALE_FILTER = 0x007008,
-
-    // Status/Control
-    ICE_RESET = 0x00FF00,
-    ICE_REVISION = 0x00FFFC,
+    // VICE TLB (0xF000..0xFFFF, 64 entries)
+    VICE_TLB = 0xF000,
   };
 
-  // Control bits
-  enum ControlBit : uint32_t {
-    CTRL_ENABLE = 0x00000001,
-    CTRL_RESET = 0x00000002,
-    CTRL_INT_ENABLE = 0x00000004,
-    CTRL_MODE_JPEG_ENC = 0x00000010,
-    CTRL_MODE_JPEG_DEC = 0x00000020,
-    CTRL_MODE_MPEG_ENC = 0x00000040,
-    CTRL_MODE_MPEG_DEC = 0x00000080,
-    CTRL_MODE_CSC = 0x00000100,
-    CTRL_MODE_SCALE = 0x00000200,
-    CTRL_DMA_ENABLE = 0x00001000,
-  };
-
-  // Status bits
-  enum StatusBit : uint32_t {
-    STATUS_BUSY = 0x00000001,
-    STATUS_CMD_FIFO_FULL = 0x00000002,
-    STATUS_CMD_FIFO_EMPTY = 0x00000004,
-    STATUS_DATA_FIFO_FULL = 0x00000008,
-    STATUS_DATA_FIFO_EMPTY = 0x00000010,
-    STATUS_ERROR = 0x00000020,
-    STATUS_INTERRUPT = 0x00000040,
-    STATUS_JPEG_DONE = 0x00000100,
-    STATUS_MPEG_DONE = 0x00000200,
-    STATUS_CSC_DONE = 0x00000400,
-    STATUS_SCALE_DONE = 0x00000800,
-  };
-
-  // Interrupt bits
-  enum InterruptBit : uint32_t {
-    INTR_JPEG_DONE = 0x00000001,
-    INTR_MPEG_DONE = 0x00000002,
-    INTR_CSC_DONE = 0x00000004,
-    INTR_SCALE_DONE = 0x00000008,
-    INTR_ERROR = 0x00000010,
-    INTR_CMD_FIFO_EMPTY = 0x00000020,
-    INTR_DATA_FIFO_FULL = 0x00000040,
-  };
-
-  // Source/Destination formats
-  enum Format : uint32_t {
-    FMT_RGB565 = 0x00,
-    FMT_RGB888 = 0x01,
-    FMT_RGBA8888 = 0x02,
-    FMT_YUV422 = 0x10,
-    FMT_YUV420 = 0x11,
-    FMT_YUV411 = 0x12,
-    FMT_JPEG = 0x20,
-    FMT_MPEG = 0x30,
-  };
-
-  // Read/write registers
-  u32 read(Register reg);
-  void write(Register reg, u32 value);
-
-  // Command FIFO
-  void push_command(u32 cmd);
-  bool fifo_full() const;
-  bool fifo_empty() const;
-
-  // JPEG operations
-  void jpeg_compress(u32 src_addr, u32 dst_addr, u32 width, u32 height,
-                     u32 quality);
-  void jpeg_decompress(u32 src_addr, u32 dst_addr, u32 *width, u32 *height);
-
-  // MPEG operations
-  void mpeg_compress(u32 src_addr, u32 dst_addr, u32 width, u32 height,
-                     u32 bitrate);
-  void mpeg_decompress(u32 src_addr, u32 dst_addr, u32 *width, u32 *height);
-
-  // Color space conversion
-  void csc_convert(u32 src_addr, u32 dst_addr, u32 width, u32 height,
-                   Format src_fmt, Format dst_fmt);
-
-  // Scaling
-  void scale_image(u32 src_addr, u32 dst_addr, u32 src_w, u32 src_h, u32 dst_w,
-                   u32 dst_h, Format fmt);
-
-  // Quantization tables
-  void set_jpeg_qtable(const u8 *qtable);
-  void set_jpeg_htable_dc(const u8 *htable);
-  void set_jpeg_htable_ac(const u8 *htable);
-
-  // CSC matrix
-  void set_csc_matrix(const float *matrix, const float *offset);
+  // Device interface (bus-mapped at 0x17000000)
+  u32 read32(u32 offset) override;
+  u16 read16(u32 offset) override;
+  u8 read8(u32 offset) override;
+  void write32(u32 offset, u32 value) override;
+  void write16(u32 offset, u16 value) override;
+  void write8(u32 offset, u8 value) override;
+  void reset() override;
 
   // Status
   bool busy() const;
   u32 status() const;
   u32 interrupt_status() const;
 
-  // Reset
-  void reset();
-
 private:
-  std::array<u32, 0x10000 / 4> regs_ = {}; // 64KB register space
+  std::array<u32, 0x10000 / 4> regs_{}; // 64KB register space
 
   // State
-  bool enabled_ = false;
   bool busy_ = false;
-  u32 status_ = 0;
-  u32 control_ = 0;
-  u32 interrupt_mask_ = 0;
+  u32 interrupt_enable_ = 0;
   u32 interrupt_status_ = 0;
-
-  // Command FIFO
-  std::array<u32, 256> cmd_fifo_ = {};
-  int fifo_head_ = 0;
-  int fifo_tail_ = 0;
-
-  // JPEG state
-  std::array<u8, 64> jpeg_qtable_ = {};
-  std::array<u8, 256> jpeg_htable_dc_ = {};
-  std::array<u8, 256> jpeg_htable_ac_ = {};
-
-  // CSC matrix
-  float csc_matrix_[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-  float csc_offset_[3] = {0, 0, 0};
-
-  // Current operation
-  enum Operation {
-    OP_NONE,
-    OP_JPEG_ENC,
-    OP_JPEG_DEC,
-    OP_MPEG_ENC,
-    OP_MPEG_DEC,
-    OP_CSC,
-    OP_SCALE,
-  } current_op_ = OP_NONE;
 };
 
 } // namespace o2emu::graphics

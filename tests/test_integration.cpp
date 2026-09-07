@@ -37,7 +37,7 @@ protected:
     cpu->reset();
 
     crime = std::make_unique<CRIME>();
-    mre = std::make_unique<MRE>();
+    mre = std::make_unique<MRE>(*mem);
     rtc = std::make_unique<RTC>();
     uart = std::make_unique<UART>();
     ps2 = std::make_unique<PS2>();
@@ -86,8 +86,8 @@ TEST_F(SystemFixture, FullSystemReset) {
   // CRIME revision
   EXPECT_EQ(crime->read(CRIME::CRM_REVISION), 0x00010000);
 
-  // MRE revision
-  EXPECT_EQ(mre->read(MRE::MRE_REVISION), 0x00010000);
+  // MRE interface-buffer control resets to empty.
+  EXPECT_EQ(mre->read(MRE::INTFBUF_CTL), 0x00000000);
 
   // RTC
   EXPECT_EQ(rtc->read(RTC::RTC_SECONDS), 0);
@@ -179,30 +179,21 @@ TEST_F(SystemFixture, TimerInterrupts) {
 }
 
 TEST_F(SystemFixture, MREGraphics) {
-  mre->write(MRE::MRE_CONTROL, MRE::CTRL_ENABLE);
+  // Begin rendering by setting the start pointer, then flush the pipe.
+  mre->write(MRE::SET_START_PTR, 0x81000000);
+  EXPECT_TRUE(mre->render_busy());
 
-  // Draw a triangle
-  mre->draw_triangle(100, 100, 200, 100, 150, 200, 0xFF0000FF);
-
-  // Should complete without error
-  EXPECT_TRUE(true);
+  mre->write(MRE::PIXPIPE_FLUSH, 0x1);
+  EXPECT_FALSE(mre->render_busy());
 }
 
 TEST_F(SystemFixture, FramebufferAccess) {
-  // Test framebuffer through MRE
-  mre->write(MRE::MRE_CONTROL, MRE::CTRL_ENABLE | MRE::CTRL_TILE_MODE);
+  // Exercise the memory-transfer engine via the documented MTE registers.
+  mre->start_dma(0x100000, 0x200000, 0x1000);
+  EXPECT_TRUE(mre->dma_busy());
 
-  u32 tile_data[16];
-  for (int i = 0; i < 16; i++)
-    tile_data[i] = 0xFF00FF00;
-  mre->write_tile(0, 0, tile_data, 64);
-
-  u32 read_data[16];
-  mre->read_tile(0, 0, read_data, 64);
-
-  for (int i = 0; i < 16; i++) {
-    EXPECT_EQ(read_data[i], 0xFF00FF00);
-  }
+  mre->write(MRE::MTE_FLUSH, 0x1);
+  EXPECT_FALSE(mre->dma_busy());
 }
 
 TEST_F(SystemFixture, SCSICommand) {

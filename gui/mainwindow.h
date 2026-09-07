@@ -98,7 +98,6 @@ private:
   std::unique_ptr<o2emu::system::Bus> bus_;
   o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
   std::unique_ptr<o2emu::graphics::Microprocessor> microprocessor_;
-  std::unique_ptr<o2emu::graphics::ICE> ice_;
   std::unique_ptr<o2emu::graphics::DisplayEngine> display_engine_;
   std::unique_ptr<o2emu::graphics::Framebuffer> framebuffer_;
   o2emu::memory::MRE *mre_ = nullptr;

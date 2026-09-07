@@ -78,53 +78,46 @@ TEST(Microprocessor, Lighting) {
 TEST(ICE, BasicOperation) {
   ICE ice;
 
-  ice.write(ICE::ICE_CONTROL, ICE::CTRL_ENABLE);
-  EXPECT_EQ(ice.read(ICE::ICE_CONTROL), ICE::CTRL_ENABLE);
+  // VICE_ID reads back the chip revision/ID (reset value 0xE1 per spec).
+  EXPECT_EQ(ice.read32(ICE::VICE_ID), 0xE1);
 
-  EXPECT_EQ(ice.read(ICE::ICE_REVISION), 0x00010000);
+  // A generic chip register write/read round-trips.
+  ice.write32(ICE::MSP_CTL_STAT, 0xDEADBEEF);
+  EXPECT_EQ(ice.read32(ICE::MSP_CTL_STAT), 0xDEADBEEF);
 }
 
-TEST(ICE, JPEGCompression) {
+TEST(ICE, ResetDefaults) {
   ICE ice;
-  ice.write(ICE::ICE_CONTROL, ICE::CTRL_ENABLE);
 
-  ice.jpeg_compress(0x100000, 0x200000, 640, 480, 75);
+  // BSP FIFO control/status resets to 0x05 per spec.
+  EXPECT_EQ(ice.read32(ICE::BSP_FIFO_CTL_STAT), 0x05);
 
-  EXPECT_FALSE(ice.busy());
-  EXPECT_EQ(ice.status() & ICE::STATUS_JPEG_DONE, ICE::STATUS_JPEG_DONE);
+  // DMA channel control/status resets to 0x10 per spec.
+  EXPECT_EQ(ice.read32(ICE::DMA_CTL_CH1), 0x10);
+  EXPECT_EQ(ice.read32(ICE::DMA_STAT_CH1), 0x10);
+  EXPECT_EQ(ice.read32(ICE::DMA_CTL_CH2), 0x10);
+  EXPECT_EQ(ice.read32(ICE::DMA_STAT_CH2), 0x10);
 }
 
-TEST(ICE, JPEGDecompression) {
+TEST(ICE, InterruptEnableAndReset) {
   ICE ice;
-  ice.write(ICE::ICE_CONTROL, ICE::CTRL_ENABLE);
 
-  u32 width = 0, height = 0;
-  ice.jpeg_decompress(0x100000, 0x200000, &width, &height);
+  // Enable an interrupt bit, then clear it via the write-1-to-clear reset.
+  ice.write32(ICE::VICE_INT_EN, 0x1);
+  ice.write32(ICE::BSP_SW_INT, 0x1); // raise software interrupt
+  EXPECT_NE(ice.interrupt_status(), 0u);
 
-  EXPECT_FALSE(ice.busy());
-  EXPECT_EQ(width, 640);
-  EXPECT_EQ(height, 480);
+  ice.write32(ICE::VICE_INT_RESET, 0x1);
+  EXPECT_EQ(ice.interrupt_status(), 0u);
 }
 
-TEST(ICE, CSCConversion) {
+TEST(ICE, SubWordAccess) {
   ICE ice;
-  ice.write(ICE::ICE_CONTROL, ICE::CTRL_ENABLE);
 
-  ice.csc_convert(0x100000, 0x200000, 640, 480, ICE::FMT_YUV422,
-                  ICE::FMT_RGB888);
-
-  EXPECT_FALSE(ice.busy());
-  EXPECT_EQ(ice.status() & ICE::STATUS_CSC_DONE, ICE::STATUS_CSC_DONE);
-}
-
-TEST(ICE, Scaling) {
-  ICE ice;
-  ice.write(ICE::ICE_CONTROL, ICE::CTRL_ENABLE);
-
-  ice.scale_image(0x100000, 0x200000, 640, 480, 320, 240, ICE::FMT_RGB888);
-
-  EXPECT_FALSE(ice.busy());
-  EXPECT_EQ(ice.status() & ICE::STATUS_SCALE_DONE, ICE::STATUS_SCALE_DONE);
+  // 16-bit and 8-bit accessors operate on the correct byte lanes.
+  ice.write32(ICE::MSP_PC, 0x12345678);
+  EXPECT_EQ(ice.read16(ICE::MSP_PC), 0x5678);
+  EXPECT_EQ(ice.read8(ICE::MSP_PC), 0x78);
 }
 
 TEST(DisplayEngine, BasicOperation) {
