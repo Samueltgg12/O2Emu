@@ -23,7 +23,9 @@ int main(int argc, char *argv[]) {
   format.setProfile(QSurfaceFormat::CoreProfile);
   format.setDepthBufferSize(24);
   format.setStencilBufferSize(8);
-  format.setSamples(4); // MSAA
+  format.setSamples(
+      0); // MSAA is unnecessary for a pixel-exact emulator display.
+  format.setSwapInterval(0); // Do not throttle emulation presentation to vsync.
   QSurfaceFormat::setDefaultFormat(format);
 
   QApplication app(argc, argv);
