@@ -289,7 +289,7 @@ bool PROMImage::parse_elf() {
   // entry point (e.g. 0x006E6F69 = ASCII "ino").
   //
   // The real firmware code lives in the `firmware` section, which is typed
-  // SECTION_TYPE_CODE | SECTION_TYPE_LOADABLE (0x05). Its entry point is the
+  // SECTION_TYPE_CODE | SECTION_TYPE_LOADABLE (0x03). Its entry point is the
   // load address stored in the section's subsect_header: the first 4 bytes of
   // the section data, big-endian, which is the firmware VMA 0x81000000.
   static constexpr u32 kFirmwareVma = 0x81000000;

@@ -64,7 +64,6 @@ enum SectionType : uint32_t {
   SECTION_TYPE_DATA = 0,
   SECTION_TYPE_CODE = 1,
   SECTION_TYPE_LOADABLE = 2,
-  SECTION_TYPE_CHECKSUM = 3,
 };
 
 // PROM sections (from decompiled PROM)
