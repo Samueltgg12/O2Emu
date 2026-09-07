@@ -67,11 +67,11 @@ void FramebufferWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
 void FramebufferWidget::clear() {
   makeCurrent();
   if (texture_id_) {
-    this->glBindTexture(GL_TEXTURE_2D, texture_id_);
+    glBindTexture(GL_TEXTURE_2D, texture_id_);
     // Clear to black
     static std::vector<o2emu::u8> black(1280 * 1024 * 4, 0);
-    this->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
-                          GL_UNSIGNED_BYTE, black.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1280, 1024, GL_RGBA,
+                    GL_UNSIGNED_BYTE, black.data());
   }
   doneCurrent();
   update();
