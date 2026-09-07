@@ -637,11 +637,32 @@ void FramebufferWidget::updateTexture() {
     }
   }
 
-  // Update OpenGL texture
-  // Recreate texture if dimensions changed
+  // Update OpenGL texture via a persistent pixel buffer object. The PBO lets
+  // the driver DMA the converted framebuffer into GPU memory asynchronously
+  // instead of stalling on a synchronous glTexImage2D upload each frame.
+  const GLsizei byte_count = static_cast<GLsizei>(width * height * 4);
+  if (pbo_ == 0) {
+    glGenBuffers(1, &pbo_);
+  }
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
+  if (byte_count > pbo_size_) {
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, byte_count, nullptr, GL_STREAM_DRAW);
+    pbo_size_ = byte_count;
+  }
+  void *mapped =
+      glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, byte_count,
+                       GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+  if (mapped) {
+    std::memcpy(mapped, pixels.data(), byte_count);
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+  }
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
   glBindTexture(GL_TEXTURE_2D, texture_id_);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, pixels.data());
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
+                  GL_UNSIGNED_BYTE, nullptr);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
