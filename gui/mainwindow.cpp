@@ -8,6 +8,7 @@
 #include "framebufferwidget.h"
 #include <QApplication>
 #include <QCloseEvent>
+#include <QCoreApplication>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QInputDialog>
