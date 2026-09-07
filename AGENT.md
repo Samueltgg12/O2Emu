@@ -1,4 +1,4 @@
-<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-07T01:11:14.182Z","hash":"sha256:a5fbb9e7bd69ec0f892db3ed7ddc42f616abccbd899a3358f236940b331cdc09"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENT.md","generatedAt":"2026-09-07T01:43:57.019Z","hash":"sha256:f6987c536a2847d64322aaba24d6d25fd57adde88fc0aed89f0d237d1d4f5746"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -31,9 +31,7 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 - `ROADMAP.md` _(spec)_ — Spec: ROADMAP.md
 
 ## Working files (current focus)
-- `gui/framebufferwidget.h` _(auto:recent-edit)_
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
-- `gui/framebufferwidget.cpp` _(auto:recent-edit)_
 - `CMakeLists.txt` _(auto:recent-edit)_
 - `gui/debuggerwidget.h` _(auto:recent-edit)_
 

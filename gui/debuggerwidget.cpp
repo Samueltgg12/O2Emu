@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include <o2emu/o2emu.h>
+
 DebuggerWidget::DebuggerWidget(QWidget *parent) : QWidget(parent) {
   createUI();
 }
@@ -206,6 +208,8 @@ void DebuggerWidget::updateRegisters() {
   if (!cpu_)
     return;
 
+  auto state = cpu_->state();
+
   reg_tree_->clear();
 
   // GPRs
@@ -243,25 +247,27 @@ void DebuggerWidget::updateRegisters() {
       ss << " (ra)";
 
     QString name = QString::fromStdString(ss.str());
-    uint32_t val = cpu_->gpr(i);
+    uint32_t val = state.gpr[i];
     QString hex = QString("0x%1").arg(val, 8, 16, QChar('0')).toUpper();
     QString dec = QString::number(val);
 
-    new QTreeWidgetItem(gpr_root, {name, hex, dec});
+    new QTreeWidgetItem(gpr_root, QStringList{name, hex, dec});
   }
   gpr_root->setExpanded(true);
 
   // Special registers
   QTreeWidgetItem *special_root =
-      new QTreeWidgetItem(reg_tree_, {"Special", "", ""});
-  uint32_t pc_val = cpu_->pc();
+      new QTreeWidgetItem(reg_tree_, QStringList{"Special", "", ""});
+  uint32_t pc_val = state.pc;
   QString pc_hex = QString("0x%1").arg(pc_val, 8, 16, QChar('0')).toUpper();
-  // HI/LO not directly accessible via CPU, show as 0 for now
-  QString hi_hex = "0x00000000";
-  QString lo_hex = "0x00000000";
-  new QTreeWidgetItem(special_root, {"PC", pc_hex, QString::number(pc_val)});
-  new QTreeWidgetItem(special_root, {"HI", hi_hex, "0"});
-  new QTreeWidgetItem(special_root, {"LO", lo_hex, "0"});
+  uint32_t hi_val = state.hi;
+  QString hi_hex = QString("0x%1").arg(hi_val, 8, 16, QChar('0')).toUpper();
+  uint32_t lo_val = state.lo;
+  QString lo_hex = QString("0x%1").arg(lo_val, 8, 16, QChar('0')).toUpper();
+  new QTreeWidgetItem(special_root,
+                      QStringList{"PC", pc_hex, QString::number(pc_val)});
+  new QTreeWidgetItem(special_root, QStringList{"HI", hi_hex, "0"});
+  new QTreeWidgetItem(special_root, QStringList{"LO", lo_hex, "0"});
   special_root->setExpanded(true);
 
   // CP0 registers
@@ -286,37 +292,42 @@ void DebuggerWidget::updateRegisters() {
   QString config_hex = QString("0x%1").arg(config, 8, 16, QChar('0')).toUpper();
   QString prid_hex = QString("0x%1").arg(prid, 8, 16, QChar('0')).toUpper();
 
+  new QTreeWidgetItem(
+      cp0_root, QStringList{"Status", status_hex, QString::number(status)});
   new QTreeWidgetItem(cp0_root,
-                      {"Status", status_hex, QString::number(status)});
-  new QTreeWidgetItem(cp0_root, {"Cause", cause_hex, QString::number(cause)});
-  new QTreeWidgetItem(cp0_root, {"EPC", epc_hex, QString::number(epc)});
+                      QStringList{"Cause", cause_hex, QString::number(cause)});
   new QTreeWidgetItem(cp0_root,
-                      {"BadVAddr", badvaddr_hex, QString::number(badvaddr)});
-  new QTreeWidgetItem(cp0_root, {"Count", count_hex, QString::number(count)});
+                      QStringList{"EPC", epc_hex, QString::number(epc)});
+  new QTreeWidgetItem(cp0_root, QStringList{"BadVAddr", badvaddr_hex,
+                                            QString::number(badvaddr)});
   new QTreeWidgetItem(cp0_root,
-                      {"Compare", compare_hex, QString::number(compare)});
+                      QStringList{"Count", count_hex, QString::number(count)});
+  new QTreeWidgetItem(
+      cp0_root, QStringList{"Compare", compare_hex, QString::number(compare)});
+  new QTreeWidgetItem(
+      cp0_root, QStringList{"Config", config_hex, QString::number(config)});
   new QTreeWidgetItem(cp0_root,
-                      {"Config", config_hex, QString::number(config)});
-  new QTreeWidgetItem(cp0_root, {"PRId", prid_hex, QString::number(prid)});
+                      QStringList{"PRId", prid_hex, QString::number(prid)});
   cp0_root->setExpanded(true);
 
   // FPU registers
-  QTreeWidgetItem *fpu_root = new QTreeWidgetItem(reg_tree_, {"FPU", "", ""});
+  QTreeWidgetItem *fpu_root =
+      new QTreeWidgetItem(reg_tree_, QStringList{"FPU", "", ""});
   QString fcr0_hex =
       QString("0x%1").arg(state.fcr0, 8, 16, QChar('0')).toUpper();
   QString fcr31_hex =
       QString("0x%1").arg(state.fcr31, 8, 16, QChar('0')).toUpper();
-  new QTreeWidgetItem(fpu_root,
-                      {"FCR0", fcr0_hex, QString::number(state.fcr0)});
-  new QTreeWidgetItem(fpu_root,
-                      {"FCR31", fcr31_hex, QString::number(state.fcr31)});
+  new QTreeWidgetItem(
+      fpu_root, QStringList{"FCR0", fcr0_hex, QString::number(state.fcr0)});
+  new QTreeWidgetItem(
+      fpu_root, QStringList{"FCR31", fcr31_hex, QString::number(state.fcr31)});
   for (int i = 0; i < 32; ++i) {
     QString name = QString("FPR%1").arg(i);
     QString hex =
         QString("0x%1").arg(state.fpr_u[i], 8, 16, QChar('0')).toUpper();
     float fval = state.fpr_s[i];
     QString dec = QString::number(fval);
-    new QTreeWidgetItem(fpu_root, {name, hex, dec});
+    new QTreeWidgetItem(fpu_root, QStringList{name, hex, dec});
   }
   fpu_root->setExpanded(false);
 }
