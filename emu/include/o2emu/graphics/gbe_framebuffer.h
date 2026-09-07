@@ -82,6 +82,12 @@ public:
   bool is_linear() const { return linear_mode_; }
   u32 get_tile_ptr() const { return tile_ptr_; }
 
+  // True once the framebuffer plane registers have been programmed
+  // (i.e. the PROM/driver has actually configured a display surface).
+  bool is_configured() const {
+    return frm_size_tile_ != 0 || frm_size_pixel_ != 0 || frm_control_ != 0;
+  }
+
 private:
   // Register state
   u32 frm_size_tile_ = 0;

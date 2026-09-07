@@ -323,11 +323,16 @@ void FramebufferWidget::updateFramebuffer() {
     fb_width_ = gbe_framebuffer_->get_fb_width();
     fb_height_ = gbe_framebuffer_->get_fb_height();
     fb_depth_ = gbe_framebuffer_->get_fb_depth();
+
+    // If the GBE framebuffer plane has never been programmed (PROM/driver
+    // hasn't configured a display surface yet), leave fb_base_ at 0 so the
+    // test-pattern fallback in updateTexture() is reachable. Only use the
+    // real framebuffer when the device is actually configured.
+    if (!gbe_framebuffer_->is_configured()) {
+      fb_base_ = 0;
+    }
   }
 
-  if (fb_base_ == 0) {
-    fb_base_ = 0x00800000;
-  }
   if (fb_width_ == 0 || fb_height_ == 0 || fb_depth_ == 0) {
     fb_width_ = 1024;
     fb_height_ = 768;
