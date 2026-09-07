@@ -55,11 +55,16 @@ struct ELFHeader {
 #pragma pack(pop)
 
 // Section type bitmasks (from decompiled PROM definitions.h)
+// NOTE: these are NOT powers of two — they are bit flags in a 2-bit field:
+//   SECTION_TYPE_DATA     = 0
+//   SECTION_TYPE_CODE     = 1
+//   SECTION_TYPE_LOADABLE = 2
+// So firmware = CODE | LOADABLE = 0x03.
 enum SectionType : uint32_t {
+  SECTION_TYPE_DATA = 0,
   SECTION_TYPE_CODE = 1,
-  SECTION_TYPE_DATA = 2,
-  SECTION_TYPE_LOADABLE = 4,
-  SECTION_TYPE_CHECKSUM = 8,
+  SECTION_TYPE_LOADABLE = 2,
+  SECTION_TYPE_CHECKSUM = 3,
 };
 
 // PROM sections (from decompiled PROM)
