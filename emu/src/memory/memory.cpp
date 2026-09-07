@@ -105,6 +105,20 @@ void Memory::write64(u32 addr, u64 value) {
   write32((addr + 4) & ram_mask_, static_cast<u32>(value >> 32));
 }
 
+void Memory::read_block(u32 addr, void *buffer, size_t size) {
+  u8 *dst = static_cast<u8 *>(buffer);
+  for (size_t i = 0; i < size; ++i) {
+    dst[i] = read8(addr + i);
+  }
+}
+
+void Memory::write_block(u32 addr, const void *buffer, size_t size) {
+  const u8 *src = static_cast<const u8 *>(buffer);
+  for (size_t i = 0; i < size; ++i) {
+    write8(addr + i, src[i]);
+  }
+}
+
 void Memory::clear() {
   if (ram_) {
     std::memset(ram_.get(), 0, ram_size_);

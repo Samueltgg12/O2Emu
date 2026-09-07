@@ -84,7 +84,7 @@ Phase 1 (research) and Phase 2 (emulation) are complete; Phase 3 (performance
 specs in `docs/manuals-specs/` first, then the driver sources. Ask the user
 before deviating from documented behavior.
 
-<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-07T03:07:36.506Z","hash":"sha256:0cbe64d11685b98288f8a12b0f88ae6e5f1925eab867be5920a037afb3a77d1c"} -->
+<!-- AICB:BEGIN {"version":1,"target":"AGENTS.md","generatedAt":"2026-09-07T03:14:00.390Z","hash":"sha256:a82e33c1b8710207d24dac6147bb78f3266b6d6289f12d0f8285a6d8a6d66f21"} -->
 # AI Context Bridge — Handoff
 
 Workspace: `/home/samuel/SGI Projects/O2Emu`
@@ -119,9 +119,9 @@ Workspace: `/home/samuel/SGI Projects/O2Emu`
 ## Working files (current focus)
 - `gui/debuggerwidget.cpp` _(auto:recent-edit)_
 - `gui/debuggerwidget.h` _(auto:recent-edit)_
-- `emu/include/o2emu/cpu/cpu.h` _(auto:recent-edit)_
 - `gui/mainwindow.cpp` _(auto:recent-edit)_
 - `gui/framebufferwidget.cpp` _(auto:recent-edit)_
+- `emu/src/memory/memory.cpp` _(auto:recent-edit)_
 
 ## How to use this handoff
 1. Read every file under "Spec / context files" before acting.
