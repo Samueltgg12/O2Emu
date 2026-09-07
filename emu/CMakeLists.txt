@@ -34,6 +34,7 @@ add_library(o2emu_core STATIC
     src/graphics/ice.cpp
     src/graphics/display_engine.cpp
     src/graphics/framebuffer.cpp
+    src/graphics/gbe_framebuffer.cpp
 )
 
 target_include_directories(o2emu_core PUBLIC

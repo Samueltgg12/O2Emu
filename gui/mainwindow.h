@@ -31,6 +31,9 @@ class PROMLoader;
 namespace o2emu::system {
 class Bus;
 }
+namespace o2emu::graphics {
+class GBEFramebuffer;
+}
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -75,6 +78,7 @@ private:
   std::unique_ptr<o2emu::memory::Memory> memory_;
   std::unique_ptr<o2emu::firmware::PROMLoader> prom_loader_;
   std::unique_ptr<o2emu::system::Bus> bus_;
+  std::unique_ptr<o2emu::graphics::GBEFramebuffer> gbe_framebuffer_;
 
   // UI components
   FramebufferWidget *framebuffer_widget_ = nullptr;

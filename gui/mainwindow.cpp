@@ -22,6 +22,7 @@
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/cpu/cpu_interface.h>
 #include <o2emu/firmware/prom_loader.h>
+#include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/system/bus.h>
 
@@ -212,6 +213,10 @@ void MainWindow::initializeEmulator() {
 
   // Connect CPU to memory via bus
   bus_->attach_memory(memory_.get());
+
+  // Initialize GBE Framebuffer (display engine plane registers at 0x16030000)
+  gbe_framebuffer_ = std::make_unique<o2emu::graphics::GBEFramebuffer>();
+  bus_->attach_device(std::move(gbe_framebuffer_));
 
   // Load PROM
   prom_loader_ =
