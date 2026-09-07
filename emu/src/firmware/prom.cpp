@@ -282,27 +282,45 @@ bool PROMImage::parse_shdr_sections() {
 }
 
 bool PROMImage::parse_elf() {
-  // The embedded ELF header is OVERLAID on the SHDR header in the same 64
-  // bytes. sect.offset points to the section DATA (shdr_offset + 64), but the
-  // ELF magic lives at shdr_offset (offset 0 of the section). So we must look
-  // at sect.offset - 64 to find the ELF header.
+  // The PROM does NOT contain a conventional ELF file. The decompiler
+  // reconstructed the `version` section as a standard ELF32 header (it starts
+  // with ELF_MAGIC), but that is a DATA section whose e_entry field is
+  // actually the overlaid SHDR `section_len` — reading it yields a garbage
+  // entry point (e.g. 0x006E6F69 = ASCII "ino").
+  //
+  // The real firmware code lives in the `firmware` section, which is typed
+  // SECTION_TYPE_CODE | SECTION_TYPE_LOADABLE (0x05). Its entry point is the
+  // load address stored in the section's subsect_header: the first 4 bytes of
+  // the section data, big-endian, which is the firmware VMA 0x81000000.
+  static constexpr u32 kFirmwareVma = 0x81000000;
+
   for (const auto &sect : sections_) {
-    if (sect.offset < kShdrHeaderSize) {
+    // Find the firmware section: name "firmware" or CODE|LOADABLE type.
+    const bool is_firmware =
+        (sect.name == "firmware") || ((sect.type & SECTION_TYPE_CODE) &&
+                                      (sect.type & SECTION_TYPE_LOADABLE));
+
+    if (!is_firmware) {
       continue;
     }
 
-    const u8 *elf_ptr = image_.data() + sect.offset - kShdrHeaderSize;
-
-    // Check ELF magic: 0x7F 'E' 'L' 'F'
-    if (elf_ptr[0] == 0x7F && elf_ptr[1] == 'E' && elf_ptr[2] == 'L' &&
-        elf_ptr[3] == 'F') {
-      const ELFHeader *elf = reinterpret_cast<const ELFHeader *>(elf_ptr);
-      entry_point_ = elf->entry;
-      O2EMU_LOG_INFO_F(
-          "Found embedded ELF in section '%s', entry point: 0x%08X",
-          sect.name.c_str(), entry_point_);
-      return true;
+    // Read the load address from the subsect_header (first 4 bytes of the
+    // section data, big-endian). Fall back to the documented firmware VMA.
+    entry_point_ = kFirmwareVma;
+    if (sect.offset + 4 <= image_.size()) {
+      const u8 *p = image_.data() + sect.offset;
+      u32 load_addr = (static_cast<u32>(p[0]) << 24) |
+                      (static_cast<u32>(p[1]) << 16) |
+                      (static_cast<u32>(p[2]) << 8) | static_cast<u32>(p[3]);
+      if (load_addr != 0) {
+        entry_point_ = load_addr;
+      }
     }
+
+    O2EMU_LOG_INFO_F(
+        "Found firmware section '%s' (type=0x%02X), entry point: 0x%08X",
+        sect.name.c_str(), sect.type, entry_point_);
+    return true;
   }
 
   return false;
