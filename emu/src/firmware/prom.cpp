@@ -13,6 +13,10 @@
 
 namespace o2emu::firmware {
 
+// SHDR_SIZE from decompiled PROM definitions.h — the 64-byte section header
+// that is overlaid with the embedded ELF header.
+static constexpr size_t kShdrHeaderSize = 64;
+
 PROM::PROM(o2emu::system::Bus *bus, o2emu::cpu::CPU *cpu)
     : bus_(bus), cpu_(cpu), image_(nullptr), loaded_(false) {}
 
@@ -153,8 +157,6 @@ bool PROMImage::load_from_buffer(const u8 *data, size_t size) {
 }
 
 bool PROMImage::parse_shdr_sections() {
-  static constexpr size_t kShdrHeaderSize =
-      64; // SHDR_SIZE from decompiled PROM definitions.h
   static constexpr u32 kShdrMagic =
       0x53484452; // "SHDR" in big-endian (bytes: 53 48 44 52 = 'S' 'H' 'D'
                   // 'R')
@@ -199,20 +201,37 @@ bool PROMImage::parse_shdr_sections() {
       continue;
     }
 
-    // Parse SHDR header fields (all big-endian in the file)
-    // Offsets per decompiled PROM definitions.h:
-    // SHDR_OFFSET_SECTION_LEN = 12, SHDR_OFFSET_NAME_LEN = 16,
-    // SHDR_OFFSET_VERSION_LEN = 18, SHDR_OFFSET_SECTION_TYPE = 20,
-    // SHDR_OFFSET_NAME = 24, SHDR_OFFSET_VERSION = 56, SHDR_OFFSET_CHECKSUM =
-    // 60
+    // Parse SHDR header fields (all big-endian in the file).
+    // NOTE: the ELF header is OVERLAID on the SHDR header in the same 64
+    // bytes. Verified against the actual image (xxd of rev4.18 at 0x69200):
+    //   offset 0:  ELF magic 0x7f454c46 (e_ident[0..3])
+    //   offset 4:  ELF e_ident[4..7] (class/data/version)
+    //   offset 8:  SHDR magic 0x53484452
+    //   offset 12: section_len
+    //   offset 16: name_len
+    //   offset 17: version_len
+    //   offset 18: section_type
+    //   offset 19: ELF e_machine (0x08 = MIPS)
+    //   offset 20: name[32]
+    //   offset 24: ELF e_phoff
+    //   offset 28: ELF e_shoff
+    //   offset 32: ELF e_flags
+    //   offset 36: ELF e_ehsize
+    //   offset 38: ELF e_phentsize
+    //   offset 40: ELF e_phnum
+    //   offset 42: ELF e_shentsize
+    //   offset 44: ELF e_shnum
+    //   offset 46: ELF e_shstrndx
+    //   offset 48: version[8]
+    //   offset 60: checksum
     u32 section_len = read_be32(shdr_ptr + 12);
     u16 name_len = read_be16(shdr_ptr + 16);
-    u16 version_len = read_be16(shdr_ptr + 18);
-    u8 section_type = shdr_ptr[20];
-    // padding[3] at 21-23
-    const char *name = reinterpret_cast<const char *>(shdr_ptr + 24);
-    const char *version = reinterpret_cast<const char *>(shdr_ptr + 56);
-    // checksum at 60-63, reserved[4] at 64-71 (but header is only 64 bytes)
+    u16 version_len = read_be16(shdr_ptr + 17);
+    u8 section_type = shdr_ptr[18];
+    // ELF e_machine at 19 (overlaid), padding at 21-23
+    const char *name = reinterpret_cast<const char *>(shdr_ptr + 20);
+    const char *version = reinterpret_cast<const char *>(shdr_ptr + 48);
+    // checksum at 60-63
 
     // Section data starts right after the SHDR header (at shdr_offset + 64)
     size_t section_data_offset = shdr_offset + kShdrHeaderSize;
@@ -263,20 +282,21 @@ bool PROMImage::parse_shdr_sections() {
 }
 
 bool PROMImage::parse_elf() {
-  // Find the firmware section (type = SECTION_TYPE_CODE | SECTION_TYPE_LOADABLE
-  // = 5) Actually from decompiled PROM, firmware has type 3 (CODE | DATA) Let's
-  // search for a section containing an ELF header
+  // The embedded ELF header is OVERLAID on the SHDR header in the same 64
+  // bytes. sect.offset points to the section DATA (shdr_offset + 64), but the
+  // ELF magic lives at shdr_offset (offset 0 of the section). So we must look
+  // at sect.offset - 64 to find the ELF header.
   for (const auto &sect : sections_) {
-    if (sect.size < sizeof(ELFHeader)) {
+    if (sect.offset < kShdrHeaderSize) {
       continue;
     }
 
-    const ELFHeader *elf =
-        reinterpret_cast<const ELFHeader *>(image_.data() + sect.offset);
+    const u8 *elf_ptr = image_.data() + sect.offset - kShdrHeaderSize;
 
     // Check ELF magic: 0x7F 'E' 'L' 'F'
-    if (elf->ident[0] == 0x7F && elf->ident[1] == 'E' && elf->ident[2] == 'L' &&
-        elf->ident[3] == 'F') {
+    if (elf_ptr[0] == 0x7F && elf_ptr[1] == 'E' && elf_ptr[2] == 'L' &&
+        elf_ptr[3] == 'F') {
+      const ELFHeader *elf = reinterpret_cast<const ELFHeader *>(elf_ptr);
       entry_point_ = elf->entry;
       O2EMU_LOG_INFO_F(
           "Found embedded ELF in section '%s', entry point: 0x%08X",
