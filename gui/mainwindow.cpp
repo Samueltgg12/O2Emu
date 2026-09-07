@@ -63,6 +63,27 @@ MainWindow::~MainWindow() {
   settings.setValue("debugLogging", debug_logging_);
 }
 
+void MainWindow::setPromPath(const QString &path) {
+  prom_path_ = path;
+  if (running_) {
+    onStop();
+    onStart();
+  }
+}
+
+void MainWindow::setRamSize(int mb) {
+  ram_mb_ = mb;
+  if (running_) {
+    onStop();
+    onStart();
+  }
+}
+
+void MainWindow::setDebugLogging(bool enabled) {
+  debug_logging_ = enabled;
+  // TODO: Configure logging system based on debug_logging_
+}
+
 void MainWindow::createMenus() {
   // File menu
   QMenu *fileMenu = menuBar()->addMenu("&File");
