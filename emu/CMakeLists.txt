@@ -14,6 +14,7 @@ add_library(o2emu_core STATIC
     src/memory/address_space.cpp
     src/memory/crime.cpp
     src/memory/mre.cpp
+    src/memory/mre_device.cpp
     src/devices/device.cpp
     src/devices/mace/mace.cpp
     src/devices/mace/mace_pci.cpp

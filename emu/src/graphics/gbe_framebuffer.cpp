@@ -127,9 +127,6 @@ void GBEFramebuffer::update_derived_params() {
   fb_stride_ = (fb_width_ * fb_depth_) / 8;
 
   fb_base_ = tile_ptr_ << 9;
-  if (fb_base_ == 0) {
-    fb_base_ = 0x00800000;
-  }
 
   O2EMU_LOG_INFO_F(
       "GBEFramebuffer: {}x{} @ {}bpp, stride={}, linear={}, tile_ptr={}, "

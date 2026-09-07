@@ -42,6 +42,7 @@
 #include <o2emu/firmware/prom_loader.h>
 #include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
+#include <o2emu/memory/mre_device.h>
 #include <o2emu/system/bus.h>
 #include <string>
 
@@ -298,6 +299,9 @@ void MainWindow::initializeEmulator() {
   bus_->attach_memory(memory_.get());
 
   // Attach the CRM display plane and MACE I/O devices before starting PROM.
+  mre_ = &memory_->mre();
+  bus_->attach_device(std::make_unique<o2emu::memory::MREDevice>(*mre_));
+
   auto gbe_framebuffer = std::make_unique<o2emu::graphics::GBEFramebuffer>();
   gbe_framebuffer_ = gbe_framebuffer.get();
   bus_->attach_device(std::move(gbe_framebuffer));
@@ -330,6 +334,7 @@ void MainWindow::initializeEmulator() {
 
   // Connect framebuffer widget
   framebuffer_widget_->setMemory(memory_.get());
+  framebuffer_widget_->setMRE(mre_);
   framebuffer_widget_->setGBEFramebuffer(gbe_framebuffer_);
   framebuffer_widget_->setPS2(ps2_);
   framebuffer_widget_->setCPU(cpu_.get());

@@ -16,6 +16,7 @@
 #include <o2emu/devices/ps2.h>
 #include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
+#include <o2emu/memory/mre.h>
 #include <o2emu/o2emu.h>
 
 const char *FramebufferWidget::vertex_shader_source = R"(
@@ -68,6 +69,8 @@ FramebufferWidget::~FramebufferWidget() {
 void FramebufferWidget::setMemory(o2emu::memory::Memory *memory) {
   memory_ = memory;
 }
+
+void FramebufferWidget::setMRE(o2emu::memory::MRE *mre) { mre_ = mre; }
 
 void FramebufferWidget::setGBEFramebuffer(
     o2emu::graphics::GBEFramebuffer *framebuffer) {
@@ -317,6 +320,8 @@ void FramebufferWidget::updateFramebuffer() {
   if (!memory_)
     return;
 
+  display_configured_ = false;
+  tiled_display_ = false;
   if (gbe_framebuffer_) {
     fb_base_ = gbe_framebuffer_->get_fb_base();
     fb_stride_ = gbe_framebuffer_->get_fb_stride();
@@ -324,13 +329,19 @@ void FramebufferWidget::updateFramebuffer() {
     fb_height_ = gbe_framebuffer_->get_fb_height();
     fb_depth_ = gbe_framebuffer_->get_fb_depth();
 
-    // If the GBE framebuffer plane has never been programmed (PROM/driver
-    // hasn't configured a display surface yet), leave fb_base_ at 0 so the
-    // test-pattern fallback in updateTexture() is reachable. Only use the
-    // real framebuffer when the device is actually configured.
-    if (!gbe_framebuffer_->is_configured()) {
-      fb_base_ = 0;
+    if (gbe_framebuffer_->is_configured()) {
+      display_configured_ = true;
+      tiled_display_ = !gbe_framebuffer_->is_linear();
     }
+  }
+
+  if (!display_configured_ && mre_ && mre_->framebuffer_configured()) {
+    fb_base_ = mre_->fb_base();
+    fb_stride_ = mre_->fb_stride();
+    fb_width_ = mre_->fb_width();
+    fb_height_ = mre_->fb_height();
+    fb_depth_ = mre_->fb_depth();
+    display_configured_ = true;
   }
 
   if (fb_width_ == 0 || fb_height_ == 0 || fb_depth_ == 0) {
@@ -460,54 +471,113 @@ void FramebufferWidget::updateTexture() {
                                 4); // Always convert to RGBA for display
 
   // Read framebuffer data from memory
-  if (fb_base_ != 0) {
-    // Read row by row to handle stride correctly
-    for (uint32_t y = 0; y < height; ++y) {
-      uint32_t src_addr = fb_base_ + y * stride;
-      uint32_t dst_offset = y * width * 4;
+  if (display_configured_) {
+    const auto write_pixel = [this, &pixels, bytes_per_pixel](uint32_t address,
+                                                              uint32_t dst) {
+      std::vector<o2emu::u8> source(bytes_per_pixel);
+      memory_->read_block(address, source.data(), source.size());
+      switch (bytes_per_pixel) {
+      case 1: {
+        const o2emu::u8 value = source[0];
+        pixels[dst + 0] = value;
+        pixels[dst + 1] = value;
+        pixels[dst + 2] = value;
+        pixels[dst + 3] = 255;
+        break;
+      }
+      case 2: {
+        const uint16_t pixel = static_cast<uint16_t>(source[0]) |
+                               (static_cast<uint16_t>(source[1]) << 8);
+        pixels[dst + 0] = static_cast<o2emu::u8>(((pixel >> 11) & 0x1F) << 3);
+        pixels[dst + 1] = static_cast<o2emu::u8>(((pixel >> 5) & 0x3F) << 2);
+        pixels[dst + 2] = static_cast<o2emu::u8>((pixel & 0x1F) << 3);
+        pixels[dst + 3] = 255;
+        break;
+      }
+      case 3:
+        pixels[dst + 0] = source[0];
+        pixels[dst + 1] = source[1];
+        pixels[dst + 2] = source[2];
+        pixels[dst + 3] = 255;
+        break;
+      case 4:
+        pixels[dst + 0] = source[0];
+        pixels[dst + 1] = source[1];
+        pixels[dst + 2] = source[2];
+        pixels[dst + 3] = source[3];
+        break;
+      }
+    };
 
-      // Read a row of pixels
-      std::vector<o2emu::u8> row_data(stride);
-      memory_->read_block(src_addr, row_data.data(), stride);
+    if (tiled_display_) {
+      // GBE tiles occupy 512 bytes per row and 128 rows. The tile width in
+      // pixels therefore depends on the selected pixel depth.
+      const uint32_t tile_width = 512 / bytes_per_pixel;
+      const uint32_t tile_height = 128;
+      const uint32_t tiles_x = (width + tile_width - 1) / tile_width;
+      const uint32_t tile_bytes = 512 * tile_height;
+      for (uint32_t y = 0; y < height; ++y) {
+        for (uint32_t x = 0; x < width; ++x) {
+          const uint32_t tile_x = x / tile_width;
+          const uint32_t tile_y = y / tile_height;
+          const uint32_t in_x = x % tile_width;
+          const uint32_t in_y = y % tile_height;
+          const uint32_t address = fb_base_ +
+                                   (tile_y * tiles_x + tile_x) * tile_bytes +
+                                   in_y * 512 + in_x * bytes_per_pixel;
+          write_pixel(address, (y * width + x) * 4);
+        }
+      }
+    } else {
+      // Linear surfaces use the programmed stride and are read row by row.
+      for (uint32_t y = 0; y < height; ++y) {
+        uint32_t src_addr = fb_base_ + y * stride;
+        uint32_t dst_offset = y * width * 4;
 
-      // Convert to RGBA based on depth
-      for (uint32_t x = 0; x < width; ++x) {
-        uint32_t src_idx = x * bytes_per_pixel;
-        uint32_t dst_idx = dst_offset + x * 4;
+        // Read a row of pixels
+        std::vector<o2emu::u8> row_data(stride);
+        memory_->read_block(src_addr, row_data.data(), stride);
 
-        if (src_idx + bytes_per_pixel <= stride) {
-          switch (bytes_per_pixel) {
-          case 1: { // 8bpp - indexed color, treat as grayscale
-            o2emu::u8 val = row_data[src_idx];
-            pixels[dst_idx + 0] = val;
-            pixels[dst_idx + 1] = val;
-            pixels[dst_idx + 2] = val;
-            pixels[dst_idx + 3] = 255;
-            break;
-          }
-          case 2: { // 16bpp - RGB565 or ARGB1555
-            uint16_t pixel = *reinterpret_cast<uint16_t *>(&row_data[src_idx]);
-            // Assume RGB565: 5 bits red, 6 bits green, 5 bits blue
-            pixels[dst_idx + 0] = ((pixel >> 11) & 0x1F) << 3; // Red
-            pixels[dst_idx + 1] = ((pixel >> 5) & 0x3F) << 2;  // Green
-            pixels[dst_idx + 2] = (pixel & 0x1F) << 3;         // Blue
-            pixels[dst_idx + 3] = 255;
-            break;
-          }
-          case 3: {                                      // 24bpp - RGB888
-            pixels[dst_idx + 0] = row_data[src_idx + 0]; // Red
-            pixels[dst_idx + 1] = row_data[src_idx + 1]; // Green
-            pixels[dst_idx + 2] = row_data[src_idx + 2]; // Blue
-            pixels[dst_idx + 3] = 255;
-            break;
-          }
-          case 4: { // 32bpp - ARGB8888 or RGBA8888
-            pixels[dst_idx + 0] = row_data[src_idx + 0]; // Red
-            pixels[dst_idx + 1] = row_data[src_idx + 1]; // Green
-            pixels[dst_idx + 2] = row_data[src_idx + 2]; // Blue
-            pixels[dst_idx + 3] = row_data[src_idx + 3]; // Alpha
-            break;
-          }
+        // Convert to RGBA based on depth
+        for (uint32_t x = 0; x < width; ++x) {
+          uint32_t src_idx = x * bytes_per_pixel;
+          uint32_t dst_idx = dst_offset + x * 4;
+
+          if (src_idx + bytes_per_pixel <= stride) {
+            switch (bytes_per_pixel) {
+            case 1: { // 8bpp - indexed color, treat as grayscale
+              o2emu::u8 val = row_data[src_idx];
+              pixels[dst_idx + 0] = val;
+              pixels[dst_idx + 1] = val;
+              pixels[dst_idx + 2] = val;
+              pixels[dst_idx + 3] = 255;
+              break;
+            }
+            case 2: { // 16bpp - RGB565 or ARGB1555
+              uint16_t pixel =
+                  *reinterpret_cast<uint16_t *>(&row_data[src_idx]);
+              // Assume RGB565: 5 bits red, 6 bits green, 5 bits blue
+              pixels[dst_idx + 0] = ((pixel >> 11) & 0x1F) << 3; // Red
+              pixels[dst_idx + 1] = ((pixel >> 5) & 0x3F) << 2;  // Green
+              pixels[dst_idx + 2] = (pixel & 0x1F) << 3;         // Blue
+              pixels[dst_idx + 3] = 255;
+              break;
+            }
+            case 3: {                                      // 24bpp - RGB888
+              pixels[dst_idx + 0] = row_data[src_idx + 0]; // Red
+              pixels[dst_idx + 1] = row_data[src_idx + 1]; // Green
+              pixels[dst_idx + 2] = row_data[src_idx + 2]; // Blue
+              pixels[dst_idx + 3] = 255;
+              break;
+            }
+            case 4: { // 32bpp - ARGB8888 or RGBA8888
+              pixels[dst_idx + 0] = row_data[src_idx + 0]; // Red
+              pixels[dst_idx + 1] = row_data[src_idx + 1]; // Green
+              pixels[dst_idx + 2] = row_data[src_idx + 2]; // Blue
+              pixels[dst_idx + 3] = row_data[src_idx + 3]; // Alpha
+              break;
+            }
+            }
           }
         }
       }
@@ -568,6 +638,7 @@ void FramebufferWidget::updateTexture() {
   // Update OpenGL texture
   // Recreate texture if dimensions changed
   glBindTexture(GL_TEXTURE_2D, texture_id_);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, pixels.data());
   glBindTexture(GL_TEXTURE_2D, 0);

@@ -149,6 +149,7 @@ public:
   u32 fb_height() const;
   u32 fb_depth() const;
   u32 fb_format() const;
+  bool framebuffer_configured() const { return framebuffer_configured_; }
 
 private:
   Memory &memory_;
@@ -161,6 +162,7 @@ private:
   u32 fb_height_ = 0;
   u32 fb_depth_ = 0;
   u32 fb_format_ = 0;
+  bool framebuffer_configured_ = false;
 
   // State
   bool render_active_ = false;

@@ -16,7 +16,8 @@
 
 namespace o2emu::memory {
 class Memory;
-}
+class MRE;
+} // namespace o2emu::memory
 namespace o2emu::graphics {
 class GBEFramebuffer;
 }
@@ -36,6 +37,7 @@ public:
   ~FramebufferWidget() override;
 
   void setMemory(o2emu::memory::Memory *memory);
+  void setMRE(o2emu::memory::MRE *mre);
   void setGBEFramebuffer(o2emu::graphics::GBEFramebuffer *framebuffer);
   void setPS2(o2emu::devices::PS2 *ps2);
   void setCPU(o2emu::cpu::CPU *cpu);
@@ -55,6 +57,7 @@ protected:
 
 private:
   o2emu::memory::Memory *memory_ = nullptr;
+  o2emu::memory::MRE *mre_ = nullptr;
   o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
   o2emu::cpu::CPU *cpu_ = nullptr;
   o2emu::devices::PS2 *ps2_ = nullptr;
@@ -73,6 +76,8 @@ private:
   uint32_t fb_width_ = 1280;
   uint32_t fb_height_ = 1024;
   uint32_t fb_depth_ = 32;
+  bool display_configured_ = false;
+  bool tiled_display_ = false;
 
   // FPS tracking
   int fps_ = 0;

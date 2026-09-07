@@ -27,7 +27,8 @@ class CPU;
 }
 namespace o2emu::memory {
 class Memory;
-}
+class MRE;
+} // namespace o2emu::memory
 namespace o2emu::firmware {
 class PROMLoader;
 }
@@ -92,6 +93,7 @@ private:
   std::unique_ptr<o2emu::firmware::PROMLoader> prom_loader_;
   std::unique_ptr<o2emu::system::Bus> bus_;
   o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
+  o2emu::memory::MRE *mre_ = nullptr;
   o2emu::devices::MACE *mace_ = nullptr;
   o2emu::devices::PS2 *ps2_ = nullptr;
   o2emu::devices::SCSIController *scsi_ = nullptr;
