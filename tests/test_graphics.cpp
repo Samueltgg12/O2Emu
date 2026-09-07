@@ -208,6 +208,24 @@ TEST(Framebuffer, PixelAccess) {
   EXPECT_EQ(fb.read_pixel(100, 100), 0xFF0000FF);
 }
 
+TEST(Framebuffer, PixelFormats) {
+  Framebuffer fb;
+  fb.write(Framebuffer::FB_CONTROL, Framebuffer::CTRL_ENABLE);
+  fb.set_dimensions(1600, 1200);
+
+  fb.set_format(Framebuffer::FMT_8BPP);
+  fb.write_pixel(1599, 1199, 0x0000007F);
+  EXPECT_EQ(fb.read_pixel(1599, 1199), 0x0000007F);
+
+  fb.set_format(Framebuffer::FMT_16BPP);
+  fb.write_pixel(1599, 1199, 0x0000ABCD);
+  EXPECT_EQ(fb.read_pixel(1599, 1199), 0x0000ABCD);
+
+  fb.set_format(Framebuffer::FMT_24BPP);
+  fb.write_pixel(1599, 1199, 0x00123456);
+  EXPECT_EQ(fb.read_pixel(1599, 1199), 0x00123456);
+}
+
 TEST(Framebuffer, SpanOperations) {
   Framebuffer fb;
   fb.write(Framebuffer::FB_CONTROL, Framebuffer::CTRL_ENABLE);

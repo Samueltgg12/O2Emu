@@ -8,20 +8,34 @@
 #include "framebufferwidget.h"
 #include <QApplication>
 #include <QCloseEvent>
+#include <QComboBox>
 #include <QCoreApplication>
+#include <QDataStream>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDockWidget>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QFormLayout>
+#include <QHBoxLayout>
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressBar>
+#include <QPushButton>
 #include <QSettings>
+#include <QSpinBox>
 #include <QStatusBar>
 #include <QToolBar>
 #include <o2emu/cpu/cpu.h>
 #include <o2emu/cpu/cpu_interface.h>
+#include <o2emu/devices/mace/mace.h>
+#include <o2emu/devices/ps2.h>
+#include <o2emu/devices/rtc.h>
+#include <o2emu/devices/scsicontroller.h>
+#include <o2emu/devices/uart.h>
 #include <o2emu/firmware/prom_loader.h>
 #include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
@@ -53,7 +67,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                               "/../../samples/ip32prom.rev4.18.bin";
   prom_path_ = settings.value("promPath", default_prom_path).toString();
   ram_mb_ = settings.value("ramMB", 256).toInt();
+  cpu_type_ = static_cast<o2emu::cpu::CPUType>(
+      settings.value("cpuType", static_cast<int>(cpu_type_)).toInt());
   debug_logging_ = settings.value("debugLogging", false).toBool();
+  for (int target = 0; target < 7; ++target) {
+    scsi_images_[target] =
+        settings.value(QString("scsi%1").arg(target), QString()).toString();
+  }
 }
 
 MainWindow::~MainWindow() {
@@ -65,7 +85,11 @@ MainWindow::~MainWindow() {
   settings.setValue("windowState", saveState());
   settings.setValue("promPath", prom_path_);
   settings.setValue("ramMB", ram_mb_);
+  settings.setValue("cpuType", static_cast<int>(cpu_type_));
   settings.setValue("debugLogging", debug_logging_);
+  for (int target = 0; target < 7; ++target) {
+    settings.setValue(QString("scsi%1").arg(target), scsi_images_[target]);
+  }
 }
 
 void MainWindow::setPromPath(const QString &path) {
@@ -78,6 +102,14 @@ void MainWindow::setPromPath(const QString &path) {
 
 void MainWindow::setRamSize(int mb) {
   ram_mb_ = mb;
+  if (running_) {
+    onStop();
+    onStart();
+  }
+}
+
+void MainWindow::setCpuType(o2emu::cpu::CPUType type) {
+  cpu_type_ = type;
   if (running_) {
     onStop();
     onStart();
@@ -212,15 +244,31 @@ void MainWindow::initializeEmulator() {
   bus_ = std::make_unique<o2emu::system::Bus>();
 
   // Initialize CPU (R10000 for O2/IP32)
-  cpu_ = o2emu::cpu::create_cpu(o2emu::cpu::CPUType::R10000, bus_.get());
+  cpu_ = o2emu::cpu::create_cpu(cpu_type_, bus_.get());
   cpu_->reset(o2emu::ip32::PROM_RESET_VECTOR);
 
   // Connect CPU to memory via bus
   bus_->attach_memory(memory_.get());
 
-  // Initialize GBE Framebuffer (display engine plane registers at 0x16030000)
-  gbe_framebuffer_ = std::make_unique<o2emu::graphics::GBEFramebuffer>();
-  bus_->attach_device(std::move(gbe_framebuffer_));
+  // Attach the CRM display plane and MACE I/O devices before starting PROM.
+  auto gbe_framebuffer = std::make_unique<o2emu::graphics::GBEFramebuffer>();
+  gbe_framebuffer_ = gbe_framebuffer.get();
+  bus_->attach_device(std::move(gbe_framebuffer));
+
+  auto mace = std::make_unique<o2emu::devices::MACE>(*memory_);
+  mace_ = mace.get();
+  bus_->attach_device(std::move(mace));
+
+  auto ps2 = std::make_unique<o2emu::devices::PS2>(0x1F320000, 5, 6);
+  ps2_ = ps2.get();
+  bus_->attach_device(std::move(ps2));
+  bus_->attach_device(std::make_unique<o2emu::devices::UART>(0x1F390000, 7));
+  bus_->attach_device(std::make_unique<o2emu::devices::UART>(0x1F398000, 8));
+  bus_->attach_device(std::make_unique<o2emu::devices::RTC>(0x1F3A0000));
+  auto scsi = std::make_unique<o2emu::devices::SCSIController>();
+  scsi_ = scsi.get();
+  bus_->attach_device(std::move(scsi));
+  updateSlotConfiguration();
 
   // Load PROM
   prom_loader_ =
@@ -234,6 +282,8 @@ void MainWindow::initializeEmulator() {
 
   // Connect framebuffer widget
   framebuffer_widget_->setMemory(memory_.get());
+  framebuffer_widget_->setGBEFramebuffer(gbe_framebuffer_);
+  framebuffer_widget_->setPS2(ps2_);
   framebuffer_widget_->setCPU(cpu_.get());
 
   // Connect debugger
@@ -271,6 +321,11 @@ void MainWindow::onPause() {
 
 void MainWindow::onStop() {
   shutdownEmulator();
+  bus_.reset();
+  gbe_framebuffer_ = nullptr;
+  mace_ = nullptr;
+  ps2_ = nullptr;
+  scsi_ = nullptr;
   cpu_.reset();
   memory_.reset();
   prom_loader_.reset();
@@ -317,11 +372,51 @@ void MainWindow::onOpenProm() {
   }
 }
 
+bool MainWindow::isCdImage(const QString &path) {
+  const QString suffix = QFileInfo(path).suffix().toLower();
+  return suffix == "iso" || suffix == "bin" || suffix == "cue" ||
+         suffix == "ccd" || suffix == "mds" || suffix == "mdf";
+}
+
+void MainWindow::attachMedia(int target, const QString &path) {
+  if (target < 0 || target >= 7)
+    return;
+  if (!path.isEmpty() && !QFileInfo(path).isFile()) {
+    QMessageBox::warning(this, "SCSI media",
+                         "The selected image does not exist.");
+    return;
+  }
+  scsi_images_[target] = path;
+  if (scsi_) {
+    scsi_->detach_device(target, 0);
+    if (!path.isEmpty())
+      scsi_->attach_device(target, 0, path.toStdString());
+  }
+}
+
+void MainWindow::updateSlotConfiguration() {
+  if (!scsi_)
+    return;
+  for (int target = 0; target < 7; ++target) {
+    scsi_->detach_device(target, 0);
+    if (!scsi_images_[target].isEmpty())
+      scsi_->attach_device(target, 0, scsi_images_[target].toStdString());
+  }
+}
+
 void MainWindow::onOpenDisk() {
   QString file = QFileDialog::getOpenFileName(
-      this, "Open Disk Image", "", "Disk Images (*.img *.iso);;All Files (*)");
+      this, "Open Disk Image", "",
+      "Disk/CD images (*.raw *.chd *.img *.iso *.bin *.cue *.ccd *.mds "
+      "*.mdf);;All files (*)");
   if (!file.isEmpty()) {
-    // TODO: Attach disk image to SCSI controller
+    bool ok = false;
+    const int default_target = isCdImage(file) ? 6 : 1;
+    const int target = QInputDialog::getInt(
+        this, "SCSI target", "Insert image into SCSI drive:", default_target, 0,
+        6, 1, &ok);
+    if (ok)
+      attachMedia(target, file);
   }
 }
 
@@ -329,7 +424,28 @@ void MainWindow::onSaveState() {
   QString file = QFileDialog::getSaveFileName(
       this, "Save State", "", "State Files (*.state);;All Files (*)");
   if (!file.isEmpty()) {
-    // TODO: Implement save state
+    if (!cpu_ || !memory_) {
+      QMessageBox::warning(this, "Save State", "The emulator is not running.");
+      return;
+    }
+    QFile state_file(file);
+    if (!state_file.open(QIODevice::WriteOnly)) {
+      QMessageBox::critical(this, "Save State", state_file.errorString());
+      return;
+    }
+    QDataStream stream(&state_file);
+    stream.setVersion(QDataStream::Qt_6_0);
+    stream << quint32(0x4F324553) << quint32(1) << qint32(ram_mb_)
+           << qint32(static_cast<int>(cpu_type_));
+    const auto &state = cpu_->state();
+    stream.writeRawData(reinterpret_cast<const char *>(state.gpr),
+                        sizeof(state.gpr));
+    stream << state.pc << state.next_pc << state.hi << state.lo;
+    stream << quint32(memory_->size());
+    stream.writeRawData(reinterpret_cast<const char *>(memory_->data()),
+                        static_cast<int>(memory_->size()));
+    for (const auto &image : scsi_images_)
+      stream << image;
   }
 }
 
@@ -337,12 +453,121 @@ void MainWindow::onLoadState() {
   QString file = QFileDialog::getOpenFileName(
       this, "Load State", "", "State Files (*.state);;All Files (*)");
   if (!file.isEmpty()) {
-    // TODO: Implement load state
+    QFile state_file(file);
+    if (!state_file.open(QIODevice::ReadOnly)) {
+      QMessageBox::critical(this, "Load State", state_file.errorString());
+      return;
+    }
+    QDataStream stream(&state_file);
+    stream.setVersion(QDataStream::Qt_6_0);
+    quint32 magic = 0;
+    quint32 version = 0;
+    qint32 saved_ram = 0;
+    qint32 saved_cpu = 0;
+    stream >> magic >> version >> saved_ram >> saved_cpu;
+    if (magic != 0x4F324553 || version != 1 || saved_ram <= 0) {
+      QMessageBox::critical(this, "Load State", "Invalid O2Emu state file.");
+      return;
+    }
+
+    onStop();
+    ram_mb_ = saved_ram;
+    cpu_type_ = static_cast<o2emu::cpu::CPUType>(saved_cpu);
+    initializeEmulator();
+    if (!cpu_ || !memory_) {
+      QMessageBox::critical(this, "Load State", "Could not initialize state.");
+      return;
+    }
+    auto &state = cpu_->state();
+    stream.readRawData(reinterpret_cast<char *>(state.gpr), sizeof(state.gpr));
+    stream >> state.pc >> state.next_pc >> state.hi >> state.lo;
+    quint32 memory_size = 0;
+    stream >> memory_size;
+    if (memory_size != memory_->size()) {
+      QMessageBox::critical(this, "Load State", "State memory size mismatch.");
+      return;
+    }
+    stream.readRawData(reinterpret_cast<char *>(memory_->data()),
+                       static_cast<int>(memory_size));
+    for (auto &image : scsi_images_)
+      stream >> image;
+    updateSlotConfiguration();
+    framebuffer_widget_->updateFramebuffer();
   }
 }
 
 void MainWindow::onSettings() {
-  // TODO: Settings dialog
+  QDialog dialog(this);
+  dialog.setWindowTitle("O2Emu Configuration");
+  auto *layout = new QFormLayout(&dialog);
+
+  auto *cpu_combo = new QComboBox(&dialog);
+  cpu_combo->addItem("R5000", static_cast<int>(o2emu::cpu::CPUType::R5000));
+  cpu_combo->addItem("R10000", static_cast<int>(o2emu::cpu::CPUType::R10000));
+  cpu_combo->addItem("R12000", static_cast<int>(o2emu::cpu::CPUType::R12000));
+  cpu_combo->setCurrentIndex(cpu_combo->findData(static_cast<int>(cpu_type_)));
+  layout->addRow("CPU", cpu_combo);
+
+  auto *ram_spin = new QSpinBox(&dialog);
+  ram_spin->setRange(8, 1024);
+  ram_spin->setSingleStep(8);
+  ram_spin->setValue(ram_mb_);
+  layout->addRow("RAM (MiB)", ram_spin);
+
+  std::array<QLineEdit *, 7> edits{};
+  for (int target = 0; target < 7; ++target) {
+    auto *row = new QWidget(&dialog);
+    auto *row_layout = new QHBoxLayout(row);
+    edits[target] = new QLineEdit(scsi_images_[target], row);
+    auto *browse = new QPushButton("Browse", row);
+    auto *remove = new QPushButton("Remove", row);
+    row_layout->addWidget(edits[target]);
+    row_layout->addWidget(browse);
+    row_layout->addWidget(remove);
+    layout->addRow(QString("SCSI %1").arg(target), row);
+    connect(browse, &QPushButton::clicked, &dialog, [&, target]() {
+      const QString path = QFileDialog::getOpenFileName(
+          &dialog, QString("SCSI %1 image").arg(target), QString(),
+          "Disk/CD images (*.raw *.chd *.img *.iso *.bin *.cue *.ccd *.mds "
+          "*.mdf);;All files (*)");
+      if (!path.isEmpty())
+        edits[target]->setText(path);
+    });
+    connect(remove, &QPushButton::clicked, &dialog,
+            [&, target]() { edits[target]->clear(); });
+  }
+
+  auto *buttons = new QDialogButtonBox(
+      QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+  layout->addRow(buttons);
+  connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+  connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+  if (dialog.exec() != QDialog::Accepted)
+    return;
+
+  const auto new_cpu_type =
+      static_cast<o2emu::cpu::CPUType>(cpu_combo->currentData().toInt());
+  const int new_ram_mb = ram_spin->value();
+  const bool restart =
+      cpu_ && (new_cpu_type != cpu_type_ || new_ram_mb != ram_mb_);
+  cpu_type_ = new_cpu_type;
+  ram_mb_ = new_ram_mb;
+  for (int target = 0; target < 7; ++target) {
+    scsi_images_[target] = edits[target]->text();
+    if (!scsi_images_[target].isEmpty() &&
+        !QFileInfo(scsi_images_[target]).isFile()) {
+      QMessageBox::warning(
+          this, "SCSI media",
+          QString("SCSI %1 image does not exist.").arg(target));
+      scsi_images_[target].clear();
+    }
+  }
+  if (restart) {
+    onStop();
+    onStart();
+  } else if (cpu_) {
+    updateSlotConfiguration();
+  }
 }
 
 void MainWindow::onAbout() {

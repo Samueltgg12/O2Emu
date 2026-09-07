@@ -44,21 +44,17 @@ public:
 
   // FRM_SIZE_TILE bitfields (0x30000)
   static constexpr u32 FRM_WIDTH_TILE_MASK =
-      0x000003FF; // bits 0-9: width in tiles
-  static constexpr u32 FRM_HEIGHT_TILE_MASK =
-      0x000FFC00; // bits 10-21: height in tiles
-  static constexpr u32 FRM_DEPTH_MASK = 0x00700000; // bits 20-22: depth (bpp)
-  static constexpr u32 FRM_DEPTH_SHIFT = 20;
+      0x00001FE0;                                   // bits 5-12: width in tiles
+  static constexpr u32 FRM_DEPTH_MASK = 0x00006000; // bits 13-14: depth
+  static constexpr u32 FRM_DEPTH_SHIFT = 13;
 
   // FRM_SIZE_PIXEL bitfields (0x30004)
-  static constexpr u32 FB_WIDTH_PIX_MASK =
-      0x000007FF; // bits 0-10: width in pixels
   static constexpr u32 FB_HEIGHT_PIX_MASK =
-      0x003FF800; // bits 11-21: height in pixels
-  static constexpr u32 FRM_LINEAR =
-      0x00400000; // bit 22: linear (non-tiled) mode
-  static constexpr u32 FRM_TILE_PTR_MASK =
-      0xFF800000; // bits 23-31: tile list pointer
+      0xFFFF0000; // bits 16-31: height in pixels
+
+  // FRM_CONTROL bitfields (0x3000C)
+  static constexpr u32 FRM_LINEAR = 0x00000002;
+  static constexpr u32 FRM_TILE_PTR_MASK = 0xFFFFFE00;
 
   // FRM_INHWCTRL bitfields (0x30008)
   static constexpr u32 FRM_HWCTRL_ENABLE =

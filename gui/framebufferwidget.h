@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <QKeyEvent>
+#include <QMouseEvent>
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLTexture>
 #include <QOpenGLWidget>
@@ -14,6 +16,12 @@
 
 namespace o2emu::memory {
 class Memory;
+}
+namespace o2emu::graphics {
+class GBEFramebuffer;
+}
+namespace o2emu::devices {
+class PS2;
 }
 namespace o2emu::cpu {
 class CPU;
@@ -28,6 +36,8 @@ public:
   ~FramebufferWidget() override;
 
   void setMemory(o2emu::memory::Memory *memory);
+  void setGBEFramebuffer(o2emu::graphics::GBEFramebuffer *framebuffer);
+  void setPS2(o2emu::devices::PS2 *ps2);
   void setCPU(o2emu::cpu::CPU *cpu);
   void clear();
   void updateFramebuffer();
@@ -37,10 +47,19 @@ protected:
   void initializeGL() override;
   void resizeGL(int w, int h) override;
   void paintGL() override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
+  void focusOutEvent(QFocusEvent *event) override;
 
 private:
   o2emu::memory::Memory *memory_ = nullptr;
+  o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
   o2emu::cpu::CPU *cpu_ = nullptr;
+  o2emu::devices::PS2 *ps2_ = nullptr;
+  bool input_grabbed_ = false;
+  QPoint last_mouse_position_;
 
   // OpenGL resources
   GLuint texture_id_ = 0;
@@ -66,4 +85,7 @@ private:
 
   void setupShaders();
   void updateTexture();
+  void grabInput();
+  void releaseInput();
+  void sendKey(uint32_t key, bool pressed);
 };

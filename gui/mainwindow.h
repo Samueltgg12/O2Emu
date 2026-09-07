@@ -9,8 +9,10 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QTimer>
+#include <array>
 #include <cstdint>
 #include <memory>
+#include <o2emu/cpu/cpu_interface.h>
 
 class FramebufferWidget;
 class DebuggerWidget;
@@ -34,6 +36,11 @@ class Bus;
 namespace o2emu::graphics {
 class GBEFramebuffer;
 }
+namespace o2emu::devices {
+class MACE;
+class PS2;
+class SCSIController;
+} // namespace o2emu::devices
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -44,6 +51,7 @@ public:
 
   void setPromPath(const QString &path);
   void setRamSize(int mb);
+  void setCpuType(o2emu::cpu::CPUType type);
   void setDebugLogging(bool enabled);
 
 private slots:
@@ -72,13 +80,19 @@ private:
   void createDockWidgets();
   void initializeEmulator();
   void shutdownEmulator();
+  void attachMedia(int target, const QString &path);
+  void updateSlotConfiguration();
+  static bool isCdImage(const QString &path);
 
   // Emulator components
   std::unique_ptr<o2emu::cpu::CPU> cpu_;
   std::unique_ptr<o2emu::memory::Memory> memory_;
   std::unique_ptr<o2emu::firmware::PROMLoader> prom_loader_;
   std::unique_ptr<o2emu::system::Bus> bus_;
-  std::unique_ptr<o2emu::graphics::GBEFramebuffer> gbe_framebuffer_;
+  o2emu::graphics::GBEFramebuffer *gbe_framebuffer_ = nullptr;
+  o2emu::devices::MACE *mace_ = nullptr;
+  o2emu::devices::PS2 *ps2_ = nullptr;
+  o2emu::devices::SCSIController *scsi_ = nullptr;
 
   // UI components
   FramebufferWidget *framebuffer_widget_ = nullptr;
@@ -99,5 +113,7 @@ private:
   // Settings
   QString prom_path_;
   int ram_mb_ = 256;
+  o2emu::cpu::CPUType cpu_type_ = o2emu::cpu::CPUType::R10000;
   bool debug_logging_ = false;
+  std::array<QString, 7> scsi_images_;
 };

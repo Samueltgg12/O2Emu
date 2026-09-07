@@ -192,6 +192,7 @@ private:
 private:
   void update_stride();
   void update_tile_dimensions();
+  void ensure_storage();
   u32 bytes_per_pixel() const;
 };
 

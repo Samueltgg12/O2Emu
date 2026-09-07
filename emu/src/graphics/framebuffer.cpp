@@ -49,8 +49,10 @@ u32 Framebuffer::read(Register reg) {
     // Tile memory and directory reads
     if (reg >= FB_TILE_BASE && reg < FB_TILE_DIR_BASE) {
       u32 offset = reg - FB_TILE_BASE;
-      if (offset < tile_memory_.size()) {
-        return *reinterpret_cast<u32 *>(&tile_memory_[offset]);
+      if (offset + sizeof(u32) <= tile_memory_.size()) {
+        u32 value = 0;
+        std::memcpy(&value, &tile_memory_[offset], sizeof(value));
+        return value;
       }
     } else if (reg >= FB_TILE_DIR_BASE && reg < FB_TILE_CONFIG) {
       u32 offset = (reg - FB_TILE_DIR_BASE) / 4;
@@ -141,7 +143,7 @@ void Framebuffer::write(Register reg, u32 value) {
     if (reg >= FB_TILE_BASE && reg < FB_TILE_DIR_BASE) {
       u32 offset = reg - FB_TILE_BASE;
       if (offset + 4 <= tile_memory_.size()) {
-        *reinterpret_cast<u32 *>(&tile_memory_[offset]) = value;
+        std::memcpy(&tile_memory_[offset], &value, sizeof(value));
       }
     } else if (reg >= FB_TILE_DIR_BASE && reg < FB_TILE_CONFIG) {
       u32 offset = (reg - FB_TILE_DIR_BASE) / 4;
@@ -159,6 +161,7 @@ void Framebuffer::write(Register reg, u32 value) {
 void Framebuffer::set_format(Format fmt) {
   format_ = fmt;
   update_stride();
+  ensure_storage();
 }
 
 void Framebuffer::set_dimensions(u32 width, u32 height) {
@@ -166,9 +169,13 @@ void Framebuffer::set_dimensions(u32 width, u32 height) {
   height_ = height;
   update_stride();
   update_tile_dimensions();
+  ensure_storage();
 }
 
-void Framebuffer::set_stride(u32 stride) { stride_ = stride; }
+void Framebuffer::set_stride(u32 stride) {
+  stride_ = stride;
+  ensure_storage();
+}
 
 void Framebuffer::set_base_address(u32 phys_addr) {
   base_addr_ = phys_addr;
@@ -246,10 +253,10 @@ void Framebuffer::clear_tile(u32 tile_x, u32 tile_y, u32 color) {
   u32 tile_size = tile_width_ * tile_height_ * (tile_bpp_ / 8);
 
   if (tile_offset + tile_size <= tile_memory_.size()) {
-    u32 *tile_data = reinterpret_cast<u32 *>(&tile_memory_[tile_offset]);
-    u32 num_pixels = tile_width_ * tile_height_;
-    for (u32 i = 0; i < num_pixels; i++) {
-      tile_data[i] = color;
+    const u32 pixel_size = std::min<u32>(bytes_per_pixel(), tile_bpp_ / 8);
+    for (u32 i = 0; i < tile_width_ * tile_height_; i++) {
+      std::memcpy(&tile_memory_[tile_offset + i * (tile_bpp_ / 8)], &color,
+                  pixel_size);
     }
     tile_directory_[tile_index] = tile_offset | 0x80000000;
     status_ |= STATUS_TILE_DIRTY;
@@ -269,8 +276,9 @@ void Framebuffer::write_pixel(u32 x, u32 y, u32 color) {
     return;
 
   u32 offset = y * stride_ + x * (bytes_per_pixel());
-  if (offset + 4 <= tile_memory_.size()) {
-    *reinterpret_cast<u32 *>(&tile_memory_[offset]) = color;
+  u32 pixel_size = bytes_per_pixel();
+  if (offset + pixel_size <= tile_memory_.size()) {
+    std::memcpy(&tile_memory_[offset], &color, pixel_size);
   }
 }
 
@@ -279,8 +287,11 @@ u32 Framebuffer::read_pixel(u32 x, u32 y) const {
     return 0;
 
   u32 offset = y * stride_ + x * (bytes_per_pixel());
-  if (offset + 4 <= tile_memory_.size()) {
-    return *reinterpret_cast<const u32 *>(&tile_memory_[offset]);
+  u32 pixel_size = bytes_per_pixel();
+  if (offset + pixel_size <= tile_memory_.size()) {
+    u32 color = 0;
+    std::memcpy(&color, &tile_memory_[offset], pixel_size);
+    return color;
   }
   return 0;
 }
@@ -289,11 +300,15 @@ void Framebuffer::write_span(u32 x, u32 y, u32 width, const u32 *colors) {
   if (y >= height_ || x + width > width_)
     return;
 
-  u32 offset = y * stride_ + x * (bytes_per_pixel());
-  u32 span_size = width * (bytes_per_pixel());
+  u32 pixel_size = bytes_per_pixel();
+  u32 offset = y * stride_ + x * pixel_size;
+  u32 span_size = width * pixel_size;
 
   if (offset + span_size <= tile_memory_.size()) {
-    std::memcpy(&tile_memory_[offset], colors, span_size);
+    for (u32 i = 0; i < width; i++) {
+      std::memcpy(&tile_memory_[offset + i * pixel_size], &colors[i],
+                  pixel_size);
+    }
   }
 }
 
@@ -301,11 +316,15 @@ void Framebuffer::read_span(u32 x, u32 y, u32 width, u32 *colors) const {
   if (y >= height_ || x + width > width_)
     return;
 
-  u32 offset = y * stride_ + x * (bytes_per_pixel());
-  u32 span_size = width * (bytes_per_pixel());
+  u32 pixel_size = bytes_per_pixel();
+  u32 offset = y * stride_ + x * pixel_size;
+  u32 span_size = width * pixel_size;
 
   if (offset + span_size <= tile_memory_.size()) {
-    std::memcpy(colors, &tile_memory_[offset], span_size);
+    for (u32 i = 0; i < width; i++) {
+      std::memcpy(&colors[i], &tile_memory_[offset + i * pixel_size],
+                  pixel_size);
+    }
   }
 }
 
@@ -321,9 +340,8 @@ void Framebuffer::clear_rect(u32 x, u32 y, u32 width, u32 height, u32 color) {
     u32 row_size = (end_x - x) * bpp;
 
     if (offset + row_size <= tile_memory_.size()) {
-      u32 *row_data = reinterpret_cast<u32 *>(&tile_memory_[offset]);
       for (u32 i = 0; i < (end_x - x); i++) {
-        row_data[i] = color;
+        std::memcpy(&tile_memory_[offset + i * bpp], &color, bpp);
       }
     }
   }
@@ -345,7 +363,8 @@ void Framebuffer::blit(u32 src_x, u32 src_y, u32 dst_x, u32 dst_y, u32 width,
     u32 dst_offset = dst_row * stride_ + dst_x * bpp;
     u32 row_size = width * bpp;
 
-    if (src_offset + row_size <= tile_memory_.size() &&
+    if (src_x + width <= width_ && dst_x + width <= width_ &&
+        src_offset + row_size <= tile_memory_.size() &&
         dst_offset + row_size <= tile_memory_.size()) {
       std::memcpy(&tile_memory_[dst_offset], &tile_memory_[src_offset],
                   row_size);
@@ -465,6 +484,7 @@ void Framebuffer::reset() {
   tile_directory_.assign(16384, 0);
 
   update_tile_dimensions();
+  ensure_storage();
 }
 
 void Framebuffer::update_stride() { stride_ = width_ * bytes_per_pixel(); }
@@ -491,6 +511,17 @@ void Framebuffer::update_tile_dimensions() {
 
   tiles_x_ = (width_ + tile_width_ - 1) / tile_width_;
   tiles_y_ = (height_ + tile_height_ - 1) / tile_height_;
+  ensure_storage();
+}
+
+void Framebuffer::ensure_storage() {
+  const u64 linear_size = static_cast<u64>(stride_) * height_;
+  const u64 tile_size = static_cast<u64>(tiles_x_) * tiles_y_ * tile_width_ *
+                        tile_height_ * (tile_bpp_ / 8);
+  const u64 required = std::max<u64>(linear_size, tile_size);
+  if (required > tile_memory_.size()) {
+    tile_memory_.resize(static_cast<size_t>(required), 0);
+  }
 }
 
 u32 Framebuffer::bytes_per_pixel() const {

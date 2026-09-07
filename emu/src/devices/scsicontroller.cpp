@@ -4,6 +4,7 @@
  */
 
 #include <cstring>
+#include <filesystem>
 #include <o2emu/devices/scsicontroller.h>
 #include <o2emu/logging/logger.h>
 
@@ -17,6 +18,28 @@ SCSIController::SCSIController()
 }
 
 SCSIController::~SCSIController() = default;
+
+u32 SCSIController::read32(u32 offset) {
+  u32 value = 0;
+  read(offset, 4, value);
+  return value;
+}
+
+u16 SCSIController::read16(u32 offset) {
+  u32 value = 0;
+  read(offset, 2, value);
+  return static_cast<u16>(value);
+}
+
+u8 SCSIController::read8(u32 offset) {
+  u32 value = 0;
+  read(offset, 1, value);
+  return static_cast<u8>(value);
+}
+
+void SCSIController::write32(u32 offset, u32 value) { write(offset, 4, value); }
+void SCSIController::write16(u32 offset, u16 value) { write(offset, 2, value); }
+void SCSIController::write8(u32 offset, u8 value) { write(offset, 1, value); }
 
 void SCSIController::reset() {
   Device::reset();
@@ -347,6 +370,40 @@ bool SCSIController::read(u32 offset, [[maybe_unused]] u32 size, u32 &value) {
     return true;
   }
   return false;
+}
+
+void SCSIController::attach_device(int target_id, int lun,
+                                   const std::string &image_path) {
+  if (target_id < 0 || target_id >= static_cast<int>(devices_.size()) ||
+      lun < 0 || lun >= static_cast<int>(devices_[target_id].size())) {
+    return;
+  }
+
+  auto &device = devices_[target_id][lun];
+  std::error_code error;
+  const bool exists = std::filesystem::is_regular_file(image_path, error);
+  if (error || !exists) {
+    device = {};
+    return;
+  }
+  device.present = true;
+  device.image_path = image_path;
+  device.removable = false;
+  device.media_locked = false;
+  device.block_size = 512;
+  error.clear();
+  device.capacity = std::filesystem::file_size(image_path, error);
+  if (error) {
+    device.capacity = 0;
+  }
+}
+
+void SCSIController::detach_device(int target_id, int lun) {
+  if (target_id < 0 || target_id >= static_cast<int>(devices_.size()) ||
+      lun < 0 || lun >= static_cast<int>(devices_[target_id].size())) {
+    return;
+  }
+  devices_[target_id][lun] = {};
 }
 
 bool SCSIController::write(u32 offset, [[maybe_unused]] u32 size, u32 value) {

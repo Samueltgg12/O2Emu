@@ -10,14 +10,38 @@
 
 namespace o2emu::devices {
 
-RTC::RTC()
-    : Device("RTC", 0xC0000000, 0x1000) // ISA I/O space
+RTC::RTC() : RTC(0xC0000000) {}
+
+RTC::RTC(u32 base_addr)
+    : Device("RTC", base_addr, 0x1000) // ISA I/O space
       ,
       cmos_ram_(nullptr) {
   reset();
 }
 
 RTC::~RTC() { delete[] cmos_ram_; }
+
+u32 RTC::read32(u32 offset) {
+  u32 value = 0;
+  read(offset, 4, value);
+  return value;
+}
+
+u16 RTC::read16(u32 offset) {
+  u32 value = 0;
+  read(offset, 2, value);
+  return static_cast<u16>(value);
+}
+
+u8 RTC::read8(u32 offset) {
+  u32 value = 0;
+  read(offset, 1, value);
+  return static_cast<u8>(value);
+}
+
+void RTC::write32(u32 offset, u32 value) { write(offset, 4, value); }
+void RTC::write16(u32 offset, u16 value) { write(offset, 2, value); }
+void RTC::write8(u32 offset, u8 value) { write(offset, 1, value); }
 
 void RTC::reset() {
   Device::reset();

@@ -60,6 +60,7 @@ void GBEFramebuffer::write32(u32 offset, u32 value) {
     break;
   case FRM_CONTROL:
     frm_control_ = value;
+    update_derived_params();
     O2EMU_LOG_DEBUG_F("GBEFramebuffer: FRM_CONTROL = 0x{:08X}", value);
     break;
   default:
@@ -98,48 +99,36 @@ void GBEFramebuffer::reset() {
 void GBEFramebuffer::update_derived_params() {
   // Extract framebuffer parameters from registers
   // FRM_SIZE_TILE (0x30000)
-  u32 width_tiles = (frm_size_tile_ & FRM_WIDTH_TILE_MASK);
-  u32 height_tiles = (frm_size_tile_ & FRM_HEIGHT_TILE_MASK) >> 10;
+  u32 width_tiles = (frm_size_tile_ & FRM_WIDTH_TILE_MASK) >> 5;
   u32 depth_code = (frm_size_tile_ & FRM_DEPTH_MASK) >> FRM_DEPTH_SHIFT;
 
   // FRM_SIZE_PIXEL (0x30004)
-  u32 width_pixels = (frm_size_pixel_ & FB_WIDTH_PIX_MASK);
-  u32 height_pixels = (frm_size_pixel_ & FB_HEIGHT_PIX_MASK) >> 11;
-  linear_mode_ = (frm_size_pixel_ & FRM_LINEAR) != 0;
-  tile_ptr_ = (frm_size_pixel_ & FRM_TILE_PTR_MASK) >> 23;
+  u32 height_pixels = (frm_size_pixel_ & FB_HEIGHT_PIX_MASK) >> 16;
+  linear_mode_ = (frm_control_ & FRM_LINEAR) != 0;
+  tile_ptr_ = (frm_control_ & FRM_TILE_PTR_MASK) >> 9;
 
   // Convert depth code to bits per pixel
   // Depth codes from IRIX/Linux sources:
-  // 0 = 8bpp, 1 = 16bpp, 2 = 24bpp, 3 = 32bpp
-  static constexpr u32 depth_to_bpp[4] = {8, 16, 24, 32};
+  // 0 = 8bpp, 1 = 16bpp, 2 = 32bpp, 3 = 32bpp/reserved
+  static constexpr u32 depth_to_bpp[4] = {8, 16, 32, 32};
   fb_depth_ = (depth_code < 4) ? depth_to_bpp[depth_code] : 8;
 
-  // Use pixel dimensions if available, otherwise compute from tiles
-  // Each tile is 64x64 pixels (from IRIX/Linux sources)
-  if (width_pixels > 0) {
-    fb_width_ = width_pixels;
-  } else if (width_tiles > 0) {
-    fb_width_ = width_tiles * 64;
+  // Normal tiles are 512 bytes wide, so their pixel width depends on depth.
+  const u32 bytes_per_pixel = fb_depth_ / 8;
+  if (width_tiles > 0) {
+    fb_width_ = width_tiles * (512 / bytes_per_pixel);
   } else {
     fb_width_ = 1280; // Default
   }
 
-  if (height_pixels > 0) {
-    fb_height_ = height_pixels;
-  } else if (height_tiles > 0) {
-    fb_height_ = height_tiles * 64;
-  } else {
-    fb_height_ = 1024; // Default
-  }
+  fb_height_ = height_pixels > 0 ? height_pixels : 1024;
 
   // Calculate stride (bytes per row)
   fb_stride_ = (fb_width_ * fb_depth_) / 8;
 
-  // Framebuffer base address - typically in UMA memory
-  // For now, use a default; this would be set by the display engine
-  // or by the PROM during initialization
+  fb_base_ = tile_ptr_ << 9;
   if (fb_base_ == 0) {
-    fb_base_ = 0x00800000; // Default framebuffer location in UMA
+    fb_base_ = 0x00800000;
   }
 
   O2EMU_LOG_INFO_F(

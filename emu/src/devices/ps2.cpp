@@ -26,6 +26,28 @@ PS2::PS2(u32 base_addr, u32 kbd_irq, u32 mouse_irq)
 
 PS2::~PS2() = default;
 
+u32 PS2::read32(u32 offset) {
+  u32 value = 0;
+  read(offset, 4, value);
+  return value;
+}
+
+u16 PS2::read16(u32 offset) {
+  u32 value = 0;
+  read(offset, 2, value);
+  return static_cast<u16>(value);
+}
+
+u8 PS2::read8(u32 offset) {
+  u32 value = 0;
+  read(offset, 1, value);
+  return static_cast<u8>(value);
+}
+
+void PS2::write32(u32 offset, u32 value) { write(offset, 4, value); }
+void PS2::write16(u32 offset, u16 value) { write(offset, 2, value); }
+void PS2::write8(u32 offset, u8 value) { write(offset, 1, value); }
+
 void PS2::reset() {
   Device::reset();
   std::memset(regs_.data(), 0, regs_.size());

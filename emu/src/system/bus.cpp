@@ -48,12 +48,17 @@ void Bus::attach_memory(o2emu::memory::Memory *memory) {
 }
 
 devices::Device *Bus::find_device(u32 phys_addr) const {
+  devices::Device *best_match = nullptr;
+  u32 best_base = 0;
   for (const auto &entry : devices_) {
     if (phys_addr >= entry.base && phys_addr < entry.base + entry.size) {
-      return entry.device;
+      if (!best_match || entry.base >= best_base) {
+        best_match = entry.device;
+        best_base = entry.base;
+      }
     }
   }
-  return nullptr;
+  return best_match;
 }
 
 u32 Bus::read32(u32 phys_addr) {
@@ -61,6 +66,10 @@ u32 Bus::read32(u32 phys_addr) {
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     return device->read32(offset);
+  }
+
+  if (memory_) {
+    return memory_->read32(phys_addr);
   }
 
   O2EMU_LOG_WARN_F("Bus read32 from unmapped address: 0x%08X", phys_addr);
@@ -74,6 +83,10 @@ u16 Bus::read16(u32 phys_addr) {
     return device->read16(offset);
   }
 
+  if (memory_) {
+    return memory_->read16(phys_addr);
+  }
+
   O2EMU_LOG_WARN_F("Bus read16 from unmapped address: 0x%08X", phys_addr);
   return 0xFFFF;
 }
@@ -85,6 +98,10 @@ u8 Bus::read8(u32 phys_addr) {
     return device->read8(offset);
   }
 
+  if (memory_) {
+    return memory_->read8(phys_addr);
+  }
+
   O2EMU_LOG_WARN_F("Bus read8 from unmapped address: 0x%08X", phys_addr);
   return 0xFF;
 }
@@ -94,6 +111,11 @@ void Bus::write32(u32 phys_addr, u32 value) {
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     device->write32(offset, value);
+    return;
+  }
+
+  if (memory_) {
+    memory_->write32(phys_addr, value);
     return;
   }
 
@@ -109,6 +131,11 @@ void Bus::write16(u32 phys_addr, u16 value) {
     return;
   }
 
+  if (memory_) {
+    memory_->write16(phys_addr, value);
+    return;
+  }
+
   O2EMU_LOG_WARN_F("Bus write16 to unmapped address: 0x%08X value=0x%04X",
                    phys_addr, value);
 }
@@ -118,6 +145,11 @@ void Bus::write8(u32 phys_addr, u8 value) {
   if (device) {
     u32 offset = phys_addr - device->base_addr();
     device->write8(offset, value);
+    return;
+  }
+
+  if (memory_) {
+    memory_->write8(phys_addr, value);
     return;
   }
 

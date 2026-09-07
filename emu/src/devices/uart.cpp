@@ -17,6 +17,28 @@ UART::UART(u32 base_addr, u32 irq)
 
 UART::~UART() = default;
 
+u32 UART::read32(u32 offset) {
+  u32 value = 0;
+  read(offset, 4, value);
+  return value;
+}
+
+u16 UART::read16(u32 offset) {
+  u32 value = 0;
+  read(offset, 2, value);
+  return static_cast<u16>(value);
+}
+
+u8 UART::read8(u32 offset) {
+  u32 value = 0;
+  read(offset, 1, value);
+  return static_cast<u8>(value);
+}
+
+void UART::write32(u32 offset, u32 value) { write(offset, 4, value); }
+void UART::write16(u32 offset, u16 value) { write(offset, 2, value); }
+void UART::write8(u32 offset, u8 value) { write(offset, 1, value); }
+
 void UART::reset() {
   Device::reset();
   std::memset(regs_.data(), 0, regs_.size());

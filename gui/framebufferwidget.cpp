@@ -4,11 +4,17 @@
  */
 
 #include "framebufferwidget.h"
+#include <QCursor>
 #include <QDebug>
+#include <QFocusEvent>
+#include <QGuiApplication>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
+#include <QPoint>
 #include <cstring>
+#include <o2emu/devices/ps2.h>
+#include <o2emu/graphics/gbe_framebuffer.h>
 #include <o2emu/memory/memory.h>
 #include <o2emu/o2emu.h>
 
@@ -63,7 +69,236 @@ void FramebufferWidget::setMemory(o2emu::memory::Memory *memory) {
   memory_ = memory;
 }
 
+void FramebufferWidget::setGBEFramebuffer(
+    o2emu::graphics::GBEFramebuffer *framebuffer) {
+  gbe_framebuffer_ = framebuffer;
+}
+
+void FramebufferWidget::setPS2(o2emu::devices::PS2 *ps2) { ps2_ = ps2; }
+
 void FramebufferWidget::setCPU(o2emu::cpu::CPU *cpu) { cpu_ = cpu; }
+
+void FramebufferWidget::grabInput() {
+  if (input_grabbed_)
+    return;
+
+  input_grabbed_ = true;
+  setFocus(Qt::MouseFocusReason);
+  grabMouse();
+  grabKeyboard();
+  setCursor(Qt::BlankCursor);
+  last_mouse_position_ = mapFromGlobal(QCursor::pos());
+}
+
+void FramebufferWidget::releaseInput() {
+  if (!input_grabbed_)
+    return;
+
+  input_grabbed_ = false;
+  releaseKeyboard();
+  releaseMouse();
+  unsetCursor();
+}
+
+static bool is_right_control(const QKeyEvent *event) {
+  return event->key() == Qt::Key_Control &&
+         (event->nativeScanCode() == 105 || event->nativeScanCode() == 0xE01D);
+}
+
+static uint32_t set2_scancode(int key) {
+  switch (key) {
+  case Qt::Key_A:
+    return 0x1C;
+  case Qt::Key_B:
+    return 0x32;
+  case Qt::Key_C:
+    return 0x21;
+  case Qt::Key_D:
+    return 0x23;
+  case Qt::Key_E:
+    return 0x24;
+  case Qt::Key_F:
+    return 0x2B;
+  case Qt::Key_G:
+    return 0x34;
+  case Qt::Key_H:
+    return 0x33;
+  case Qt::Key_I:
+    return 0x43;
+  case Qt::Key_J:
+    return 0x3B;
+  case Qt::Key_K:
+    return 0x42;
+  case Qt::Key_L:
+    return 0x4B;
+  case Qt::Key_M:
+    return 0x3A;
+  case Qt::Key_N:
+    return 0x31;
+  case Qt::Key_O:
+    return 0x44;
+  case Qt::Key_P:
+    return 0x4D;
+  case Qt::Key_Q:
+    return 0x15;
+  case Qt::Key_R:
+    return 0x2D;
+  case Qt::Key_S:
+    return 0x1B;
+  case Qt::Key_T:
+    return 0x2C;
+  case Qt::Key_U:
+    return 0x3C;
+  case Qt::Key_V:
+    return 0x2A;
+  case Qt::Key_W:
+    return 0x1D;
+  case Qt::Key_X:
+    return 0x22;
+  case Qt::Key_Y:
+    return 0x35;
+  case Qt::Key_Z:
+    return 0x1A;
+  case Qt::Key_0:
+    return 0x45;
+  case Qt::Key_1:
+    return 0x16;
+  case Qt::Key_2:
+    return 0x1E;
+  case Qt::Key_3:
+    return 0x26;
+  case Qt::Key_4:
+    return 0x25;
+  case Qt::Key_5:
+    return 0x2E;
+  case Qt::Key_6:
+    return 0x36;
+  case Qt::Key_7:
+    return 0x3D;
+  case Qt::Key_8:
+    return 0x3E;
+  case Qt::Key_9:
+    return 0x46;
+  case Qt::Key_Space:
+    return 0x29;
+  case Qt::Key_Return:
+    return 0x5A;
+  case Qt::Key_Escape:
+    return 0x76;
+  case Qt::Key_Backspace:
+    return 0x66;
+  case Qt::Key_Tab:
+    return 0x0D;
+  case Qt::Key_Left:
+    return 0x6B;
+  case Qt::Key_Right:
+    return 0x74;
+  case Qt::Key_Up:
+    return 0x75;
+  case Qt::Key_Down:
+    return 0x72;
+  case Qt::Key_Shift:
+    return 0x12;
+  case Qt::Key_Control:
+    return 0x14;
+  case Qt::Key_Alt:
+    return 0x11;
+  case Qt::Key_F1:
+    return 0x05;
+  case Qt::Key_F2:
+    return 0x06;
+  case Qt::Key_F3:
+    return 0x04;
+  case Qt::Key_F4:
+    return 0x0C;
+  case Qt::Key_F5:
+    return 0x03;
+  case Qt::Key_F6:
+    return 0x0B;
+  case Qt::Key_F7:
+    return 0x83;
+  case Qt::Key_F8:
+    return 0x0A;
+  case Qt::Key_F9:
+    return 0x01;
+  case Qt::Key_F10:
+    return 0x09;
+  case Qt::Key_F11:
+    return 0x78;
+  case Qt::Key_F12:
+    return 0x07;
+  default:
+    return 0;
+  }
+}
+
+void FramebufferWidget::sendKey(uint32_t key, bool pressed) {
+  if (!ps2_ || key == 0)
+    return;
+  if (!pressed)
+    ps2_->push_keyboard_scancode(0xF0);
+  ps2_->push_keyboard_scancode(static_cast<o2emu::u8>(key));
+}
+
+void FramebufferWidget::mousePressEvent(QMouseEvent *event) {
+  if (!input_grabbed_)
+    grabInput();
+
+  if (ps2_) {
+    uint8_t buttons = 0;
+    if (event->buttons() & Qt::LeftButton)
+      buttons |= 1;
+    if (event->buttons() & Qt::RightButton)
+      buttons |= 2;
+    if (event->buttons() & Qt::MiddleButton)
+      buttons |= 4;
+    ps2_->push_mouse_data(buttons, 0, 0);
+  }
+  event->accept();
+}
+
+void FramebufferWidget::mouseMoveEvent(QMouseEvent *event) {
+  if (input_grabbed_ && ps2_) {
+    const QPoint delta = event->position().toPoint() - last_mouse_position_;
+    if (!delta.isNull()) {
+      uint8_t buttons = 0;
+      if (event->buttons() & Qt::LeftButton)
+        buttons |= 1;
+      if (event->buttons() & Qt::RightButton)
+        buttons |= 2;
+      if (event->buttons() & Qt::MiddleButton)
+        buttons |= 4;
+      ps2_->push_mouse_data(buttons, static_cast<o2emu::i8>(delta.x()),
+                            static_cast<o2emu::i8>(-delta.y()));
+    }
+  }
+  last_mouse_position_ = event->position().toPoint();
+  event->accept();
+}
+
+void FramebufferWidget::keyPressEvent(QKeyEvent *event) {
+  if (!input_grabbed_)
+    return;
+  if (is_right_control(event)) {
+    releaseInput();
+    event->accept();
+    return;
+  }
+  if (!event->isAutoRepeat())
+    sendKey(set2_scancode(event->key()), true);
+  event->accept();
+}
+
+void FramebufferWidget::keyReleaseEvent(QKeyEvent *event) {
+  if (input_grabbed_ && !is_right_control(event) && !event->isAutoRepeat())
+    sendKey(set2_scancode(event->key()), false);
+  event->accept();
+}
+
+void FramebufferWidget::focusOutEvent(QFocusEvent *event) {
+  releaseInput();
+  QOpenGLWidget::focusOutEvent(event);
+}
 
 void FramebufferWidget::clear() {
   makeCurrent();
@@ -82,78 +317,18 @@ void FramebufferWidget::updateFramebuffer() {
   if (!memory_)
     return;
 
-  // Read framebuffer configuration from GBE (Graphics Back End / Display
-  // Engine) GBE base address: 0x16000000 Framebuffer plane registers at offset
-  // 0x30000
-  constexpr uint32_t GBE_BASE = 0x16000000;
-  constexpr uint32_t FB_PLANE_OFFSET = 0x30000;
-
-  // Read frm_size_tile register (offset 0x30000)
-  // Bits 4:0   = FRM_RHS (right hand side / tile count - 1)
-  // Bits 12:5  = FRM_WIDTH_TILE (width in tiles)
-  // Bits 14:13 = FRM_DEPTH (0=8bpp, 1=16bpp, 2=24bpp, 3=32bpp)
-  // Bit 15     = FRM_FIFO_RESET
-  uint32_t frm_size_tile = memory_->read32(GBE_BASE + FB_PLANE_OFFSET + 0x00);
-
-  // Read frm_size_pixel register (offset 0x30004)
-  // Bits 31:16 = FB_HEIGHT_PIX (height in pixels)
-  uint32_t frm_size_pixel = memory_->read32(GBE_BASE + FB_PLANE_OFFSET + 0x04);
-
-  // Read frm_control register (offset 0x3000C)
-  // Bit 0      = FRM_DMA_ENABLE
-  // Bit 1      = FRM_LINEAR (1 = linear framebuffer, 0 = tiled)
-  // Bits 31:9  = FRM_TILE_PTR (tile list pointer / framebuffer base)
-  uint32_t frm_control = memory_->read32(GBE_BASE + FB_PLANE_OFFSET + 0x0C);
-
-  // Parse framebuffer configuration
-  uint32_t width_tiles =
-      (frm_size_tile >> 5) & 0xFF;              // FRM_WIDTH_TILE (bits 12:5)
-  uint32_t depth = (frm_size_tile >> 13) & 0x3; // FRM_DEPTH (bits 14:13)
-  uint32_t height_pixels =
-      (frm_size_pixel >> 16) & 0xFFFF;    // FB_HEIGHT_PIX (bits 31:16)
-  bool linear = (frm_control >> 1) & 0x1; // FRM_LINEAR (bit 1)
-  uint32_t tile_ptr = (frm_control >> 9) & 0x7FFFFF; // FRM_TILE_PTR (bits 31:9)
-
-  // Calculate actual dimensions
-  // Each tile is 128 bytes (32 pixels at 32bpp, 64 pixels at 16bpp, etc.)
-  // Width in pixels = width_tiles * tiles_per_pixel_factor
-  // For simplicity, assume 32 pixels per tile at 32bpp
-  uint32_t pixels_per_tile = 32; // 128 bytes / 4 bytes per pixel at 32bpp
-  uint32_t width = width_tiles * pixels_per_tile;
-  uint32_t height = height_pixels;
-
-  // Determine bytes per pixel from depth
-  uint32_t bytes_per_pixel = 4; // default 32bpp
-  switch (depth) {
-  case 0:
-    bytes_per_pixel = 1;
-    break; // 8bpp
-  case 1:
-    bytes_per_pixel = 2;
-    break; // 16bpp
-  case 2:
-    bytes_per_pixel = 3;
-    break; // 24bpp
-  case 3:
-    bytes_per_pixel = 4;
-    break; // 32bpp
+  if (gbe_framebuffer_) {
+    fb_base_ = gbe_framebuffer_->get_fb_base();
+    fb_stride_ = gbe_framebuffer_->get_fb_stride();
+    fb_width_ = gbe_framebuffer_->get_fb_width();
+    fb_height_ = gbe_framebuffer_->get_fb_height();
+    fb_depth_ = gbe_framebuffer_->get_fb_depth();
   }
 
-  // Calculate framebuffer base address from tile pointer
-  // FRM_TILE_PTR is bits 31:9, so shift left by 9 to get byte address
-  uint32_t fb_base = tile_ptr << 9;
-
-  // If linear mode, the tile pointer may point directly to framebuffer
-  // Otherwise, we'd need to follow the tile list (more complex)
-  if (linear && fb_base != 0) {
-    fb_base_ = fb_base;
-    fb_width_ = width ? width : 1024;
-    fb_height_ = height ? height : 768;
-    fb_depth_ = bytes_per_pixel * 8;
-    fb_stride_ = fb_width_ * bytes_per_pixel;
-  } else if (fb_base_ == 0) {
-    // Fallback to defaults if registers not configured
-    fb_base_ = 0x00800000; // Typical framebuffer location in UMA
+  if (fb_base_ == 0) {
+    fb_base_ = 0x00800000;
+  }
+  if (fb_width_ == 0 || fb_height_ == 0 || fb_depth_ == 0) {
     fb_width_ = 1024;
     fb_height_ = 768;
     fb_depth_ = 32;

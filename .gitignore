@@ -3,3 +3,4 @@ samples/linux
 samples/netbsd
 samples/openbsd
 build/
+build-asan/

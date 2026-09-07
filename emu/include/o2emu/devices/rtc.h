@@ -17,6 +17,7 @@ namespace o2emu::devices {
 class RTC : public Device {
 public:
   RTC();
+  explicit RTC(u32 base_addr);
   ~RTC() override;
 
   // RTC register offsets (DS1286/DS1386 compatible)
