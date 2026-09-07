@@ -51,6 +51,9 @@ public:
   MACEAudio &audio() { return *audio_; }
   MACEISA &isa() { return *isa_; }
 
+  // Shared memory access (for DMA-capable sub-devices)
+  o2emu::memory::Memory &memory() { return memory_; }
+
   // Device interface
   u32 read32(u32 offset) override;
   u16 read16(u32 offset) override;

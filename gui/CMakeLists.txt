@@ -9,6 +9,7 @@ add_executable(o2emu-gui
     mainwindow.cpp
     framebufferwidget.cpp
     debuggerwidget.cpp
+    audiooutput.cpp
     resources.qrc
 )
 
@@ -19,6 +20,7 @@ target_link_libraries(o2emu-gui PRIVATE
     Qt6::Gui
     Qt6::OpenGL
     Qt6::OpenGLWidgets
+    Qt6::Multimedia
 )
 
 target_include_directories(o2emu-gui PRIVATE

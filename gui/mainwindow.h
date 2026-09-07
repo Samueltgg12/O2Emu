@@ -17,6 +17,7 @@
 
 class FramebufferWidget;
 class DebuggerWidget;
+class AudioOutput;
 class QMenuBar;
 class QToolBar;
 class QStatusBar;
@@ -104,6 +105,7 @@ private:
   o2emu::devices::MACE *mace_ = nullptr;
   o2emu::devices::PS2 *ps2_ = nullptr;
   o2emu::devices::SCSIController *scsi_ = nullptr;
+  std::unique_ptr<AudioOutput> audio_output_;
 
   // UI components
   FramebufferWidget *framebuffer_widget_ = nullptr;

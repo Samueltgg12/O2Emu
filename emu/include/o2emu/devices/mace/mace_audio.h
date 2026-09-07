@@ -9,6 +9,8 @@
  */
 
 #include <array>
+#include <cstddef>
+#include <functional>
 #include <o2emu/devices/device.h>
 #include <o2emu/o2emu.h>
 
@@ -18,8 +20,16 @@ class MACE;
 
 class MACEAudio {
 public:
+  // Callback invoked with a block of interleaved 16-bit signed PCM samples
+  // (stereo: L,R,L,R...; mono: single channel). The buffer is only valid for
+  // the duration of the call.
+  using SampleCallback = std::function<void(const int16_t *, size_t frames)>;
+
   explicit MACEAudio(MACE &mace);
   ~MACEAudio() = default;
+
+  // Register a consumer for decoded PCM samples (e.g. the GUI audio sink).
+  void set_sample_callback(SampleCallback cb) { sample_cb_ = std::move(cb); }
 
   // MACE Audio register offsets (from MACE base + 0x300000)
   enum Register : uint32_t {
@@ -92,6 +102,7 @@ public:
 private:
   MACE &mace_;
   std::array<u32, SIZE / 4> regs_ = {};
+  SampleCallback sample_cb_;
 };
 
 } // namespace o2emu::devices

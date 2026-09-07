@@ -4,6 +4,7 @@
  */
 
 #include "mainwindow.h"
+#include "audiooutput.h"
 #include "debuggerwidget.h"
 #include "framebufferwidget.h"
 #include <QApplication>
@@ -325,6 +326,18 @@ void MainWindow::initializeEmulator() {
   mace_ = mace.get();
   bus_->attach_device(std::move(mace));
 
+  // Wire MACE audio to the host sound system via Qt6.
+  audio_output_ = std::make_unique<AudioOutput>(this);
+  if (audio_output_->configure(44100, 2)) {
+    audio_output_->start();
+    mace_->audio().set_sample_callback(
+        [this](const int16_t *samples, size_t frames) {
+          audio_output_->push(samples, frames);
+        });
+  } else {
+    audio_output_.reset();
+  }
+
   auto ps2 = std::make_unique<o2emu::devices::PS2>(0x1F320000, 5, 6);
   ps2_ = ps2.get();
   bus_->attach_device(std::move(ps2));
@@ -366,6 +379,9 @@ void MainWindow::initializeEmulator() {
 void MainWindow::shutdownEmulator() {
   emulation_timer_.stop();
   running_ = false;
+  if (audio_output_) {
+    audio_output_->stop();
+  }
   cpu_status_label_->setText("CPU: Stopped");
 }
 
