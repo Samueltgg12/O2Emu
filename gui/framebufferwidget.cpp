@@ -661,6 +661,14 @@ void FramebufferWidget::updateTexture() {
   glBindTexture(GL_TEXTURE_2D, texture_id_);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
+  if (static_cast<GLsizei>(width) != texture_width_ ||
+      static_cast<GLsizei>(height) != texture_height_) {
+    // Allocate (or reallocate) the texture storage for the new dimensions.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    texture_width_ = static_cast<GLsizei>(width);
+    texture_height_ = static_cast<GLsizei>(height);
+  }
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA,
                   GL_UNSIGNED_BYTE, nullptr);
   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
