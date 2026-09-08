@@ -82,10 +82,13 @@ struct CPUState {
   CP0 *cp0 = nullptr;
 };
 
+/**
+ * Abstract CPU interface. All MIPS CPU implementations must inherit from this.
+ * The base interpreter implementation has been moved to BaseInterpreter.
+ */
 class CPU {
 public:
-  CPU();
-  virtual ~CPU();
+  virtual ~CPU() = default;
 
   // Non-copyable, movable
   CPU(const CPU &) = delete;
@@ -94,120 +97,43 @@ public:
   CPU &operator=(CPU &&) = default;
 
   // Initialize CPU state
-  virtual void reset(u32 reset_vector = ip32::PROM_RESET_VECTOR);
+  virtual void reset(u32 reset_vector = ip32::PROM_RESET_VECTOR) = 0;
 
   // Execute instructions
-  virtual void step();                   // Execute one instruction
-  virtual void run(u64 cycles);          // Run for N cycles
-  virtual void run_until(u32 target_pc); // Run until PC reaches target
+  virtual void step() = 0;                   // Execute one instruction
+  virtual void run(u64 cycles) = 0;          // Run for N cycles
+  virtual void run_until(u32 target_pc) = 0; // Run until PC reaches target
 
-  // Memory access callbacks
+  // Memory access callbacks (for base interpreter compatibility)
   using ReadCallback = std::function<u32(u32 addr, u32 size)>;
   using WriteCallback = std::function<void(u32 addr, u32 size, u32 value)>;
 
-  void set_memory_read_callback(ReadCallback cb) {
-    mem_read_cb_ = std::move(cb);
-  }
-  void set_memory_write_callback(WriteCallback cb) {
-    mem_write_cb_ = std::move(cb);
-  }
+  virtual void set_memory_read_callback(ReadCallback cb) = 0;
+  virtual void set_memory_write_callback(WriteCallback cb) = 0;
 
   // Interrupt handling
-  virtual void raise_interrupt(InterruptLine line);
-  virtual void clear_interrupt(InterruptLine line);
+  virtual void raise_interrupt(InterruptLine line) = 0;
+  virtual void clear_interrupt(InterruptLine line) = 0;
 
   // State access
-  virtual CPUState &state() { return state_; }
-  virtual const CPUState &state() const { return state_; }
+  virtual CPUState &state() = 0;
+  virtual const CPUState &state() const = 0;
 
   // CP0 access
-  CP0 &cp0() { return cp0_; }
-  const CP0 &cp0() const { return cp0_; }
+  virtual CP0 &cp0() = 0;
+  virtual const CP0 &cp0() const = 0;
 
   // Debugging
-  void dump_registers() const;
-  void disassemble(u32 addr, char *buffer, size_t size) const;
+  virtual void dump_registers() const = 0;
+  virtual void disassemble(u32 addr, char *buffer, size_t size) const = 0;
 
   // State access (for debugger)
-  u32 pc() const { return state_.pc; }
-  u32 cp0_reg(int index) const {
-    return cp0_.read(static_cast<CP0::Register>(index));
-  }
+  virtual u32 pc() const = 0;
+  virtual u32 cp0_reg(int index) const = 0;
 
   // Cycle counting
-  virtual u64 cycles_executed() const { return cycles_; }
-  void stop() { stop_requested_ = true; }
-
-private:
-  CPUState state_;
-  ReadCallback mem_read_cb_;
-  WriteCallback mem_write_cb_;
-  u64 cycles_ = 0;
-  bool stop_requested_ = false;
-  bool branch_delay_ = false; // Next Instruction is branch delay slot
-  u32 cur_pc = 0; // Address of the current instruction being executed
-
-  CP0 cp0_;
-
-  // Branch Helpers.
-  void set_gpr(u32 index, u64 value);
-  void branch_to(u32 target);
-  void nullify_delay_slot();
-  // Instruction fetch
-  u32 fetch32(u32 addr) const;
-  u16 fetch16(u32 addr) const;
-  u8 fetch8(u32 addr) const;
-  u16 fetch16(u32 addr);
-  u8 fetch8(u32 addr);
-
-  // Instruction decode/execute
-  void execute(u32 instr);
-  void execute_special(u32 instr);
-  void execute_regimm(u32 instr);
-  void execute_j(u32 instr);
-  void execute_jal(u32 instr);
-  void execute_branch(u32 instr, bool eq, bool likely);
-  void execute_blez(u32 instr, bool likely);
-  void execute_bgtz(u32 instr, bool likely);
-  void execute_addi(u32 instr);
-  void execute_addiu(u32 instr);
-  void execute_slti(u32 instr, bool signed_cmp);
-  void execute_andi(u32 instr);
-  void execute_ori(u32 instr);
-  void execute_xori(u32 instr);
-  void execute_lui(u32 instr);
-  void execute_cop0(u32 instr);
-  void execute_cop1(u32 instr);
-  void execute_fpu_arith(u32 instr);
-
-  // Load/store instructions
-  void execute_load(u32 instr, u32 size, bool sign_extend);
-  void execute_store(u32 instr, u32 size);
-  void execute_ldl(u32 instr);
-  void execute_ldr(u32 instr);
-  void execute_sdl(u32 instr);
-  void execute_sdr(u32 instr);
-  void execute_lwl(u32 instr);
-  void execute_lwr(u32 instr);
-  void execute_swl(u32 instr);
-  void execute_swr(u32 instr);
-  void execute_ll(u32 instr);
-  void execute_sc(u32 instr);
-  void execute_lwc1(u32 instr);
-  void execute_swc1(u32 instr);
-
-  // Exception handling
-  void exception(ExceptionCode code, u32 bad_addr = 0);
-  void check_interrupts();
-
-  // Memory access helpers
-  u32 read_memory(u32 addr, u32 size);
-  void write_memory(u32 addr, u32 size, u32 value);
-  u64 read_memory64(u32 addr);
-  void write_memory64(u32 addr, u64 value);
-  // Exception handling (legacy names)
-  void handle_exception(ExceptionCode code, u32 bad_addr = 0);
-  void return_from_exception();
+  virtual u64 cycles_executed() const = 0;
+  virtual void stop() = 0;
 };
 
 } // namespace o2emu::cpu
