@@ -64,10 +64,15 @@ void CPU::step() {
   if (stop_requested_)
     return;
 
-  // Fetch instruction
-  u32 instr = fetch32(state_.pc);
+  // Fetch the instruction, then advance the PC to the next instruction (for
+  // branch delay slots)
+  // rewrites next_pc so the delay slot intruction can be executed before the
+  // branch target
+  cur_pc_ = state_.pc;
+  const u32 instr = fetch32(state_.pc);
 
   // Execute instruction
+
   execute(instr);
 
   // Update CP0 count register
