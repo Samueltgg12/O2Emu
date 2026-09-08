@@ -17,7 +17,14 @@ namespace o2emu::cpu {
 // interface
 class CpuAdapter : public CPU {
 public:
-  CpuAdapter() = default;
+  // Delete default constructor - CPU base has no default ctor
+  CpuAdapter() = delete;
+  CpuAdapter(CpuAdapter &&) = default;
+  CpuAdapter &operator=(CpuAdapter &&) = default;
+
+  // Delete copy operations (CPU base is non-copyable)
+  CpuAdapter(const CpuAdapter &) = delete;
+  CpuAdapter &operator=(const CpuAdapter &) = delete;
 
   // ICpu interface methods not in CPU
   using ReadCallback = ICpu::ReadCallback;
@@ -37,11 +44,9 @@ public:
 
   void set_pc(uint32_t pc) { state().pc = pc; }
 
-  uint32_t cp0_reg(CP0::Register reg) const { return cp0().read(reg); }
+  uint32_t cp0_reg(int index) const { return cp0().read(index); }
 
-  void set_cp0_reg(CP0::Register reg, uint32_t value) {
-    cp0().write(reg, value);
-  }
+  void set_cp0_reg(int index, u32 value) { cp0().write(index, value); }
 
   uint64_t cycles() const { return cycles_executed(); }
 
@@ -58,6 +63,29 @@ public:
 
   // ICpu state() - const version
   const CPUState &state() const { return CPU::state(); }
+
+  // CP0 access
+  CP0 &cp0() override { return cp0_; }
+  const CP0 &cp0() const override { return cp0_; }
+
+  u32 pc() const override { return state().pc; }
+
+  u32 cp0_reg(int index) const override { return cp0().read(index); }
+
+  void dump_registers() const override {}
+
+  void disassemble(u32 addr, char *buffer, size_t size) const override {
+    (void)addr;
+    (void)buffer;
+    (void)size;
+  }
+
+  u64 cycles_executed() const override { return CPU::cycles_executed(); }
+
+  void stop() override {}
+
+private:
+  CP0 cp0_;
 };
 
 // Adapter for MIPSR5000 - uses composition over inheritance
@@ -80,14 +108,14 @@ public:
     }
   }
 
-  void set_memory_read_callback(ReadCallback cb) {
+  void set_memory_read_callback(ReadCallback cb) override {
     // MIPSR5000 uses Bus interface, not callbacks
     (void)cb;
   }
 
-  void set_memory_write_callback(WriteCallback cb) { (void)cb; }
+  void set_memory_write_callback(WriteCallback cb) override { (void)cb; }
 
-  void raise_interrupt(InterruptLine line) {
+  void raise_interrupt(InterruptLine line) override {
     // Not directly supported in MIPSR5000
     (void)line;
   }
@@ -106,10 +134,12 @@ public:
 
   void set_pc(uint32_t pc) { mips_.set_pc(pc); }
 
-  uint32_t cp0_reg(CP0::Register reg) const { return mips_.cp0_reg(reg); }
+  uint32_t cp0_reg(int index) const {
+    return mips_.cp0_reg(static_cast<CP0::Register>(index));
+  }
 
-  void set_cp0_reg(CP0::Register reg, uint32_t value) {
-    mips_.set_cp0_reg(reg, value);
+  void set_cp0_reg(int index, u32 value) {
+    mips_.set_cp0_reg(static_cast<CP0::Register>(index), value);
   }
 
   uint64_t cycles() const { return mips_.cycles(); }
@@ -129,7 +159,7 @@ public:
       cached_state_.gpr[i] = mips_.gpr(i);
       cached_state_.fpr[i] = mips_.fpr(i);
     }
-    cached_state_.cp0 = nullptr;
+    cached_state_.cp0 = &cp0_;
     return cached_state_;
   }
 
@@ -141,8 +171,7 @@ public:
 
   void dump_registers() const { mips_.dump_registers(); }
 
-  void disassemble(uint32_t addr, char *buffer, size_t size) const {
-    // Not implemented
+  void disassemble(uint32_t addr, char *buffer, size_t size) const override {
     (void)addr;
     (void)buffer;
     (void)size;
@@ -152,8 +181,16 @@ public:
 
   const char *type_name() const { return "MIPS R5000"; }
 
+  // CP0 access
+  CP0 &cp0() override { return cp0_; }
+  const CP0 &cp0() const override { return cp0_; }
+
+public:
+  void stop() override {}
+
 private:
   MIPSR5000 mips_;
+  CP0 cp0_;
   CPUState cached_state_;
 };
 
@@ -161,7 +198,7 @@ private:
 class MIPSR10000Adapter : public CPU {
 public:
   explicit MIPSR10000Adapter(system::Bus *bus, MIPSR10000::Variant variant =
-                                                   MIPSR10000::Variant::R10000)
+                                                  MIPSR10000::Variant::R10000)
       : mips_(bus, variant) {}
 
   void reset(uint32_t reset_vector = 0xBFC00000) {
@@ -179,11 +216,11 @@ public:
     }
   }
 
-  void set_memory_read_callback(ReadCallback cb) { (void)cb; }
+  void set_memory_read_callback(ReadCallback cb) override { (void)cb; }
 
-  void set_memory_write_callback(WriteCallback cb) { (void)cb; }
+  void set_memory_write_callback(WriteCallback cb) override { (void)cb; }
 
-  void raise_interrupt(InterruptLine line) { (void)line; }
+  void raise_interrupt(InterruptLine line) override { (void)line; }
 
   void clear_interrupt(InterruptLine line) { (void)line; }
 
@@ -199,10 +236,12 @@ public:
 
   void set_pc(uint32_t pc) { mips_.set_pc(pc); }
 
-  uint32_t cp0_reg(CP0::Register reg) const { return mips_.cp0_reg(reg); }
+  uint32_t cp0_reg(int index) const {
+    return mips_.cp0_reg(static_cast<CP0::Register>(index));
+  }
 
-  void set_cp0_reg(CP0::Register reg, uint32_t value) {
-    mips_.set_cp0_reg(reg, value);
+  void set_cp0_reg(int index, u32 value) {
+    mips_.set_cp0_reg(static_cast<CP0::Register>(index), value);
   }
 
   uint64_t cycles() const { return mips_.cycles(); }
@@ -222,7 +261,7 @@ public:
       cached_state_.gpr[i] = mips_.gpr(i);
       cached_state_.fpr[i] = mips_.fpr(i);
     }
-    cached_state_.cp0 = nullptr;
+    cached_state_.cp0 = &cp0_;
     return cached_state_;
   }
 
@@ -234,7 +273,7 @@ public:
 
   void dump_registers() const { mips_.dump_registers(); }
 
-  void disassemble(uint32_t addr, char *buffer, size_t size) const {
+  void disassemble(uint32_t addr, char *buffer, size_t size) const override {
     (void)addr;
     (void)buffer;
     (void)size;
@@ -250,8 +289,16 @@ public:
                                                           : "MIPS R10000";
   }
 
+  // CP0 access
+  CP0 &cp0() override { return cp0_; }
+  const CP0 &cp0() const override { return cp0_; }
+
+public:
+  void stop() override {}
+
 private:
   MIPSR10000 mips_;
+  CP0 cp0_;
   CPUState cached_state_;
 };
 

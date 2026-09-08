@@ -21,43 +21,47 @@ public:
 
   // CRIME register indices (register space is 64KB = 0x10000 bytes = 0x4000 u32
   // registers)
+  // Byte offsets from CRM_BASEADDR (Linux crime.h / IRIX crime.h).
   enum Register : uint32_t {
-    // Core registers
-    REG_ID = 0x0000,
-    REG_CONFIG = 0x0002,
-    REG_STATUS = 0x0004,
-    REG_CONTROL = 0x0006,
+    REG_ID = 0x00,
+    REG_CONTROL = 0x08,
+    REG_INTSTAT = 0x10,
+    REG_INTMASK = 0x18,
+    REG_SOFTINT = 0x20,
+    REG_HARDINT = 0x28,
+    REG_DOG = 0x30,
+    REG_TIME = 0x38,
+    REG_CPU_ERROR_ADDR = 0x40,
+    REG_CPU_ERROR_STAT = 0x48,
+    REG_CPU_ERROR_ENA = 0x50,
+    REG_VICE_ERROR_ADDR = 0x58,
+    REG_MEM_CONTROL = 0x200,
+    REG_MEM_BANK_CTRL0 = 0x208,
+    REG_MEM_REFRESH_CNTR = 0x248,
+    REG_MEM_ERROR_STAT = 0x250,
+    REG_MEM_ERROR_ADDR = 0x258,
+    REG_MEM_ERROR_ECC_SYN = 0x260,
+    REG_MEM_ERROR_ECC_CHK = 0x268,
+    REG_MEM_ERROR_ECC_REPL = 0x270,
 
-    // Memory configuration (4 banks)
-    REG_MEM_CONFIG0 = 0x0040,
-    REG_MEM_CONFIG1 = 0x0041,
-    REG_MEM_CONFIG2 = 0x0042,
-    REG_MEM_CONFIG3 = 0x0043,
-
-    // Refresh control
-    REG_REFRESH = 0x0048,
-
-    // ECC control
-    REG_ECC_CTRL = 0x004C,
-    REG_ECC_STATUS = 0x004E,
-    REG_ECC_ADDR = 0x0050,
-    REG_ECC_SYNDROME = 0x0052,
-
-    // Interrupt control
-    REG_INT_STATUS = 0x0080,
-    REG_INT_MASK = 0x0082,
-    REG_INT_CLEAR = 0x0084,
-
-    // DMA registers (8 channels, 6 registers each)
-    REG_DMA_BASE = 0x0100,
-    // Per channel: SRC, DST, COUNT, CTRL, NEXT, STATUS
-
-    // Timer registers (2 timers, 3 registers each)
-    REG_TIMER_BASE = 0x0200,
-    // Per timer: COUNT, COMPARE, CTRL
-
-    // Revision
-    REG_REVISION = 0x3FFC,
+    // Compat aliases used by older call sites
+    REG_CONFIG = REG_CONTROL,
+    REG_STATUS = REG_INTSTAT,
+    REG_INT_STATUS = REG_INTSTAT,
+    REG_INT_MASK = REG_INTMASK,
+    REG_INT_CLEAR = REG_SOFTINT,
+    REG_REFRESH = REG_MEM_REFRESH_CNTR,
+    REG_ECC_CTRL = REG_MEM_CONTROL,
+    REG_ECC_STATUS = REG_MEM_ERROR_STAT,
+    REG_ECC_ADDR = REG_MEM_ERROR_ADDR,
+    REG_ECC_SYNDROME = REG_MEM_ERROR_ECC_SYN,
+    REG_MEM_CONFIG0 = REG_MEM_BANK_CTRL0,
+    REG_MEM_CONFIG1 = REG_MEM_BANK_CTRL0 + 8,
+    REG_MEM_CONFIG2 = REG_MEM_BANK_CTRL0 + 16,
+    REG_MEM_CONFIG3 = REG_MEM_BANK_CTRL0 + 24,
+    REG_DMA_BASE = 0x400,
+    REG_TIMER_BASE = 0x500,
+    REG_REVISION = 0x00,
   };
 
   // REG_CONTROL bits

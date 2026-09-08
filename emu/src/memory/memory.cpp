@@ -49,27 +49,20 @@ u8 Memory::read8(u32 addr) const {
 
 u16 Memory::read16(u32 addr) const {
   addr &= ram_mask_;
-  // Handle unaligned access
-  if (addr & 1) {
-    return (ram_[addr] << 8) | ram_[(addr + 1) & ram_mask_];
-  }
-  return *reinterpret_cast<const u16 *>(&ram_[addr]);
+  return static_cast<u16>((ram_[addr] << 8) | ram_[(addr + 1) & ram_mask_]);
 }
 
 u32 Memory::read32(u32 addr) const {
   addr &= ram_mask_;
-  // Handle unaligned access
-  if (addr & 3) {
-    return (ram_[addr] << 24) | (ram_[(addr + 1) & ram_mask_] << 16) |
-           (ram_[(addr + 2) & ram_mask_] << 8) | ram_[(addr + 3) & ram_mask_];
-  }
-  return *reinterpret_cast<const u32 *>(&ram_[addr]);
+  return (static_cast<u32>(ram_[addr]) << 24) |
+         (static_cast<u32>(ram_[(addr + 1) & ram_mask_]) << 16) |
+         (static_cast<u32>(ram_[(addr + 2) & ram_mask_]) << 8) |
+         static_cast<u32>(ram_[(addr + 3) & ram_mask_]);
 }
 
 u64 Memory::read64(u32 addr) const {
-  addr &= ram_mask_;
-  u32 lo = read32(addr);
-  u32 hi = read32((addr + 4) & ram_mask_);
+  const u32 hi = read32(addr);
+  const u32 lo = read32((addr + 4) & ram_mask_);
   return (static_cast<u64>(hi) << 32) | lo;
 }
 
@@ -80,29 +73,21 @@ void Memory::write8(u32 addr, u8 value) {
 
 void Memory::write16(u32 addr, u16 value) {
   addr &= ram_mask_;
-  if (addr & 1) {
-    ram_[addr] = value >> 8;
-    ram_[(addr + 1) & ram_mask_] = value & 0xFF;
-  } else {
-    *reinterpret_cast<u16 *>(&ram_[addr]) = value;
-  }
+  ram_[addr] = static_cast<u8>(value >> 8);
+  ram_[(addr + 1) & ram_mask_] = static_cast<u8>(value);
 }
 
 void Memory::write32(u32 addr, u32 value) {
   addr &= ram_mask_;
-  if (addr & 3) {
-    ram_[addr] = value >> 24;
-    ram_[(addr + 1) & ram_mask_] = (value >> 16) & 0xFF;
-    ram_[(addr + 2) & ram_mask_] = (value >> 8) & 0xFF;
-    ram_[(addr + 3) & ram_mask_] = value & 0xFF;
-  } else {
-    *reinterpret_cast<u32 *>(&ram_[addr]) = value;
-  }
+  ram_[addr] = static_cast<u8>(value >> 24);
+  ram_[(addr + 1) & ram_mask_] = static_cast<u8>(value >> 16);
+  ram_[(addr + 2) & ram_mask_] = static_cast<u8>(value >> 8);
+  ram_[(addr + 3) & ram_mask_] = static_cast<u8>(value);
 }
 
 void Memory::write64(u32 addr, u64 value) {
-  write32(addr, static_cast<u32>(value));
-  write32((addr + 4) & ram_mask_, static_cast<u32>(value >> 32));
+  write32(addr, static_cast<u32>(value >> 32));
+  write32((addr + 4) & ram_mask_, static_cast<u32>(value));
 }
 
 void Memory::read_block(u32 addr, void *buffer, size_t size) {

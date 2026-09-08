@@ -37,10 +37,12 @@ public:
   devices::Device *find_device(u32 phys_addr) const;
 
   // Bus read/write
+  u64 read64(u32 phys_addr);
   u32 read32(u32 phys_addr);
   u16 read16(u32 phys_addr);
   u8 read8(u32 phys_addr);
 
+  void write64(u32 phys_addr, u64 value);
   void write32(u32 phys_addr, u32 value);
   void write16(u32 phys_addr, u16 value);
   void write8(u32 phys_addr, u8 value);

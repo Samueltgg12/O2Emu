@@ -62,6 +62,12 @@ devices::Device *Bus::find_device(u32 phys_addr) const {
   return best_match;
 }
 
+u64 Bus::read64(u32 phys_addr) {
+  const u32 hi = read32(phys_addr);
+  const u32 lo = read32(phys_addr + 4);
+  return (static_cast<u64>(hi) << 32) | lo;
+}
+
 u32 Bus::read32(u32 phys_addr) {
   phys_addr = to_physical(phys_addr);
   devices::Device *device = find_device(phys_addr);
@@ -108,6 +114,11 @@ u8 Bus::read8(u32 phys_addr) {
 
   O2EMU_LOG_WARN_F("Bus read8 from unmapped address: 0x%08X", phys_addr);
   return 0xFF;
+}
+
+void Bus::write64(u32 phys_addr, u64 value) {
+  write32(phys_addr, static_cast<u32>(value >> 32));
+  write32(phys_addr + 4, static_cast<u32>(value));
 }
 
 void Bus::write32(u32 phys_addr, u32 value) {
