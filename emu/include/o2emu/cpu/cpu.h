@@ -51,13 +51,13 @@ enum class InterruptLine : uint32_t {
 
 struct CPUState {
   // General purpose registers
-  u32 gpr[32] = {}; // $0-$31
+  u64 gpr[32] = {}; // $0-$31
 
   // Special registers
   u32 pc = 0;      // Program counter
   u32 next_pc = 0; // Next PC (for branch delay slots)
-  u32 hi = 0;      // Multiply/divide high
-  u32 lo = 0;      // Multiply/divide low
+  u64 hi = 0;      // Multiply/divide high
+  u64 lo = 0;      // Multiply/divide low
 
   // FPU registers (32 single-precision or 16 double-precision)
   union {
@@ -73,7 +73,7 @@ struct CPUState {
   bool in_delay_slot = false;
   u32 delay_slot_pc = 0;
   bool llbit = false; // Load-linked bit
-
+  u32 lladr = 0;
   // Interrupt state
   u32 interrupt_mask = 0;
   u32 interrupt_pending = 0;
@@ -85,7 +85,7 @@ struct CPUState {
 class CPU {
 public:
   CPU();
-  ~CPU();
+  virtual ~CPU();
 
   // Non-copyable, movable
   CPU(const CPU &) = delete;
@@ -94,12 +94,12 @@ public:
   CPU &operator=(CPU &&) = default;
 
   // Initialize CPU state
-  void reset(u32 reset_vector = ip32::PROM_RESET_VECTOR);
+  virtual void reset(u32 reset_vector = ip32::PROM_RESET_VECTOR);
 
   // Execute instructions
-  void step();                   // Execute one instruction
-  void run(u64 cycles);          // Run for N cycles
-  void run_until(u32 target_pc); // Run until PC reaches target
+  virtual void step();                   // Execute one instruction
+  virtual void run(u64 cycles);          // Run for N cycles
+  virtual void run_until(u32 target_pc); // Run until PC reaches target
 
   // Memory access callbacks
   using ReadCallback = std::function<u32(u32 addr, u32 size)>;
@@ -113,12 +113,12 @@ public:
   }
 
   // Interrupt handling
-  void raise_interrupt(InterruptLine line);
-  void clear_interrupt(InterruptLine line);
+  virtual void raise_interrupt(InterruptLine line);
+  virtual void clear_interrupt(InterruptLine line);
 
   // State access
-  CPUState &state() { return state_; }
-  const CPUState &state() const { return state_; }
+  virtual CPUState &state() { return state_; }
+  virtual const CPUState &state() const { return state_; }
 
   // CP0 access
   CP0 &cp0() { return cp0_; }
@@ -135,7 +135,7 @@ public:
   }
 
   // Cycle counting
-  u64 cycles_executed() const { return cycles_; }
+  virtual u64 cycles_executed() const { return cycles_; }
   void stop() { stop_requested_ = true; }
 
 private:
@@ -144,9 +144,15 @@ private:
   WriteCallback mem_write_cb_;
   u64 cycles_ = 0;
   bool stop_requested_ = false;
+  bool branch_delay_ = false; // Next Instruction is branch delay slot
+  u32 cur_pc = 0; // Address of the current instruction being executed
 
   CP0 cp0_;
 
+  // Branch Helpers.
+  void set_gpr(u32 index, u64 value);
+  void branch_to(u32 target);
+  void nullify_delay_slot();
   // Instruction fetch
   u32 fetch32(u32 addr) const;
   u16 fetch16(u32 addr) const;
@@ -160,9 +166,9 @@ private:
   void execute_regimm(u32 instr);
   void execute_j(u32 instr);
   void execute_jal(u32 instr);
-  void execute_branch(u32 instr, bool eq);
-  void execute_blez(u32 instr);
-  void execute_bgtz(u32 instr);
+  void execute_branch(u32 instr, bool eq, bool likely);
+  void execute_blez(u32 instr, bool likely);
+  void execute_bgtz(u32 instr, bool likely);
   void execute_addi(u32 instr);
   void execute_addiu(u32 instr);
   void execute_slti(u32 instr, bool signed_cmp);
@@ -177,6 +183,10 @@ private:
   // Load/store instructions
   void execute_load(u32 instr, u32 size, bool sign_extend);
   void execute_store(u32 instr, u32 size);
+  void execute_ldl(u32 instr);
+  void execute_ldr(u32 instr);
+  void execute_sdl(u32 instr);
+  void execute_sdr(u32 instr);
   void execute_lwl(u32 instr);
   void execute_lwr(u32 instr);
   void execute_swl(u32 instr);
@@ -187,13 +197,14 @@ private:
   void execute_swc1(u32 instr);
 
   // Exception handling
-  void exception(ExceptionCode code);
+  void exception(ExceptionCode code, u32 bad_addr = 0);
   void check_interrupts();
 
   // Memory access helpers
   u32 read_memory(u32 addr, u32 size);
   void write_memory(u32 addr, u32 size, u32 value);
-
+  u64 read_memory64(u32 addr);
+  void write_memory64(u32 addr, u64 value);
   // Exception handling (legacy names)
   void handle_exception(ExceptionCode code, u32 bad_addr = 0);
   void return_from_exception();
